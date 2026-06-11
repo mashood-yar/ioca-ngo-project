@@ -245,7 +245,7 @@ export const campaigns: Campaign[] = [
     image: '/assets/card-education.webp',
     raised: 3250000,
     goal: 5000000,
-    isUrgent: false,
+    isUrgent: true,
   },
   {
     id: 'thalassemia-blood-bank',
