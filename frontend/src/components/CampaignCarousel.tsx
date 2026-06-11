@@ -76,7 +76,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
             return (
               <motion.div
                 key={campaign.id}
-                className={`group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 ${campaign.isUrgent ? 'border-brand-gold' : 'border-transparent'}`}
+                className={`group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 will-change-transform ${campaign.isUrgent ? 'border-brand-gold' : 'border-transparent'}`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: idx * 0.15 }}
@@ -88,6 +88,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
                     alt={isUrdu ? campaign.titleUr : campaign.titleEn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   <span className={`absolute top-4 ${isUrdu ? 'right-4' : 'left-4'} text-[11px] font-bold uppercase px-3 py-1 rounded-full ${campaign.isUrgent ? 'bg-red-500 text-white' : 'bg-brand-white/90 text-brand-navy'}`}>

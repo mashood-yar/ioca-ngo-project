@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Droplets, GraduationCap, HeartPulse, CheckCircle2 } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { toUrduNumerals } from '../utils/formatters';
@@ -9,23 +9,30 @@ interface ImpactBentoGridProps {
 }
 
 /** Animated counter that counts up to a target value */
-const CountUp = ({ target, suffix = '', isInView, isUrdu }: { target: number; suffix?: string; isInView: boolean; isUrdu: boolean }) => {
-  const [count, setCount] = useState(0);
+const CountUp = ({ target, suffix, isInView, isUrdu }: { target: number, suffix: string, isInView: boolean, isUrdu: boolean }) => {
+  const nodeRef = useRef<HTMLSpanElement>(null);
+  
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || !nodeRef.current) return;
     let start = 0;
-    const duration = 2000;
+    const duration = window.innerWidth < 768 ? 1000 : 2000; // Faster on mobile
     const step = (timestamp: number) => {
       start = start || timestamp;
       const progress = Math.min((timestamp - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-      setCount(Math.floor(eased * target));
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const currentCount = Math.floor(eased * target);
+      
+      const displayStr = currentCount.toLocaleString();
+      if (nodeRef.current) {
+        nodeRef.current.textContent = (isUrdu ? toUrduNumerals(displayStr) : displayStr) + suffix;
+      }
+      
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
-  }, [isInView, target]);
-  const displayNum = isUrdu ? toUrduNumerals(count.toLocaleString()) : count.toLocaleString();
-  return <>{displayNum}{suffix}</>;
+  }, [isInView, target, suffix, isUrdu]);
+  
+  return <span ref={nodeRef}>0{suffix}</span>;
 };
 
 const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {

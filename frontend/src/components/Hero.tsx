@@ -49,6 +49,8 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
               src="/assets/hero-community.webp" 
               alt="Community gathering in Pakistan" 
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+              fetchPriority="high"
+              decoding="sync"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/60 via-transparent to-transparent" />
             
@@ -70,7 +72,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
           
           {/* Logo Icon */}
           <motion.div className={`w-full ${isUrdu ? 'flex justify-end' : 'flex justify-start'} mb-6`} {...fadeUp(0.1)}>
-            <img src="/assets/logos/logo-icon-teal.webp" alt="" className="h-16 md:h-20 w-auto object-contain" aria-hidden="true" />
+            <img src="/assets/logos/logo-icon-teal.webp" alt="" className="h-16 md:h-20 w-auto object-contain" aria-hidden="true" fetchPriority="high" decoding="sync" />
           </motion.div>
           
           {/* Eyebrow */}

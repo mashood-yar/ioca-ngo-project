@@ -79,7 +79,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
       </a>
 
       <nav
-        className="sticky top-0 z-50 bg-brand-white/90 backdrop-blur-md border-b border-brand-navy/10"
+        className="sticky top-0 z-50 bg-brand-white md:bg-brand-white/90 backdrop-blur-none md:backdrop-blur-md border-b border-brand-navy/10 will-change-transform"
         role="navigation"
         aria-label={isUrdu ? 'مرکزی نیویگیشن' : 'Main navigation'}
       >
