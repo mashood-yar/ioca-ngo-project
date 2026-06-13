@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MapPin, Calendar } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -21,27 +21,30 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
       setFetchError('');
 
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .order('event_date', { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .order('event_date', { ascending: false });
 
-      if (error) {
-        console.warn('Failed to load events from Supabase, falling back to empty state.');
+        if (error) {
+          console.warn('Failed to load events from Supabase, falling back to empty state.');
+          setEvents([]);
+        } else {
+          setEvents(data ?? []);
+        }
+      } catch (err) {
+        console.warn('Exception during Supabase fetch, falling back to empty state.', err);
         setEvents([]);
-      } else {
-        setEvents(data ?? []);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchEvents();
@@ -79,13 +82,14 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
           ) : events.length === 0 ? (
             <p className="text-brand-navy/60 text-center py-16">{isUrdu ? 'کوئی تقریب نہیں۔' : 'No events yet.'}</p>
           ) : (
-            <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events.map((event, idx) => (
                 <motion.div
                   key={event.id}
                   className="bg-brand-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-all group"
                   initial={{ opacity: 0, y: 30 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
                   transition={{ duration: 0.5, delay: idx * 0.08 }}
                 >
                   <div className="relative h-48 overflow-hidden">

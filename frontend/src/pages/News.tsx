@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Calendar } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -21,27 +21,30 @@ const News: React.FC<NewsProps> = ({ isUrdu }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   useEffect(() => {
     const fetchNews = async () => {
       setLoading(true);
       setFetchError('');
 
-      const { data, error } = await supabase
-        .from('news')
-        .select('*')
-        .order('published_at', { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from('news')
+          .select('*')
+          .order('published_at', { ascending: false });
 
-      if (error) {
-        console.warn('Failed to load news from Supabase, falling back to empty state.');
+        if (error) {
+          console.warn('Failed to load news from Supabase, falling back to empty state.');
+          setPosts([]);
+        } else {
+          setPosts(data ?? []);
+        }
+      } catch (err) {
+        console.warn('Exception during Supabase fetch, falling back to empty state.', err);
         setPosts([]);
-      } else {
-        setPosts(data ?? []);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchNews();
@@ -83,7 +86,7 @@ const News: React.FC<NewsProps> = ({ isUrdu }) => {
           ) : posts.length === 0 ? (
             <p className="text-brand-navy/60 text-center py-16">{isUrdu ? 'کوئی خبر نہیں۔' : 'No news posts yet.'}</p>
           ) : (
-            <div ref={ref} className="space-y-8">
+            <div className="space-y-8">
               {posts.map((post, idx) => {
                 const isExpanded = expandedId === post.id;
                 return (
@@ -91,7 +94,8 @@ const News: React.FC<NewsProps> = ({ isUrdu }) => {
                     key={post.id}
                     className="bg-brand-white rounded-[2rem] overflow-hidden shadow-md"
                     initial={{ opacity: 0, y: 30 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-50px' }}
                     transition={{ duration: 0.5, delay: idx * 0.15 }}
                   >
                     <div className="grid grid-cols-1 md:grid-cols-5">

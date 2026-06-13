@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MapPin, Calendar, CheckCircle2, Clock } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Project } from '../data/types';
@@ -16,46 +16,49 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);
       setFetchError('');
 
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from('projects')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-      if (error) {
-        console.warn('Failed to load projects from Supabase, falling back to mock data.');
+        if (error) {
+          console.warn('Failed to load projects from Supabase, falling back to mock data.');
+          setProjects(mockProjects);
+        } else {
+          setProjects(
+            (data ?? []).map((row) => {
+              const status = row.status === 'completed' ? 'completed' : 'ongoing';
+              return {
+                id: row.id,
+                titleEn: row.title,
+                titleUr: row.title,
+                descEn: row.description,
+                descUr: row.description,
+                locationEn: '',
+                locationUr: '',
+                status,
+                statusEn: status === 'completed' ? 'Completed' : 'Ongoing',
+                statusUr: status === 'completed' ? 'مکمل' : 'جاری',
+                date: new Date(row.created_at).toLocaleDateString(),
+                image: row.image_url ?? '/assets/hero-community.webp',
+                progress: status === 'completed' ? 100 : 50,
+              };
+            })
+          );
+        }
+      } catch (err) {
+        console.warn('Exception during Supabase fetch, falling back to mock data.', err);
         setProjects(mockProjects);
-      } else {
-        setProjects(
-          (data ?? []).map((row) => {
-            const status = row.status === 'completed' ? 'completed' : 'ongoing';
-            return {
-              id: row.id,
-              titleEn: row.title,
-              titleUr: row.title,
-              descEn: row.description,
-              descUr: row.description,
-              locationEn: '',
-              locationUr: '',
-              status,
-              statusEn: status === 'completed' ? 'Completed' : 'Ongoing',
-              statusUr: status === 'completed' ? 'مکمل' : 'جاری',
-              date: new Date(row.created_at).toLocaleDateString(),
-              image: row.image_url ?? '/assets/hero-community.webp',
-              progress: status === 'completed' ? 100 : 50,
-            };
-          })
-        );
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchProjects();
@@ -120,13 +123,14 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
           ) : fetchError ? (
             <p className="text-red-600 text-center py-16">{fetchError}</p>
           ) : (
-          <div ref={ref} className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {filtered.map((project, idx) => (
               <motion.div
                 key={project.id}
                 className="bg-brand-white rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-all group"
                 initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
               >
                 <div className="relative h-28 md:h-48 overflow-hidden">
