@@ -102,7 +102,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             <motion.div className={`flex items-center gap-4 mt-5 md:mt-6 ${isUrdu ? 'flex-row-reverse' : ''}`} {...fadeUp(0.4)}>
               <Link
                 to="/donate"
-                className="inline-flex items-center justify-center bg-brand-gold text-brand-navy font-bold text-[15px] px-6 rounded-lg min-h-[48px] hover:bg-brand-white hover:text-brand-navy transition-all duration-300 whitespace-nowrap shadow-xl shadow-brand-gold/20"
+                className="inline-flex items-center justify-center bg-brand-teal text-brand-white font-bold text-[15px] px-6 rounded-lg min-h-[48px] hover:bg-brand-white hover:text-brand-navy transition-all duration-300 whitespace-nowrap shadow-xl shadow-brand-teal/20"
               >
                 {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
               </Link>
@@ -138,7 +138,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
           
           <Link
             to="/donate"
-            className="bg-brand-gold text-brand-navy font-bold text-[13px] px-6 rounded-md min-h-[44px] flex items-center justify-center whitespace-nowrap hover:opacity-90 transition-opacity"
+            className="bg-brand-teal text-brand-white font-bold text-[13px] px-6 rounded-md min-h-[44px] flex items-center justify-center whitespace-nowrap hover:opacity-90 transition-opacity"
           >
             {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
           </Link>

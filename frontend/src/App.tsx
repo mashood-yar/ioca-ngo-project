@@ -47,7 +47,7 @@ class ErrorBoundary extends React.Component<
             <p className="text-brand-navy/70 mb-6">
               {isUrdu ? 'براہ کرم صفحہ ریفریش کریں یا بعد میں دوبارہ کوشش کریں۔' : 'Please refresh the page or try again later.'}
             </p>
-            <button onClick={() => window.location.reload()} className="bg-brand-gold text-brand-navy px-6 py-3 rounded-full font-semibold">
+            <button onClick={() => window.location.reload()} className="bg-brand-teal text-brand-white px-6 py-3 rounded-full font-semibold">
               {isUrdu ? 'صفحہ ریفریش کریں' : 'Refresh Page'}
             </button>
           </div>

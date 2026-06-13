@@ -259,7 +259,7 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-brand-gold text-brand-navy font-bold py-3.5 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-brand-gold/20 disabled:opacity-50"
+                    className="w-full bg-brand-teal text-brand-white font-bold py-3.5 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-brand-teal/20 disabled:opacity-50"
                   >
                     <Send className="w-4 h-4" />
                     {isSubmitting

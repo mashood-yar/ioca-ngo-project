@@ -28,7 +28,7 @@ const NotFound: React.FC<NotFoundProps> = ({ isUrdu }) => (
       </p>
       <Link
         to="/"
-        className="bg-brand-gold text-brand-navy px-8 py-3.5 rounded-full font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-brand-gold/20"
+        className="bg-brand-teal text-brand-white px-8 py-3.5 rounded-full font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-brand-teal/20"
       >
         {isUrdu ? 'ہوم پیج پر واپس جائیں' : 'Back to Home'}
       </Link>

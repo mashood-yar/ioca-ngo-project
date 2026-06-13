@@ -247,7 +247,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/volunteer"
-                  className="inline-flex items-center justify-center gap-2 bg-brand-gold text-brand-navy px-8 py-4 rounded-full font-bold text-lg hover:opacity-90 transition-opacity shadow-lg"
+                  className="inline-flex items-center justify-center gap-2 bg-brand-teal text-brand-white px-8 py-4 rounded-full font-bold text-lg hover:opacity-90 transition-opacity shadow-lg"
                 >
                   {isUrdu ? 'رضاکار بنیں' : 'Join Our Team'}
                   <ArrowRight className={`w-5 h-5 ${isUrdu ? 'rotate-180' : ''}`} />

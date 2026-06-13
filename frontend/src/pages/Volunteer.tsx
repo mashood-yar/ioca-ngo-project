@@ -284,7 +284,7 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
 
                 <button
                   type="submit"
-                  className="w-full bg-brand-gold text-brand-navy font-bold py-4 rounded-xl text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-brand-gold/20"
+                  className="w-full bg-brand-teal text-brand-white font-bold py-4 rounded-xl text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-brand-teal/20"
                 >
                   <Heart className="w-5 h-5" />
                   {isUrdu ? 'رضاکارانہ درخواست بھیجیں' : 'Submit Application'}

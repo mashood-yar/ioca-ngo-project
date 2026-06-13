@@ -73,7 +73,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
       {/* Skip Navigation Link */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:bg-brand-gold focus:text-brand-navy focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold focus:text-sm focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:bg-brand-teal focus:text-brand-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold focus:text-sm focus:shadow-lg"
       >
         {isUrdu ? 'مواد پر جائیں' : 'Skip to main content'}
       </a>
@@ -182,7 +182,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
 
             <button
               onClick={onDonateClick}
-              className="hidden md:flex bg-brand-gold text-brand-navy px-6 py-2.5 min-h-[48px] items-center justify-center rounded-full font-semibold hover:opacity-90 transition-all shadow-md shadow-brand-gold/20"
+              className="hidden md:flex bg-brand-teal text-brand-white px-6 py-2.5 min-h-[48px] items-center justify-center rounded-full font-semibold hover:opacity-90 transition-all shadow-md shadow-brand-teal/20"
             >
               {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
             </button>
@@ -276,7 +276,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
                     closeMenu();
                     onDonateClick();
                   }}
-                  className="py-2 mt-2 bg-brand-gold text-brand-navy rounded-xl text-center font-bold min-h-[48px]"
+                  className="py-2 mt-2 bg-brand-teal text-brand-white rounded-xl text-center font-bold min-h-[48px]"
                 >
                   {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
                 </button>

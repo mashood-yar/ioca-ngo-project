@@ -104,7 +104,7 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
             </p>
             <Link
               to="/donate"
-              className="inline-flex items-center justify-center bg-brand-gold text-brand-navy font-semibold px-8 py-3.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-brand-gold/20"
+              className="inline-flex items-center justify-center bg-brand-teal text-brand-white font-semibold px-8 py-3.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-brand-teal/20"
             >
               {isUrdu ? 'ابھی عطیہ کریں' : 'Donate Now'}
             </Link>

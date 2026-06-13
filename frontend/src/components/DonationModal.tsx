@@ -158,7 +158,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
           </h2>
           <button 
             onClick={onClose}
-            className="text-brand-navy/50 hover:text-brand-navy bg-brand-navy/5 hover:bg-brand-navy/10 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold"
+            className="text-brand-navy/50 hover:text-brand-navy bg-brand-navy/5 hover:bg-brand-navy/10 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-teal"
             aria-label={isUrdu ? 'بند کریں' : 'Close modal'}
           >
             <X className="w-5 h-5" />
@@ -195,7 +195,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                       key={preset}
                       onClick={() => { setAmount(preset); setCustomAmount(''); }}
                       aria-pressed={amount === preset}
-                      className={`py-3.5 rounded-xl font-bold border-2 transition-all focus:outline-none focus:ring-2 focus:ring-brand-gold ${amount === preset ? 'border-brand-gold bg-brand-gold/5 text-brand-gold' : 'border-brand-navy/10 text-brand-navy hover:border-brand-navy/30'}`}
+                      className={`py-3.5 rounded-xl font-bold border-2 transition-all focus:outline-none focus:ring-2 focus:ring-brand-teal ${amount === preset ? 'border-brand-teal bg-brand-teal/5 text-brand-teal' : 'border-brand-navy/10 text-brand-navy hover:border-brand-navy/30'}`}
                     >
                       Rs {displayNum(preset.toLocaleString())}
                     </button>
@@ -215,7 +215,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                         setCustomAmount(e.target.value);
                         setAmount(null);
                       }}
-                      className="w-full ps-12 pe-4 py-3.5 rounded-xl border-2 border-brand-navy/10 font-bold text-brand-navy focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/50 transition-colors"
+                      className="w-full ps-12 pe-4 py-3.5 rounded-xl border-2 border-brand-navy/10 font-bold text-brand-navy focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-teal/50 transition-colors"
                     />
                   </div>
                 </div>
@@ -231,7 +231,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                     id="campaign-select"
                     value={campaign}
                     onChange={(e) => setCampaign(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-brand-navy/10 font-medium text-brand-navy focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/50 bg-white"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-brand-navy/10 font-medium text-brand-navy focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-teal/50 bg-white"
                   >
                     <option value="General Fund">{isUrdu ? 'جنرل فنڈ' : 'General Fund (Where needed most)'}</option>
                     <option value="Maternal Health Care">{isUrdu ? 'زچہ و بچہ کی صحت' : 'Maternal Health Care'}</option>
@@ -246,7 +246,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                       key={type}
                       onClick={() => setFundType(type)}
                       aria-pressed={fundType === type}
-                      className={`flex-1 py-2 rounded-lg text-xs font-bold border focus:outline-none focus:ring-2 focus:ring-brand-gold ${fundType === type ? 'border-brand-navy bg-brand-navy text-white' : 'border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5'}`}
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold border focus:outline-none focus:ring-2 focus:ring-brand-teal ${fundType === type ? 'border-brand-navy bg-brand-navy text-white' : 'border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5'}`}
                     >
                       {type === 'general' ? (isUrdu ? 'عطیہ' : 'General') : 
                        type === 'zakat' ? (isUrdu ? 'زکوٰۃ' : 'Zakat') : 
@@ -273,21 +273,21 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
 
               <div>
                 <label htmlFor="donor-name" className="block text-sm font-semibold text-brand-navy/80 mb-2">{isUrdu ? 'پورا نام' : 'Full Name'} *</label>
-                <input id="donor-name" type="text" value={donorName} onChange={e => setDonorName(e.target.value)} required className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
+                <input id="donor-name" type="text" value={donorName} onChange={e => setDonorName(e.target.value)} required className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-teal/50" />
               </div>
               
               <div>
                 <label htmlFor="donor-email" className="block text-sm font-semibold text-brand-navy/80 mb-2">{isUrdu ? 'ای میل ایڈریس' : 'Email Address'} *</label>
-                <input id="donor-email" type="email" value={donorEmail} onChange={e => setDonorEmail(e.target.value)} required className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
+                <input id="donor-email" type="email" value={donorEmail} onChange={e => setDonorEmail(e.target.value)} required className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-teal/50" />
               </div>
 
               <div>
                 <label htmlFor="donor-phone" className="block text-sm font-semibold text-brand-navy/80 mb-2">{isUrdu ? 'فون نمبر (اختیاری)' : 'Phone Number (Optional)'}</label>
-                <input id="donor-phone" type="tel" value={donorPhone} onChange={e => setDonorPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/50" />
+                <input id="donor-phone" type="tel" value={donorPhone} onChange={e => setDonorPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-teal/50" />
               </div>
 
               <div className="flex items-center gap-3 pt-4">
-                <input type="checkbox" id="anon" checked={isAnon} onChange={e => setIsAnon(e.target.checked)} className="w-5 h-5 accent-brand-gold rounded focus:ring-brand-gold focus:ring-offset-2" />
+                <input type="checkbox" id="anon" checked={isAnon} onChange={e => setIsAnon(e.target.checked)} className="w-5 h-5 accent-brand-gold rounded focus:ring-brand-teal focus:ring-offset-2" />
                 <label htmlFor="anon" className="text-sm text-brand-navy/80 font-medium cursor-pointer">
                   {isUrdu ? 'میرا عطیہ گمنام رکھیں' : 'Make my donation anonymous'}
                 </label>
@@ -303,7 +303,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
               </label>
               
               <div className="space-y-3" role="group" aria-labelledby="payment-label">
-                <button onClick={() => setPaymentMethod('online')} className={`w-full flex items-center justify-between p-4 border-2 rounded-xl transition-all text-left focus:outline-none focus:ring-2 focus:ring-brand-gold ${paymentMethod === 'online' ? 'border-brand-gold bg-brand-gold/5' : 'border-brand-navy/10 hover:border-brand-gold hover:bg-brand-gold/5'}`}>
+                <button onClick={() => setPaymentMethod('online')} className={`w-full flex items-center justify-between p-4 border-2 rounded-xl transition-all text-left focus:outline-none focus:ring-2 focus:ring-brand-teal ${paymentMethod === 'online' ? 'border-brand-teal bg-brand-teal/5' : 'border-brand-navy/10 hover:border-brand-teal hover:bg-brand-teal/5'}`}>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-brand-navy/5 rounded-full flex items-center justify-center text-brand-navy" aria-hidden="true">
                       <CreditCard className="w-5 h-5" />
@@ -312,7 +312,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                   </div>
                 </button>
 
-                <button onClick={() => setPaymentMethod('manual')} className={`w-full flex items-center justify-between p-4 border-2 rounded-xl transition-all text-left focus:outline-none focus:ring-2 focus:ring-brand-gold ${paymentMethod === 'manual' ? 'border-brand-gold bg-brand-gold/5' : 'border-brand-navy/10 hover:border-brand-gold hover:bg-brand-gold/5'}`}>
+                <button onClick={() => setPaymentMethod('manual')} className={`w-full flex items-center justify-between p-4 border-2 rounded-xl transition-all text-left focus:outline-none focus:ring-2 focus:ring-brand-teal ${paymentMethod === 'manual' ? 'border-brand-teal bg-brand-teal/5' : 'border-brand-navy/10 hover:border-brand-teal hover:bg-brand-teal/5'}`}>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-brand-navy/5 rounded-full flex items-center justify-center text-brand-navy" aria-hidden="true">
                       <Building2 className="w-5 h-5" />
@@ -359,7 +359,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                           maxLength={19}
                           value={cardNumber}
                           onChange={e => setCardNumber(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all font-mono"
+                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-teal outline-none transition-all font-mono"
                         />
                       </div>
                     </div>
@@ -373,7 +373,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                           maxLength={5}
                           value={cardExpiry}
                           onChange={e => setCardExpiry(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all font-mono"
+                          className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-teal outline-none transition-all font-mono"
                         />
                       </div>
                       <div>
@@ -385,7 +385,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                           maxLength={4}
                           value={cardCvc}
                           onChange={e => setCardCvc(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all font-mono"
+                          className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-teal outline-none transition-all font-mono"
                         />
                       </div>
                     </div>
@@ -461,7 +461,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
               <button 
                 onClick={handleBack}
                 disabled={isProcessing}
-                className="p-4 rounded-xl border border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold disabled:opacity-50"
+                className="p-4 rounded-xl border border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-teal disabled:opacity-50"
                 aria-label={isUrdu ? 'پچھلا قدم' : 'Previous step'}
               >
                 <ArrowLeft className={`w-5 h-5 ${isUrdu ? 'rotate-180' : ''}`} />
@@ -472,7 +472,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
               <button 
                 onClick={handleCheckoutSubmit}
                 disabled={!cardNumber || !cardExpiry || !cardCvc || isProcessing}
-                className="flex-1 bg-brand-gold text-brand-navy py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-gold/20"
+                className="flex-1 bg-brand-teal text-brand-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-teal/20"
               >
                 {isProcessing ? (
                   <>
@@ -490,7 +490,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
               <button 
                 onClick={handleNext}
                 disabled={(step === 1 && !amount && !customAmount) || (step === 2 && (!donorName || !donorEmail)) || (step === 3 && !paymentMethod)}
-                className="flex-1 bg-brand-gold text-brand-navy py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-gold/20"
+                className="flex-1 bg-brand-teal text-brand-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-teal/20"
               >
                 {step === 3 && paymentMethod === 'manual' ? (isUrdu ? 'ادائیگی مکمل کریں' : 'Complete Donation') : (isUrdu ? 'آگے بڑھیں' : 'Continue')}
                 {step < 3 && <ArrowRight className={`w-5 h-5 ${isUrdu ? 'rotate-180' : ''}`} />}
@@ -503,7 +503,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
           <div className="p-6 border-t border-brand-navy/10 bg-brand-gray/50 shrink-0">
             <button 
               onClick={onClose}
-              className="w-full bg-brand-navy/5 text-brand-navy py-4 rounded-xl font-bold hover:bg-brand-navy/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold"
+              className="w-full bg-brand-navy/5 text-brand-navy py-4 rounded-xl font-bold hover:bg-brand-navy/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-teal"
             >
               {isUrdu ? 'مرکزی صفحہ پر واپس جائیں' : 'Return to Home'}
             </button>
