@@ -76,7 +76,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
             return (
               <motion.div
                 key={campaign.id}
-                className={`group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 will-change-transform ${campaign.isUrgent ? 'border-brand-teal' : 'border-transparent'}`}
+                className="group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 border-brand-teal/20 hover:border-brand-teal will-change-transform"
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: idx * 0.15 }}
@@ -133,11 +133,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
 
                     <button
                       onClick={() => onDonateClick(isUrdu ? campaign.titleUr : campaign.titleEn)}
-                      className={`w-full py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors ${
-                        campaign.isUrgent
-                          ? 'bg-brand-teal text-brand-white hover:opacity-90'
-                          : 'bg-brand-gray text-brand-navy border-2 border-brand-navy/10 hover:bg-brand-navy hover:text-brand-white'
-                      }`}
+                      className="w-full py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors bg-brand-teal text-brand-white hover:opacity-90 shadow-md shadow-brand-teal/20"
                     >
                       <Heart className="w-4 h-4" />
                       {campaign.isUrgent
