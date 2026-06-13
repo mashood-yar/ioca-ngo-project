@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, CheckCircle2, Clock } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, hasSupabaseConfig } from '../lib/supabase';
 import type { Project } from '../data/types';
 import { projects as mockProjects } from '../data/mockData';
 import { toUrduNumerals } from '../utils/formatters';
@@ -21,6 +21,13 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
     const fetchProjects = async () => {
       setLoading(true);
       setFetchError('');
+
+      if (!hasSupabaseConfig) {
+        console.warn('No Supabase configuration found, falling back to mock data instantly.');
+        setProjects(mockProjects);
+        setLoading(false);
+        return;
+      }
 
       try {
         const { data, error } = await supabase

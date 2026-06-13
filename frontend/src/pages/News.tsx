@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Calendar } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, hasSupabaseConfig } from '../lib/supabase';
 
 interface NewsItem {
   id: string;
@@ -26,6 +26,13 @@ const News: React.FC<NewsProps> = ({ isUrdu }) => {
     const fetchNews = async () => {
       setLoading(true);
       setFetchError('');
+
+      if (!hasSupabaseConfig) {
+        console.warn('No Supabase configuration found, falling back to empty state instantly.');
+        setPosts([]);
+        setLoading(false);
+        return;
+      }
 
       try {
         const { data, error } = await supabase

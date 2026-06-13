@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, hasSupabaseConfig } from '../lib/supabase';
 
 interface EventItem {
   id: string;
@@ -26,6 +26,13 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
     const fetchEvents = async () => {
       setLoading(true);
       setFetchError('');
+
+      if (!hasSupabaseConfig) {
+        console.warn('No Supabase configuration found, falling back to empty state instantly.');
+        setEvents([]);
+        setLoading(false);
+        return;
+      }
 
       try {
         const { data, error } = await supabase
