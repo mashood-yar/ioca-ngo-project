@@ -27,8 +27,8 @@ export const programs: Program[] = [
     contentEn: 'Our Education Program is the cornerstone of IOCA\'s mission to uplift communities across Pakistan. We believe that education is the most powerful tool for breaking the cycle of poverty and building a brighter future.\n\nThrough our network of community learning centers, we provide free primary and secondary education to children in underserved areas. Our curriculum combines academic excellence with life skills training, ensuring students are prepared for both higher education and meaningful employment.\n\nWe also run adult literacy programs for women, recognizing that an educated mother is the foundation of an educated family. Our scholarship program supports exceptional students from low-income households to pursue higher education at top universities.',
     contentUr: 'ہمارا تعلیمی پروگرام IOCA کے مشن کا سنگ بنیاد ہے۔ ہم یقین رکھتے ہیں کہ تعلیم غربت کے چکر کو توڑنے اور روشن مستقبل بنانے کا سب سے طاقتور ذریعہ ہے۔\n\nہمارے کمیونٹی لرننگ سینٹرز کے نیٹ ورک کے ذریعے، ہم پسماندہ علاقوں کے بچوں کو مفت پرائمری اور سیکنڈری تعلیم فراہم کرتے ہیں۔ ہم خواتین کے لیے بالغ خواندگی کے پروگرام بھی چلاتے ہیں۔',
     icon: '📚',
-    image: '/assets/prog-edu-card.png',
-    heroImage: '/assets/prog-edu-hero.png',
+    image: '/assets/prog-edu-card.webp',
+    heroImage: '/assets/prog-edu-hero.webp',
     stats: { beneficiaries: 25000, projects: 45, volunteers: 300 },
   },
   {
@@ -40,8 +40,8 @@ export const programs: Program[] = [
     contentEn: 'IOCA\'s Health Program addresses the critical healthcare gaps in Pakistan\'s most underserved communities. With a network of mobile health clinics, we bring essential medical services directly to villages and settlements that have no access to hospitals or qualified doctors.\n\nOur maternal and child health initiative has established 12 dedicated care centers across Punjab and Sindh, providing prenatal care, safe delivery services, and postnatal support. Since inception, we have facilitated over 8,000 safe deliveries.\n\nWe also train community health workers - predominantly women from local communities - who serve as the first point of contact for basic health needs, disease prevention, and health education.',
     contentUr: 'IOCA کا صحت کا پروگرام پاکستان کی پسماندہ ترین کمیونٹیز میں صحت کی خدمات کے فرق کو پُر کرتا ہے۔ موبائل ہیلتھ کلینکس کے نیٹ ورک کے ذریعے، ہم ضروری طبی خدمات براہ راست دیہات تک لے جاتے ہیں۔\n\nہمارے زچہ و بچہ صحت اقدام نے پنجاب اور سندھ میں 12 مخصوص نگہداشت مراکز قائم کیے ہیں۔',
     icon: '🏥',
-    image: '/assets/prog-health-card.png',
-    heroImage: '/assets/prog-health-hero.png',
+    image: '/assets/prog-health-card.webp',
+    heroImage: '/assets/prog-health-hero.webp',
     stats: { beneficiaries: 50000, projects: 12, volunteers: 150 },
   },
   {
@@ -53,8 +53,8 @@ export const programs: Program[] = [
     contentEn: 'Pakistan\'s youth represent over 60% of the population - they are the nation\'s greatest asset and its future. IOCA\'s Youth Empowerment Program channels this potential through structured skills development, mentorship, and civic engagement programs.\n\nOur digital literacy initiative has trained over 5,000 young people in computer skills, coding, and online freelancing. Our sports and recreation program provides safe spaces for young people to develop teamwork, discipline, and leadership.\n\nThrough our mentorship network, we connect young professionals with experienced leaders across various industries.',
     contentUr: 'پاکستان کے نوجوان آبادی کا 60 فیصد سے زیادہ ہیں - وہ قوم کا سب سے بڑا اثاثہ اور اس کا مستقبل ہیں۔ IOCA کا یوتھ ایمپاورمنٹ پروگرام اس صلاحیت کو منظم مہارت کی ترقی کے ذریعے آگے بڑھاتا ہے۔\n\nہماری ڈیجیٹل خواندگی کے اقدام نے 5,000 سے زیادہ نوجوانوں کو کمپیوٹر، کوڈنگ اور آن لائن فری لانسنگ کی تربیت دی ہے۔',
     icon: '🌟',
-    image: '/assets/prog-youth-card.png',
-    heroImage: '/assets/prog-youth-hero.png',
+    image: '/assets/prog-youth-card.webp',
+    heroImage: '/assets/prog-youth-hero.webp',
     stats: { beneficiaries: 15000, projects: 28, volunteers: 450 },
   },
   {
@@ -66,8 +66,8 @@ export const programs: Program[] = [
     contentEn: 'Community Bonding is at the heart of everything IOCA does. We believe that lasting change only happens when communities come together - across ethnic, religious, and socioeconomic lines - to support one another.\n\nOur neighborhood development program empowers local leaders to identify and address community needs through participatory planning. Our disaster relief coordination network enables rapid response during floods, earthquakes, and other emergencies.\n\nWe organize cultural events and interfaith dialogues that celebrate Pakistan\'s diversity while building bridges of understanding.',
     contentUr: 'کمیونٹی ہم آہنگی IOCA کے ہر کام کے مرکز میں ہے۔ ہم یقین رکھتے ہیں کہ پائیدار تبدیلی صرف اس وقت ہوتی ہے جب کمیونٹیز ایک ساتھ آتی ہیں۔\n\nہمارا محلے کی ترقی کا پروگرام مقامی رہنماؤں کو بااختیار بناتا ہے۔ ہماری آفات سے نمٹنے کی ہم آہنگی کا نیٹ ورک سیلاب، زلزلوں اور دیگر ہنگامی حالات کے دوران فوری ردعمل کو ممکن بناتا ہے۔',
     icon: '🤝',
-    image: '/assets/prog-comm-card.png',
-    heroImage: '/assets/prog-comm-hero.png',
+    image: '/assets/prog-comm-card.webp',
+    heroImage: '/assets/prog-comm-hero.webp',
     stats: { beneficiaries: 120000, projects: 65, volunteers: 800 },
   },
 ];
@@ -88,7 +88,7 @@ export const projects: Project[] = [
     statusEn: 'Ongoing',
     statusUr: 'جاری',
     date: '2024 - Present',
-    image: '/assets/proj-education.png',
+    image: '/assets/proj-education.webp',
     progress: 65,
   },
   {
@@ -103,7 +103,7 @@ export const projects: Project[] = [
     statusEn: 'Ongoing',
     statusUr: 'جاری',
     date: '2024 - Present',
-    image: '/assets/proj-thalassemia.png',
+    image: '/assets/proj-thalassemia.webp',
     progress: 42,
   },
   {
@@ -118,7 +118,7 @@ export const projects: Project[] = [
     statusEn: 'Ongoing',
     statusUr: 'جاری',
     date: '2024 - Present',
-    image: '/assets/proj-water.png',
+    image: '/assets/proj-water.webp',
     progress: 65,
   },
   {
@@ -133,7 +133,7 @@ export const projects: Project[] = [
     statusEn: 'Ongoing',
     statusUr: 'جاری',
     date: '2024 - Present',
-    image: '/assets/proj-flood.png',
+    image: '/assets/proj-flood.webp',
     progress: 40,
   },
   {
@@ -148,7 +148,7 @@ export const projects: Project[] = [
     statusEn: 'Completed',
     statusUr: 'مکمل',
     date: '2023 - 2024',
-    image: '/assets/proj-digital.png',
+    image: '/assets/proj-digital.webp',
     progress: 100,
   },
   {
@@ -163,7 +163,7 @@ export const projects: Project[] = [
     statusEn: 'Ongoing',
     statusUr: 'جاری',
     date: '2024 - Present',
-    image: '/assets/proj-maternal.png',
+    image: '/assets/proj-maternal.webp',
     progress: 55,
   },
   {
@@ -178,7 +178,7 @@ export const projects: Project[] = [
     statusEn: 'Completed',
     statusUr: 'مکمل',
     date: '2023',
-    image: '/assets/proj-school.png',
+    image: '/assets/proj-school.webp',
     progress: 100,
   },
   {
@@ -193,7 +193,7 @@ export const projects: Project[] = [
     statusEn: 'Completed',
     statusUr: 'مکمل',
     date: '2023',
-    image: '/assets/proj-tree.png',
+    image: '/assets/proj-tree.webp',
     progress: 100,
   },
 ];
@@ -210,7 +210,7 @@ export const teamMembers: TeamMember[] = [
     positionUr: 'بانی اور ایگزیکٹو ڈائریکٹر',
     bioEn: 'Social entrepreneur with 15+ years leadership across South Asia.',
     bioUr: 'جنوبی ایشیا میں 15 سالہ قائدانہ تجربہ رکھنے والے سماجی کاروباری۔',
-    image: '/assets/team-1.png',
+    image: '/assets/team-1.webp',
   },
   {
     id: '2',
@@ -220,7 +220,7 @@ export const teamMembers: TeamMember[] = [
     positionUr: 'ڈائریکٹر صحت پروگرامز',
     bioEn: 'MBBS, MPH. Led maternal health initiatives serving 50,000+ women.',
     bioUr: 'MBBS, MPH. 50,000 سے زیادہ خواتین کو زچگی کی خدمات فراہم کیں۔',
-    image: '/assets/team-2.png',
+    image: '/assets/team-2.webp',
   },
   {
     id: '3',
@@ -230,7 +230,7 @@ export const teamMembers: TeamMember[] = [
     positionUr: 'سربراہ شعبہ تعلیم',
     bioEn: 'Former principal passionate about rural curriculum development and teacher training.',
     bioUr: 'دیہی تعلیمی نصاب اور اساتذہ کی تربیت کا شوق رکھنے والے سابق پرنسپل۔',
-    image: '/assets/team-3.png',
+    image: '/assets/team-3.webp',
   },
   {
     id: '4',
@@ -240,7 +240,7 @@ export const teamMembers: TeamMember[] = [
     positionUr: 'کمیونٹی آؤٹ ریچ مینیجر',
     bioEn: 'Grassroots organizer connecting programs with communities that need them most.',
     bioUr: 'پروگراموں کو سب سے زیادہ ضرورت مند کمیونٹیز سے جوڑنے والی منتظم۔',
-    image: '/assets/team-4.png',
+    image: '/assets/team-4.webp',
   },
   {
     id: '5',
@@ -250,7 +250,7 @@ export const teamMembers: TeamMember[] = [
     positionUr: 'ڈائریکٹر مالیات اور تعمیل',
     bioEn: 'Chartered Accountant ensuring transparent tracking and maximum impact.',
     bioUr: 'شفاف نگرانی اور زیادہ سے زیادہ اثر کو یقینی بنانے والے چارٹرڈ اکاؤنٹنٹ۔',
-    image: '/assets/team-5.png',
+    image: '/assets/team-5.webp',
   },
   {
     id: '6',
@@ -260,7 +260,7 @@ export const teamMembers: TeamMember[] = [
     positionUr: 'سربراہ نوجوان پروگرامز',
     bioEn: 'Digital skills trainer empowering the next generation of Pakistani leaders.',
     bioUr: 'پاکستانی قائدین کی اگلی نسل کو بااختیار بنانے والی ڈیجیٹل سکلز ٹرینر۔',
-    image: '/assets/team-6.png',
+    image: '/assets/team-6.webp',
   },
 ];
 
@@ -276,7 +276,7 @@ export const campaigns: Campaign[] = [
     descUr: 'ایک سال کی تعلیم کی کفالت کریں۔ آپ کا عطیہ ٹیوشن، کتابیں اور یونیفارم فراہم کرتا ہے۔',
     categoryEn: 'Education',
     categoryUr: 'تعلیم',
-    image: '/assets/proj-education.png',
+    image: '/assets/proj-education.webp',
     raised: 3250000,
     goal: 5000000,
     isUrgent: true,
@@ -289,7 +289,7 @@ export const campaigns: Campaign[] = [
     descUr: 'تھیلیسیمیا سے متاثرہ بچوں کے لیے ضروری خون کی منتقلی اور طبی دیکھ بھال فراہم کریں۔',
     categoryEn: 'Healthcare',
     categoryUr: 'صحت',
-    image: '/assets/proj-thalassemia.png',
+    image: '/assets/proj-thalassemia.webp',
     raised: 2100000,
     goal: 5000000,
     isUrgent: true,
@@ -302,7 +302,7 @@ export const campaigns: Campaign[] = [
     descUr: 'سیلاب سے بے گھر خاندانوں کو فوری طور پر خوراک، پناہ گاہ اور صاف پانی کی ضرورت ہے۔',
     categoryEn: 'Emergency',
     categoryUr: 'ہنگامی',
-    image: '/assets/proj-flood.png',
+    image: '/assets/proj-flood.webp',
     raised: 8500000,
     goal: 10000000,
     isUrgent: true,
@@ -315,7 +315,7 @@ export const campaigns: Campaign[] = [
     descUr: 'تھرپارکر کے 50 دیہات میں شمسی توانائی سے چلنے والے پانی کے پلانٹ۔',
     categoryEn: 'Water',
     categoryUr: 'پانی',
-    image: '/assets/proj-water.png',
+    image: '/assets/proj-water.webp',
     raised: 1300000,
     goal: 2000000,
     isUrgent: false,
@@ -328,7 +328,7 @@ export const campaigns: Campaign[] = [
     descUr: 'کراچی کے پسماندہ محلوں میں 5 زچگی نگہداشت مراکز کا قیام۔',
     categoryEn: 'Healthcare',
     categoryUr: 'صحت',
-    image: '/assets/proj-maternal.png',
+    image: '/assets/proj-maternal.webp',
     raised: 5500000,
     goal: 10000000,
     isUrgent: false,
@@ -341,7 +341,7 @@ export const campaigns: Campaign[] = [
     descUr: 'سیلاب سے تباہ ہونے والے 12 سکولوں کی زلزلے سے محفوظ تعمیر نو۔',
     categoryEn: 'Education',
     categoryUr: 'تعلیم',
-    image: '/assets/proj-school.png',
+    image: '/assets/proj-school.webp',
     raised: 5000000,
     goal: 5000000,
     isUrgent: false,
@@ -391,18 +391,18 @@ export const testimonials: Testimonial[] = [
 // GALLERY
 // ────────────────────────────────────────────────────────────
 export const galleryItems: GalleryItem[] = [
-  { id: '1', image: '/assets/gallery-1.png', captionEn: 'Students at our Lahore Learning Center', captionUr: 'ہمارے لاہور لرننگ سینٹر کے طلباء', category: 'programs' },
-  { id: '2', image: '/assets/gallery-2.png', captionEn: 'Mobile health clinic in rural Sindh', captionUr: 'دیہی سندھ میں موبائل ہیلتھ کلینک', category: 'programs' },
-  { id: '3', image: '/assets/gallery-3.png', captionEn: 'Annual community festival in Islamabad', captionUr: 'اسلام آباد میں سالانہ کمیونٹی فیسٹیول', category: 'events' },
-  { id: '4', image: '/assets/gallery-4.png', captionEn: 'Emergency relief distribution during 2024 floods', captionUr: '2024 کے سیلاب کے دوران ہنگامی امداد کی تقسیم', category: 'community' },
-  { id: '5', image: '/assets/gallery-5.png', captionEn: 'Graduation ceremony for adult literacy program', captionUr: 'بالغ خواندگی پروگرام کی گریجویشن تقریب', category: 'events' },
-  { id: '6', image: '/assets/gallery-6.png', captionEn: 'Community health worker training session', captionUr: 'کمیونٹی ہیلتھ ورکر ٹریننگ سیشن', category: 'programs' },
-  { id: '7', image: '/assets/gallery-7.png', captionEn: 'Youth coding bootcamp participants', captionUr: 'نوجوان کوڈنگ بوٹ کیمپ کے شرکاء', category: 'programs' },
-  { id: '8', image: '/assets/gallery-8.png', captionEn: 'Tree plantation drive with school children', captionUr: 'سکول کے بچوں کے ساتھ شجرکاری مہم', category: 'community' },
-  { id: '9', image: '/assets/gallery-9.png', captionEn: 'IOCA team meeting with community leaders', captionUr: 'IOCA ٹیم کی کمیونٹی رہنماؤں سے ملاقات', category: 'community' },
-  { id: '10', image: '/assets/gallery-10.png', captionEn: 'Media coverage of Safe Motherhood Initiative', captionUr: 'محفوظ ماں بچہ اقدام کی میڈیا کوریج', category: 'media' },
-  { id: '11', image: '/assets/gallery-11.png', captionEn: 'Interfaith harmony dialogue in Karachi', captionUr: 'کراچی میں بین المذاہب ہم آہنگی مکالمہ', category: 'events' },
-  { id: '12', image: '/assets/gallery-12.png', captionEn: 'Clean water project inauguration in Thar', captionUr: 'تھر میں صاف پانی کے منصوبے کا افتتاح', category: 'community' },
+  { id: '1', image: '/assets/gallery-1.webp', captionEn: 'Students at our Lahore Learning Center', captionUr: 'ہمارے لاہور لرننگ سینٹر کے طلباء', category: 'programs' },
+  { id: '2', image: '/assets/gallery-2.webp', captionEn: 'Mobile health clinic in rural Sindh', captionUr: 'دیہی سندھ میں موبائل ہیلتھ کلینک', category: 'programs' },
+  { id: '3', image: '/assets/gallery-3.webp', captionEn: 'Annual community festival in Islamabad', captionUr: 'اسلام آباد میں سالانہ کمیونٹی فیسٹیول', category: 'events' },
+  { id: '4', image: '/assets/gallery-4.webp', captionEn: 'Emergency relief distribution during 2024 floods', captionUr: '2024 کے سیلاب کے دوران ہنگامی امداد کی تقسیم', category: 'community' },
+  { id: '5', image: '/assets/gallery-5.webp', captionEn: 'Graduation ceremony for adult literacy program', captionUr: 'بالغ خواندگی پروگرام کی گریجویشن تقریب', category: 'events' },
+  { id: '6', image: '/assets/gallery-6.webp', captionEn: 'Community health worker training session', captionUr: 'کمیونٹی ہیلتھ ورکر ٹریننگ سیشن', category: 'programs' },
+  { id: '7', image: '/assets/gallery-7.webp', captionEn: 'Youth coding bootcamp participants', captionUr: 'نوجوان کوڈنگ بوٹ کیمپ کے شرکاء', category: 'programs' },
+  { id: '8', image: '/assets/gallery-8.webp', captionEn: 'Tree plantation drive with school children', captionUr: 'سکول کے بچوں کے ساتھ شجرکاری مہم', category: 'community' },
+  { id: '9', image: '/assets/gallery-9.webp', captionEn: 'IOCA team meeting with community leaders', captionUr: 'IOCA ٹیم کی کمیونٹی رہنماؤں سے ملاقات', category: 'community' },
+  { id: '10', image: '/assets/gallery-10.webp', captionEn: 'Media coverage of Safe Motherhood Initiative', captionUr: 'محفوظ ماں بچہ اقدام کی میڈیا کوریج', category: 'media' },
+  { id: '11', image: '/assets/gallery-11.webp', captionEn: 'Interfaith harmony dialogue in Karachi', captionUr: 'کراچی میں بین المذاہب ہم آہنگی مکالمہ', category: 'events' },
+  { id: '12', image: '/assets/gallery-12.webp', captionEn: 'Clean water project inauguration in Thar', captionUr: 'تھر میں صاف پانی کے منصوبے کا افتتاح', category: 'community' },
 ];
 
 // ────────────────────────────────────────────────────────────
@@ -421,7 +421,7 @@ export const impactStories: ImpactStory[] = [
     quoteUr: '"IOCA نے مجھے صرف تعلیم نہیں دی - انہوں نے مجھے ایک ایسا مستقبل دیا جس کا میں نے کبھی سوچنے کی بھی ہمت نہیں کی تھی۔"',
     categoryEn: 'Education',
     categoryUr: 'تعلیم',
-    image: '/assets/impact-ali.png',
+    image: '/assets/impact-ali.webp',
     date: '2024',
   },
   {
@@ -436,7 +436,7 @@ export const impactStories: ImpactStory[] = [
     quoteUr: '"IOCA کے بغیر، میں بغیر مدد کے گھر میں اکیلی بچے کو جنم دیتی۔ انہوں نے میری اور میرے بچے کی جان بچائی۔"',
     categoryEn: 'Healthcare',
     categoryUr: 'صحت',
-    image: '/assets/impact-amina.png',
+    image: '/assets/impact-amina.webp',
     date: '2024',
   },
   {
@@ -451,8 +451,9 @@ export const impactStories: ImpactStory[] = [
     quoteUr: '"انہوں نے ہمیں صرف خیمے نہیں دیے - انہوں نے ہمارے لیے حقیقی گھر بنائے، پہلے سے مضبوط۔"',
     categoryEn: 'Emergency Relief',
     categoryUr: 'ہنگامی امداد',
-    image: '/assets/impact-kot.png',
+    image: '/assets/impact-kot.webp',
     date: '2023',
   },
 ];
+
 
