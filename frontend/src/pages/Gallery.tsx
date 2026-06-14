@@ -17,10 +17,10 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
 
   const filters = [
     { key: 'all', labelEn: 'All', labelUr: 'سب' },
-    { key: 'events', labelEn: 'Events', labelUr: 'تقریبات' },
-    { key: 'programs', labelEn: 'Programs', labelUr: 'پروگرامز' },
+    { key: 'education', labelEn: 'Education', labelUr: 'تعلیم' },
+    { key: 'health', labelEn: 'Health', labelUr: 'صحت' },
+    { key: 'youth', labelEn: 'Youth', labelUr: 'نوجوان' },
     { key: 'community', labelEn: 'Community', labelUr: 'کمیونٹی' },
-    { key: 'media', labelEn: 'Media', labelUr: 'میڈیا' },
   ];
 
   const filtered = activeFilter === 'all'
@@ -98,14 +98,19 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
               >
                 <img
                   src={item.image}
-                  alt={isUrdu ? item.captionUr : item.captionEn}
+                  alt={isUrdu ? item.titleUr : item.titleEn}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-end p-3">
-                  <p className="text-white text-xs md:text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {isUrdu ? item.captionUr : item.captionEn}
-                  </p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4 md:p-6">
+                  <h3 className={`text-white text-lg md:text-xl font-bold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ${isUrdu ? 'font-urduHeading text-right' : ''}`}>
+                    {isUrdu ? item.titleUr : item.titleEn}
+                  </h3>
+                  <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
+                    <span className="inline-block bg-brand-teal text-white text-xs md:text-sm px-4 py-2 rounded-full font-medium hover:bg-brand-navy transition-colors">
+                      {isUrdu ? 'مزید جانیں' : 'Learn More'}
+                    </span>
+                  </div>
                 </div>
               </motion.button>
             ))}
@@ -136,18 +141,29 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
             >
               <X className="w-8 h-8" />
             </button>
-            <motion.img
-              src={selectedImage.image}
-              alt={isUrdu ? selectedImage.captionUr : selectedImage.captionEn}
-              className="max-w-full max-h-[85vh] object-contain rounded-xl"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            />
-            <p className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white text-center text-sm md:text-base max-w-lg">
-              {isUrdu ? selectedImage.captionUr : selectedImage.captionEn}
-            </p>
+            <div className="relative bg-white rounded-2xl overflow-hidden max-w-5xl w-full flex flex-col md:flex-row shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="w-full md:w-3/5 bg-black flex items-center justify-center relative">
+                <img
+                  src={selectedImage.image}
+                  alt={isUrdu ? selectedImage.titleUr : selectedImage.titleEn}
+                  className="w-full max-h-[50vh] md:max-h-[85vh] object-contain"
+                />
+              </div>
+              <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-center overflow-y-auto max-h-[50vh] md:max-h-[85vh]">
+                <h2 className={`text-2xl md:text-3xl font-bold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading text-right' : ''}`}>
+                  {isUrdu ? selectedImage.titleUr : selectedImage.titleEn}
+                </h2>
+                <div className="w-16 h-1 bg-brand-teal mb-6 rounded-full"></div>
+                <p className={`text-brand-navy/70 leading-relaxed text-base md:text-lg ${isUrdu ? 'font-urduBody text-right' : ''}`}>
+                  {isUrdu ? selectedImage.descUr : selectedImage.descEn}
+                </p>
+                <div className="mt-8">
+                  <span className="inline-block bg-brand-navy/5 text-brand-teal text-sm px-4 py-1.5 rounded-full font-medium uppercase tracking-wider">
+                    {isUrdu ? (selectedImage.category === 'education' ? 'تعلیم' : selectedImage.category === 'health' ? 'صحت' : selectedImage.category === 'youth' ? 'نوجوان' : 'کمیونٹی') : selectedImage.category}
+                  </span>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -76,9 +76,11 @@ export interface Testimonial {
 export interface GalleryItem {
   id: string;
   image: string;
-  captionEn: string;
-  captionUr: string;
-  category: 'events' | 'programs' | 'community' | 'media';
+  titleEn: string;
+  titleUr: string;
+  descEn: string;
+  descUr: string;
+  category: 'education' | 'health' | 'youth' | 'community';
 }
 
 export interface ImpactStory {

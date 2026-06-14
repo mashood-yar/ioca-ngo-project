@@ -391,18 +391,114 @@ export const testimonials: Testimonial[] = [
 // GALLERY
 // ────────────────────────────────────────────────────────────
 export const galleryItems: GalleryItem[] = [
-  { id: '1', image: '/assets/gallery-1.webp', captionEn: 'Students at our Lahore Learning Center', captionUr: 'ہمارے لاہور لرننگ سینٹر کے طلباء', category: 'programs' },
-  { id: '2', image: '/assets/gallery-2.webp', captionEn: 'Mobile health clinic in rural Sindh', captionUr: 'دیہی سندھ میں موبائل ہیلتھ کلینک', category: 'programs' },
-  { id: '3', image: '/assets/gallery-3.webp', captionEn: 'Annual community festival in Islamabad', captionUr: 'اسلام آباد میں سالانہ کمیونٹی فیسٹیول', category: 'events' },
-  { id: '4', image: '/assets/gallery-4.webp', captionEn: 'Emergency relief distribution during 2024 floods', captionUr: '2024 کے سیلاب کے دوران ہنگامی امداد کی تقسیم', category: 'community' },
-  { id: '5', image: '/assets/gallery-5.webp', captionEn: 'Graduation ceremony for adult literacy program', captionUr: 'بالغ خواندگی پروگرام کی گریجویشن تقریب', category: 'events' },
-  { id: '6', image: '/assets/gallery-6.webp', captionEn: 'Community health worker training session', captionUr: 'کمیونٹی ہیلتھ ورکر ٹریننگ سیشن', category: 'programs' },
-  { id: '7', image: '/assets/gallery-7.webp', captionEn: 'Youth coding bootcamp participants', captionUr: 'نوجوان کوڈنگ بوٹ کیمپ کے شرکاء', category: 'programs' },
-  { id: '8', image: '/assets/gallery-8.webp', captionEn: 'Tree plantation drive with school children', captionUr: 'سکول کے بچوں کے ساتھ شجرکاری مہم', category: 'community' },
-  { id: '9', image: '/assets/gallery-9.webp', captionEn: 'IOCA team meeting with community leaders', captionUr: 'IOCA ٹیم کی کمیونٹی رہنماؤں سے ملاقات', category: 'community' },
-  { id: '10', image: '/assets/gallery-10.webp', captionEn: 'Media coverage of Safe Motherhood Initiative', captionUr: 'محفوظ ماں بچہ اقدام کی میڈیا کوریج', category: 'media' },
-  { id: '11', image: '/assets/gallery-11.webp', captionEn: 'Interfaith harmony dialogue in Karachi', captionUr: 'کراچی میں بین المذاہب ہم آہنگی مکالمہ', category: 'events' },
-  { id: '12', image: '/assets/gallery-12.webp', captionEn: 'Clean water project inauguration in Thar', captionUr: 'تھر میں صاف پانی کے منصوبے کا افتتاح', category: 'community' },
+  { 
+    id: '1', 
+    image: '/assets/gallery-1.webp', 
+    titleEn: 'Flood Relief Food Distribution', 
+    titleUr: 'سیلاب زدگان میں خوراک کی تقسیم',
+    descEn: 'IOCA volunteers distributing freshly cooked meals to families displaced by devastating floods in southern Punjab. Ensuring no one goes to sleep hungry during emergencies.',
+    descUr: 'IOCA کے رضاکار جنوبی پنجاب میں تباہ کن سیلاب سے بے گھر ہونے والے خاندانوں میں تازہ پکا ہوا کھانا تقسیم کر رہے ہیں۔ اس بات کو یقینی بنانا کہ ہنگامی حالات میں کوئی بھوکا نہ سوئے۔',
+    category: 'community' 
+  },
+  { 
+    id: '2', 
+    image: '/assets/gallery-2.webp', 
+    titleEn: 'Adult Literacy Center', 
+    titleUr: 'بالغ خواندگی مرکز',
+    descEn: 'Women attending our adult literacy classes. By teaching basic reading, writing, and arithmetic, we empower mothers to support their children\'s education and manage household finances.',
+    descUr: 'ہماری بالغ خواندگی کی کلاسوں میں شرکت کرنے والی خواتین۔ پڑھنا، لکھنا اور بنیادی حساب سکھا کر، ہم ماؤں کو بااختیار بناتے ہیں۔',
+    category: 'education' 
+  },
+  { 
+    id: '3', 
+    image: '/assets/gallery-3.webp', 
+    titleEn: 'Clean Water Initiative', 
+    titleUr: 'صاف پانی کا اقدام',
+    descEn: 'Children celebrating the installation of a new solar-powered water pump in their village in Tharparkar. This pump provides safe drinking water to over 200 households.',
+    descUr: 'تھرپارکر کے گاؤں میں شمسی توانائی سے چلنے والے نئے واٹر پمپ کی تنصیب کا جشن مناتے بچے۔ یہ پمپ 200 سے زائد گھرانوں کو پینے کا صاف پانی فراہم کرتا ہے۔',
+    category: 'community' 
+  },
+  { 
+    id: '4', 
+    image: '/assets/gallery-4.webp', 
+    titleEn: 'Polio Vaccination Drive', 
+    titleUr: 'پولیو ویکسینیشن مہم',
+    descEn: 'Our dedicated healthcare professionals administering life-saving polio drops to children in hard-to-reach areas, fighting to eradicate the disease completely.',
+    descUr: 'ہمارے سرشار صحت کی دیکھ بھال کرنے والے پیشہ ور افراد دور دراز علاقوں میں بچوں کو پولیو کے قطرے پلا رہے ہیں تاکہ اس بیماری کا مکمل خاتمہ کیا جا سکے۔',
+    category: 'health' 
+  },
+  { 
+    id: '5', 
+    image: '/assets/gallery-5.webp', 
+    titleEn: 'Youth Sports Initiative', 
+    titleUr: 'نوجوانوں کے کھیلوں کا اقدام',
+    descEn: 'Street cricket tournament organized for local youth. Sports provide a healthy outlet, build teamwork, and keep young people engaged in positive community activities.',
+    descUr: 'مقامی نوجوانوں کے لیے سٹریٹ کرکٹ ٹورنامنٹ کا انعقاد۔ کھیل ایک صحت مند مشغلہ فراہم کرتے ہیں اور نوجوانوں کو مثبت سرگرمیوں میں مصروف رکھتے ہیں۔',
+    category: 'youth' 
+  },
+  { 
+    id: '6', 
+    image: '/assets/gallery-6.webp', 
+    titleEn: 'Girls Education Program', 
+    titleUr: 'لڑکیوں کی تعلیم کا پروگرام',
+    descEn: 'Young girls studying enthusiastically in an IOCA-supported classroom. We believe educating girls is the most powerful catalyst for social change.',
+    descUr: 'IOCA کے تعاون یافتہ کلاس روم میں جوش و خروش سے پڑھتی ہوئی نوجوان لڑکیاں۔ ہمارا ماننا ہے کہ لڑکیوں کی تعلیم سماجی تبدیلی کا سب سے طاقتور ذریعہ ہے۔',
+    category: 'education' 
+  },
+  { 
+    id: '7', 
+    image: '/assets/gallery-7.webp', 
+    titleEn: 'Emergency Ration Distribution', 
+    titleUr: 'ہنگامی راشن کی تقسیم',
+    descEn: 'Distributing heavy emergency ration boxes containing flour, lentils, cooking oil, and essential supplies to vulnerable families facing food insecurity.',
+    descUr: 'خوراک کی کمی کا شکار کمزور خاندانوں میں آٹا، دالیں، کوکنگ آئل اور ضروری اشیاء پر مشتمل ہنگامی راشن بکس تقسیم کرنا۔',
+    category: 'community' 
+  },
+  { 
+    id: '8', 
+    image: '/assets/gallery-8.webp', 
+    titleEn: 'Free Medical Camp', 
+    titleUr: 'مفت میڈیکل کیمپ',
+    descEn: 'A doctor checking the blood pressure of an elderly patient at our free rural medical camp. We provide essential screenings and medications to those who cannot afford care.',
+    descUr: 'ہمارے مفت دیہی میڈیکل کیمپ میں ایک ڈاکٹر بزرگ مریض کا بلڈ پریشر چیک کر رہا ہے۔ ہم ان لوگوں کو ادویات فراہم کرتے ہیں جو علاج کے اخراجات برداشت نہیں کر سکتے۔',
+    category: 'health' 
+  },
+  { 
+    id: '9', 
+    image: '/assets/gallery-9.webp', 
+    titleEn: 'Tree Plantation Drive', 
+    titleUr: 'شجرکاری مہم',
+    descEn: 'Community members working together to plant native trees on barren hillsides. This initiative combats deforestation and builds climate resilience.',
+    descUr: 'بنجر پہاڑیوں پر مقامی درخت لگانے کے لیے مل کر کام کرنے والے کمیونٹی ممبران۔ یہ اقدام جنگلات کی کٹائی کا مقابلہ کرتا ہے اور ماحولیاتی تبدیلیوں سے بچاتا ہے۔',
+    category: 'community' 
+  },
+  { 
+    id: '10', 
+    image: '/assets/gallery-10.webp', 
+    titleEn: 'Women\'s Vocational Training', 
+    titleUr: 'خواتین کی پیشہ ورانہ تربیت',
+    descEn: 'Women learning tailoring and embroidery at our vocational center. Equipping them with marketable skills allows them to earn a sustainable livelihood from home.',
+    descUr: 'ہمارے ووکیشنل سینٹر میں سلائی اور کڑھائی سیکھنے والی خواتین۔ انہیں قابل فروخت ہنر سے آراستہ کرنا انہیں گھر سے پائیدار روزگار کمانے کے قابل بناتا ہے۔',
+    category: 'education' 
+  },
+  { 
+    id: '11', 
+    image: '/assets/gallery-11.webp', 
+    titleEn: 'Community Council Meeting', 
+    titleUr: 'کمیونٹی کونسل کا اجلاس',
+    descEn: 'Village elders and IOCA representatives sitting together to discuss local development needs. We believe in grassroots, community-led solutions.',
+    descUr: 'گاؤں کے بزرگ اور IOCA کے نمائندے مقامی ترقی کی ضروریات پر بات کرنے کے لیے اکٹھے بیٹھے ہیں۔ ہم نچلی سطح پر کمیونٹی کی قیادت میں حل پر یقین رکھتے ہیں۔',
+    category: 'community' 
+  },
+  { 
+    id: '12', 
+    image: '/assets/gallery-12.webp', 
+    titleEn: 'Tech Hub & Digital Skills', 
+    titleUr: 'ٹیک ہب اور ڈیجیٹل سکلز',
+    descEn: 'A young boy deeply focused on coding at an IOCA digital skills center. We are preparing the next generation for the global digital economy.',
+    descUr: 'IOCA ڈیجیٹل سکلز سینٹر میں کوڈنگ پر گہری توجہ مرکوز کیے ہوئے ایک نوجوان لڑکا۔ ہم اگلی نسل کو عالمی ڈیجیٹل معیشت کے لیے تیار کر رہے ہیں۔',
+    category: 'youth' 
+  },
 ];
 
 // ────────────────────────────────────────────────────────────

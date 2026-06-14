@@ -116,7 +116,8 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 }
 
 export async function getGalleryItems(): Promise<GalleryItem[]> {
-  return mockGallery;
+  // Simulating a backend ORDER BY created_at DESC
+  return [...mockGallery].reverse();
 }
 
 export async function getImpactStories(): Promise<ImpactStory[]> {
