@@ -421,7 +421,7 @@ export const impactStories: ImpactStory[] = [
     quoteUr: '"IOCA نے مجھے صرف تعلیم نہیں دی - انہوں نے مجھے ایک ایسا مستقبل دیا جس کا میں نے کبھی سوچنے کی بھی ہمت نہیں کی تھی۔"',
     categoryEn: 'Education',
     categoryUr: 'تعلیم',
-    image: '/assets/hero-community.webp',
+    image: '/assets/impact-ali.png',
     date: '2024',
   },
   {
@@ -436,7 +436,7 @@ export const impactStories: ImpactStory[] = [
     quoteUr: '"IOCA کے بغیر، میں بغیر مدد کے گھر میں اکیلی بچے کو جنم دیتی۔ انہوں نے میری اور میرے بچے کی جان بچائی۔"',
     categoryEn: 'Healthcare',
     categoryUr: 'صحت',
-    image: '/assets/card-maternal-health.webp',
+    image: '/assets/impact-amina.png',
     date: '2024',
   },
   {
@@ -451,7 +451,7 @@ export const impactStories: ImpactStory[] = [
     quoteUr: '"انہوں نے ہمیں صرف خیمے نہیں دیے - انہوں نے ہمارے لیے حقیقی گھر بنائے، پہلے سے مضبوط۔"',
     categoryEn: 'Emergency Relief',
     categoryUr: 'ہنگامی امداد',
-    image: '/assets/card-flood-relief.webp',
+    image: '/assets/impact-kot.png',
     date: '2023',
   },
 ];
