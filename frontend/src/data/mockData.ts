@@ -387,18 +387,18 @@ export const testimonials: Testimonial[] = [
 // GALLERY
 // ────────────────────────────────────────────────────────────
 export const galleryItems: GalleryItem[] = [
-  { id: '1', image: '/assets/ai-education.png', captionEn: 'Students at our Lahore Learning Center', captionUr: 'ہمارے لاہور لرننگ سینٹر کے طلباء', category: 'programs' },
-  { id: '2', image: '/assets/ai-health.png', captionEn: 'Mobile health clinic in rural Sindh', captionUr: 'دیہی سندھ میں موبائل ہیلتھ کلینک', category: 'programs' },
-  { id: '3', image: '/assets/ai-community.png', captionEn: 'Annual community festival in Islamabad', captionUr: 'اسلام آباد میں سالانہ کمیونٹی فیسٹیول', category: 'events' },
-  { id: '4', image: '/assets/ai-community.png', captionEn: 'Emergency relief distribution during 2024 floods', captionUr: '2024 کے سیلاب کے دوران ہنگامی امداد کی تقسیم', category: 'community' },
-  { id: '5', image: '/assets/ai-education.png', captionEn: 'Graduation ceremony for adult literacy program', captionUr: 'بالغ خواندگی پروگرام کی گریجویشن تقریب', category: 'events' },
-  { id: '6', image: '/assets/ai-health.png', captionEn: 'Community health worker training session', captionUr: 'کمیونٹی ہیلتھ ورکر ٹریننگ سیشن', category: 'programs' },
-  { id: '7', image: '/assets/ai-community.png', captionEn: 'Youth coding bootcamp participants', captionUr: 'نوجوان کوڈنگ بوٹ کیمپ کے شرکاء', category: 'programs' },
-  { id: '8', image: '/assets/ai-community.png', captionEn: 'Tree plantation drive with school children', captionUr: 'سکول کے بچوں کے ساتھ شجرکاری مہم', category: 'community' },
-  { id: '9', image: '/assets/ai-education.png', captionEn: 'IOCA team meeting with community leaders', captionUr: 'IOCA ٹیم کی کمیونٹی رہنماؤں سے ملاقات', category: 'community' },
-  { id: '10', image: '/assets/ai-health.png', captionEn: 'Media coverage of Safe Motherhood Initiative', captionUr: 'محفوظ ماں بچہ اقدام کی میڈیا کوریج', category: 'media' },
-  { id: '11', image: '/assets/ai-community.png', captionEn: 'Interfaith harmony dialogue in Karachi', captionUr: 'کراچی میں بین المذاہب ہم آہنگی مکالمہ', category: 'events' },
-  { id: '12', image: '/assets/ai-community.png', captionEn: 'Clean water project inauguration in Thar', captionUr: 'تھر میں صاف پانی کے منصوبے کا افتتاح', category: 'community' },
+  { id: '1', image: '/assets/gallery-1.png', captionEn: 'Students at our Lahore Learning Center', captionUr: 'ہمارے لاہور لرننگ سینٹر کے طلباء', category: 'programs' },
+  { id: '2', image: '/assets/gallery-2.png', captionEn: 'Mobile health clinic in rural Sindh', captionUr: 'دیہی سندھ میں موبائل ہیلتھ کلینک', category: 'programs' },
+  { id: '3', image: '/assets/gallery-3.png', captionEn: 'Annual community festival in Islamabad', captionUr: 'اسلام آباد میں سالانہ کمیونٹی فیسٹیول', category: 'events' },
+  { id: '4', image: '/assets/gallery-4.png', captionEn: 'Emergency relief distribution during 2024 floods', captionUr: '2024 کے سیلاب کے دوران ہنگامی امداد کی تقسیم', category: 'community' },
+  { id: '5', image: '/assets/gallery-5.png', captionEn: 'Graduation ceremony for adult literacy program', captionUr: 'بالغ خواندگی پروگرام کی گریجویشن تقریب', category: 'events' },
+  { id: '6', image: '/assets/gallery-6.png', captionEn: 'Community health worker training session', captionUr: 'کمیونٹی ہیلتھ ورکر ٹریننگ سیشن', category: 'programs' },
+  { id: '7', image: '/assets/gallery-7.png', captionEn: 'Youth coding bootcamp participants', captionUr: 'نوجوان کوڈنگ بوٹ کیمپ کے شرکاء', category: 'programs' },
+  { id: '8', image: '/assets/gallery-8.png', captionEn: 'Tree plantation drive with school children', captionUr: 'سکول کے بچوں کے ساتھ شجرکاری مہم', category: 'community' },
+  { id: '9', image: '/assets/gallery-9.png', captionEn: 'IOCA team meeting with community leaders', captionUr: 'IOCA ٹیم کی کمیونٹی رہنماؤں سے ملاقات', category: 'community' },
+  { id: '10', image: '/assets/gallery-10.png', captionEn: 'Media coverage of Safe Motherhood Initiative', captionUr: 'محفوظ ماں بچہ اقدام کی میڈیا کوریج', category: 'media' },
+  { id: '11', image: '/assets/gallery-11.png', captionEn: 'Interfaith harmony dialogue in Karachi', captionUr: 'کراچی میں بین المذاہب ہم آہنگی مکالمہ', category: 'events' },
+  { id: '12', image: '/assets/gallery-12.png', captionEn: 'Clean water project inauguration in Thar', captionUr: 'تھر میں صاف پانی کے منصوبے کا افتتاح', category: 'community' },
 ];
 
 // ────────────────────────────────────────────────────────────
