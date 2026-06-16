@@ -28,9 +28,9 @@ export default async function handler(req: { method?: string; body: { name?: str
     );
     await supabase.from('contacts').insert({ name, email, message });
 
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ message: 'Email sent successfully' });
   } catch (error) {
-    console.error('Contact handler error:', error);
-    return res.status(500).json({ error: 'Failed to process contact form' });
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Failed to send email' });
   }
 }

@@ -1,6 +1,8 @@
 import { supabase } from './supabase';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+// For production on Vercel: empty string (calls /api/... on same domain)
+// For local dev with Vercel CLI: http://localhost:3000
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
 export async function fetchApi<T = unknown>(
   endpoint: string,
@@ -16,7 +18,9 @@ export async function fetchApi<T = unknown>(
       headers.set('Authorization', `Bearer ${session.access_token}`);
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, {
+    // Construct full URL: either /api/endpoint or http://localhost:3000/api/endpoint
+    const url = API_BASE ? `${API_BASE}/api${endpoint}` : `/api${endpoint}`;
+    const response = await fetch(url, {
       ...options,
       headers,
     });
