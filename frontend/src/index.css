@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@font-face {
+  font-family: 'Univers';
+  src: url('/fonts/univers/UniversLTStd-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Univers';
+  src: url('/fonts/univers/UniversLTStd.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Univers';
+  src: url('/fonts/univers/UniversLTStd-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Univers';
+  src: url('/fonts/univers/UniversLTStd-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Nastaliq Urdu';
+  src: url('/fonts/urdu/NotoNastaliqUrdu-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Nastaliq Urdu';
+  src: url('/fonts/urdu/NotoNastaliqUrdu-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Nastaliq Urdu';
+  src: url('/fonts/urdu/NotoNastaliqUrdu-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Nastaliq Urdu';
+  src: url('/fonts/urdu/NotoNastaliqUrdu-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@theme {
+  --color-brand-teal: #569AD0;
+  --color-brand-navy: #1D2D49;
+  --color-brand-gold: #E6A726;
+  --color-brand-white: #FFFFFF;
+  --color-brand-gray: #F5F5F5;
+
+  --font-sans: 'Univers', 'Inter', system-ui, sans-serif;
+  --font-serif: 'Aleo', Georgia, serif;
+  --font-urduHeading: 'Noto Nastaliq Urdu', serif;
+  --font-urduBody: 'Noto Nastaliq Urdu', serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-margin-top: 5rem;
+  }
+  body {
+    @apply bg-brand-gray text-brand-navy font-sans antialiased;
+  }
+  
+  /* Fix Nastaliq overlapping and clipping globally */
+  .font-urduHeading, .font-urduBody {
+    line-height: 2.4 !important;
+    padding-top: 0.1em;
+    padding-bottom: 0.2em;
+  }
+}
+
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .glass-panel {
+    @apply bg-white/95 md:bg-white/70 backdrop-blur-none md:backdrop-blur-md border border-white/20 shadow-xl;
+  }
+
+  .brush-border {
+    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 500 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,25 Q125,0 250,25 T500,25 L500,50 L0,50 Z' fill='black'/%3E%3C/svg%3E");
+    mask-size: 100% 100%;
+  }
+
+  /* Framer-motion compatible reduced-motion handling */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
