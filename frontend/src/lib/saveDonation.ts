@@ -1,13 +1,25 @@
-import { supabase } from './supabase';
+import { fetchApi } from './apiClient';
 
-export const saveDonation = async (donor_name: string, email: string, phone: string, payment_method: string, amount: number, message: string) => {
-  const { error } = await supabase.from('donations').insert({ 
-    donor_name, 
-    email,
-    phone,
-    payment_method,
-    amount, 
-    message 
+export const saveDonation = async (
+  donorName: string, 
+  email: string, 
+  phone: string, 
+  paymentMethod: string, 
+  amount: number, 
+  message: string,
+  userId?: string
+) => {
+  const { data, error } = await fetchApi<{ id: string }>('/donations', {
+    method: 'POST',
+    body: JSON.stringify({
+      donorName,
+      email,
+      phone,
+      paymentMethod,
+      amount,
+      message,
+      userId,
+    }),
   });
-  return !error;
+  return { success: !error, data };
 };

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSession, signOut } from '../lib/auth';
-import { supabase } from '../lib/supabase';
+import { fetchApi } from '../lib/apiClient';
 
 type Tab = 'contacts' | 'donations' | 'news' | 'events' | 'projects';
 
@@ -55,6 +55,15 @@ const emptyNewsForm = { title: '', content: '', image_url: '' };
 const emptyEventForm = { title: '', description: '', location: '', event_date: '', image_url: '' };
 const emptyProjectForm = { title: '', description: '', status: 'ongoing', image_url: '' };
 
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+  });
+};
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('contacts');
@@ -76,8 +85,8 @@ const AdminDashboard = () => {
   const [eventForm, setEventForm] = useState(emptyEventForm);
   const [projectForm, setProjectForm] = useState(emptyProjectForm);
 
-  const handleAuthError = useCallback(async (fetchError: { message?: string; code?: string }) => {
-    if (fetchError.message?.includes('JWT') || fetchError.code === 'PGRST301') {
+  const handleAuthError = useCallback(async (fetchError: any) => {
+    if (String(fetchError?.message || fetchError).includes('JWT') || String(fetchError?.message || fetchError).includes('token') || fetchError?.code === 'PGRST301') {
       await signOut();
       navigate('/admin/login', { replace: true });
       return true;
@@ -86,10 +95,7 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   const loadContacts = useCallback(async () => {
-    const { data, error: fetchError } = await supabase
-      .from('contacts')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const { data, error: fetchError } = await fetchApi<ContactSubmission[]>('/contacts');
 
     if (fetchError) {
       if (await handleAuthError(fetchError)) return;
@@ -100,10 +106,7 @@ const AdminDashboard = () => {
   }, [handleAuthError]);
 
   const loadDonations = useCallback(async () => {
-    const { data, error: fetchError } = await supabase
-      .from('donations')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const { data, error: fetchError } = await fetchApi<Donation[]>('/donations');
 
     if (fetchError) {
       if (await handleAuthError(fetchError)) return;
@@ -114,10 +117,7 @@ const AdminDashboard = () => {
   }, [handleAuthError]);
 
   const loadNews = useCallback(async () => {
-    const { data, error: fetchError } = await supabase
-      .from('news')
-      .select('*')
-      .order('published_at', { ascending: false });
+    const { data, error: fetchError } = await fetchApi<NewsPost[]>('/news');
 
     if (fetchError) {
       if (await handleAuthError(fetchError)) return;
@@ -128,10 +128,7 @@ const AdminDashboard = () => {
   }, [handleAuthError]);
 
   const loadEvents = useCallback(async () => {
-    const { data, error: fetchError } = await supabase
-      .from('events')
-      .select('*')
-      .order('event_date', { ascending: false });
+    const { data, error: fetchError } = await fetchApi<EventItem[]>('/events');
 
     if (fetchError) {
       if (await handleAuthError(fetchError)) return;
@@ -142,10 +139,7 @@ const AdminDashboard = () => {
   }, [handleAuthError]);
 
   const loadProjects = useCallback(async () => {
-    const { data, error: fetchError } = await supabase
-      .from('projects')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const { data, error: fetchError } = await fetchApi<ProjectItem[]>('/projects');
 
     if (fetchError) {
       if (await handleAuthError(fetchError)) return;
@@ -201,7 +195,7 @@ const AdminDashboard = () => {
   const handleDelete = async (table: 'contacts' | 'news' | 'events' | 'projects', id: string) => {
     setDeletingId(id);
 
-    const { error: deleteError } = await supabase.from(table).delete().eq('id', id);
+    const { error: deleteError } = await fetchApi(`/${table}/${id}`, { method: 'DELETE' });
 
     if (deleteError) {
       if (await handleAuthError(deleteError)) return;
@@ -249,12 +243,12 @@ const AdminDashboard = () => {
     const payload = {
       title: newsForm.title,
       content: newsForm.content,
-      image_url: newsForm.image_url || null,
+      imageUrl: newsForm.image_url || undefined,
     };
 
     const result = editingNewsId
-      ? await supabase.from('news').update(payload).eq('id', editingNewsId)
-      : await supabase.from('news').insert(payload);
+      ? await fetchApi(`/news/${editingNewsId}`, { method: 'PUT', body: JSON.stringify(payload) })
+      : await fetchApi('/news', { method: 'POST', body: JSON.stringify(payload) });
 
     if (result.error) {
       if (await handleAuthError(result.error)) return;
@@ -275,14 +269,14 @@ const AdminDashboard = () => {
     const payload = {
       title: eventForm.title,
       description: eventForm.description,
-      location: eventForm.location || null,
-      event_date: eventForm.event_date || null,
-      image_url: eventForm.image_url || null,
+      location: eventForm.location || undefined,
+      eventDate: eventForm.event_date || undefined,
+      imageUrl: eventForm.image_url || undefined,
     };
 
     const result = editingEventId
-      ? await supabase.from('events').update(payload).eq('id', editingEventId)
-      : await supabase.from('events').insert(payload);
+      ? await fetchApi(`/events/${editingEventId}`, { method: 'PUT', body: JSON.stringify(payload) })
+      : await fetchApi('/events', { method: 'POST', body: JSON.stringify(payload) });
 
     if (result.error) {
       if (await handleAuthError(result.error)) return;
@@ -304,12 +298,12 @@ const AdminDashboard = () => {
       title: projectForm.title,
       description: projectForm.description,
       status: projectForm.status,
-      image_url: projectForm.image_url || null,
+      imageUrl: projectForm.image_url || undefined,
     };
 
     const result = editingProjectId
-      ? await supabase.from('projects').update(payload).eq('id', editingProjectId)
-      : await supabase.from('projects').insert(payload);
+      ? await fetchApi(`/projects/${editingProjectId}`, { method: 'PUT', body: JSON.stringify(payload) })
+      : await fetchApi('/projects', { method: 'POST', body: JSON.stringify(payload) });
 
     if (result.error) {
       if (await handleAuthError(result.error)) return;
@@ -472,12 +466,17 @@ const AdminDashboard = () => {
                     className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-teal outline-none resize-none"
                   />
                   <input
-                    type="url"
-                    placeholder="Image URL"
-                    value={newsForm.image_url}
-                    onChange={(e) => setNewsForm({ ...newsForm, image_url: e.target.value })}
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const base64 = await fileToBase64(e.target.files[0]);
+                        setNewsForm({ ...newsForm, image_url: base64 });
+                      }
+                    }}
                     className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-teal outline-none"
                   />
+                  {newsForm.image_url && <img src={newsForm.image_url} alt="Preview" className="mt-2 h-20 rounded object-cover" />}
                   <div className="flex gap-2">
                     <button
                       type="submit"
@@ -582,12 +581,17 @@ const AdminDashboard = () => {
                     className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-teal outline-none"
                   />
                   <input
-                    type="url"
-                    placeholder="Image URL"
-                    value={eventForm.image_url}
-                    onChange={(e) => setEventForm({ ...eventForm, image_url: e.target.value })}
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const base64 = await fileToBase64(e.target.files[0]);
+                        setEventForm({ ...eventForm, image_url: base64 });
+                      }
+                    }}
                     className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-teal outline-none"
                   />
+                  {eventForm.image_url && <img src={eventForm.image_url} alt="Preview" className="mt-2 h-20 rounded object-cover" />}
                   <div className="flex gap-2">
                     <button
                       type="submit"
@@ -687,12 +691,17 @@ const AdminDashboard = () => {
                     <option value="completed">Completed</option>
                   </select>
                   <input
-                    type="url"
-                    placeholder="Image URL"
-                    value={projectForm.image_url}
-                    onChange={(e) => setProjectForm({ ...projectForm, image_url: e.target.value })}
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const base64 = await fileToBase64(e.target.files[0]);
+                        setProjectForm({ ...projectForm, image_url: base64 });
+                      }
+                    }}
                     className="w-full px-4 py-3 rounded-xl border border-brand-navy/20 focus:border-brand-teal outline-none"
                   />
+                  {projectForm.image_url && <img src={projectForm.image_url} alt="Preview" className="mt-2 h-20 rounded object-cover" />}
                   <div className="flex gap-2">
                     <button
                       type="submit"
