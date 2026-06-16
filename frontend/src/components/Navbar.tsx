@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../hooks/useAuth';
 
 interface NavbarProps {
   isUrdu: boolean;
@@ -20,6 +21,19 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
   const closeMenu = () => {
     setIsMobileMenuOpen(false);
     setIsProgramsOpen(false);
+  };
+
+  const { user, isAdmin, signOut } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  const avatarUrl = user?.user_metadata?.avatar_url;
+  const fullName = user?.user_metadata?.full_name || 'Member';
+  const initials = fullName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsDropdownOpen(false);
   };
 
   /** Check if a path matches the current route (exact or prefix) */
@@ -55,6 +69,9 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
     const handleClickOutside = (e: MouseEvent) => {
       if (programsRef.current && !programsRef.current.contains(e.target as Node)) {
         setIsProgramsOpen(false);
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -186,6 +203,67 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
             >
               {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
             </button>
+
+            {user ? (
+              <div className="relative" ref={dropdownRef}>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="focus:outline-none flex items-center justify-center rounded-full transition-transform hover:scale-105 ml-1 md:ml-2"
+                  aria-expanded={isDropdownOpen}
+                  aria-label="User menu"
+                >
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={fullName} className="w-10 h-10 rounded-full object-cover border-2 border-brand-teal/30" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-brand-teal text-white flex items-center justify-center text-sm font-bold shadow-sm">
+                      {initials}
+                    </div>
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {isDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-12 bg-white shadow-xl rounded-xl border border-brand-navy/10 py-2 w-56 flex flex-col z-50 overflow-hidden"
+                    >
+                      <div className="px-4 py-3 bg-brand-gray/30 border-b border-brand-navy/5 mb-1">
+                        <p className="font-bold text-sm text-brand-navy truncate">{fullName}</p>
+                        <p className="text-xs text-brand-navy/60 truncate">{user.email}</p>
+                      </div>
+                      
+                      <Link
+                        to={isAdmin ? '/admin/dashboard' : '/dashboard'}
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-brand-navy hover:bg-brand-gray transition-colors"
+                      >
+                        <LayoutDashboard className="w-4 h-4 text-brand-teal" />
+                        {isUrdu ? 'ڈیش بورڈ' : 'Dashboard'}
+                      </Link>
+                      
+                      <button
+                        onClick={handleSignOut}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        {isUrdu ? 'لاگ آؤٹ' : 'Sign Out'}
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link 
+                to="/user/login" 
+                className="hidden md:flex items-center gap-2 font-bold text-brand-navy/80 hover:text-brand-teal transition-colors ml-1"
+              >
+                <User className="w-5 h-5" />
+                <span className="sr-only lg:not-sr-only">{isUrdu ? 'لاگ ان' : 'Sign In'}</span>
+              </Link>
+            )}
 
             {/* Mobile Menu Toggle Button */}
             <button

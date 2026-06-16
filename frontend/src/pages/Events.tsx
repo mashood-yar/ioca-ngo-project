@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { MapPin, Calendar } from 'lucide-react';
+import { MapPin, Calendar, Check, Plus } from 'lucide-react';
 import { getEvents } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
+import { fetchApi } from '../lib/apiClient';
 
 interface EventItem {
   id: string;
@@ -21,6 +23,33 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
+  const { user } = useAuth();
+  const [registeredEventIds, setRegisteredEventIds] = useState<Set<string>>(new Set());
+  const [registeringId, setRegisteringId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRegistrations = async () => {
+      if (!user) return;
+      const { data } = await fetchApi('/event-registrations/me');
+      if (Array.isArray(data)) {
+        setRegisteredEventIds(new Set(data.map((r: any) => r.event_id)));
+      }
+    };
+    fetchRegistrations();
+  }, [user]);
+
+  const handleRegister = async (eventId: string) => {
+    if (!user || registeredEventIds.has(eventId)) return;
+    setRegisteringId(eventId);
+    const { error } = await fetchApi(`/events/${eventId}/register`, { method: 'POST' });
+    if (!error) {
+      setRegisteredEventIds(prev => new Set(prev).add(eventId));
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Successfully registered!', variant: 'success' } }));
+    } else {
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: error, variant: 'error' } }));
+    }
+    setRegisteringId(null);
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -113,6 +142,32 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
                     <p className={`text-sm text-brand-navy/60 leading-relaxed line-clamp-3 ${isUrdu ? 'font-urduBody' : ''}`}>
                       {event.description}
                     </p>
+
+                    {user && (
+                      <button
+                        onClick={() => handleRegister(event.id)}
+                        disabled={registeredEventIds.has(event.id) || registeringId === event.id}
+                        className={`mt-4 w-full py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
+                          registeredEventIds.has(event.id)
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : 'bg-brand-teal text-white hover:bg-brand-teal/90'
+                        } disabled:opacity-70`}
+                      >
+                        {registeredEventIds.has(event.id) ? (
+                          <>
+                            <Check className="w-4 h-4" />
+                            {isUrdu ? 'رجسٹرڈ ✓' : 'Registered ✓'}
+                          </>
+                        ) : registeringId === event.id ? (
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        ) : (
+                          <>
+                            <Plus className="w-4 h-4" />
+                            {isUrdu ? 'رجسٹر کریں' : 'Register'}
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               ))}

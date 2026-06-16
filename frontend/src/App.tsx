@@ -1,8 +1,10 @@
 import React, { useState, lazy, Suspense } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import DonationModal from './components/DonationModal';
+
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 // Lazy-loaded pages for code splitting
 const Home = lazy(() => import('./pages/Home'));
@@ -18,8 +20,22 @@ const Contact = lazy(() => import('./pages/Contact'));
 const News = lazy(() => import('./pages/News'));
 const Events = lazy(() => import('./pages/Events'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const AdminLogin = lazy(() => import('./admin/AdminLogin'));
-const AdminDashboard = lazy(() => import('./admin/AdminDashboard'));
+const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const UserLogin = lazy(() => import('./pages/UserLogin').then(m => ({ default: m.UserLogin })));
+const UserSignup = lazy(() => import('./pages/UserSignup').then(m => ({ default: m.UserSignup })));
+const UserDashboard = lazy(() => import('./pages/UserDashboard').then(m => ({ default: m.UserDashboard })));
+const Logout = lazy(() => import('./pages/Logout'));
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const AdminPosts = lazy(() => import('./pages/admin/AdminPosts').then(m => ({ default: m.AdminPosts })));
+const AdminEvents = lazy(() => import('./pages/admin/AdminEvents').then(m => ({ default: m.AdminEvents })));
+const AdminZones = lazy(() => import('./pages/admin/AdminZones').then(m => ({ default: m.AdminZones })));
+const AdminMembers = lazy(() => import('./pages/admin/AdminMembers').then(m => ({ default: m.AdminMembers })));
+const AdminDonations = lazy(() => import('./pages/admin/AdminDonations').then(m => ({ default: m.AdminDonations })));
+const AdminQueries = lazy(() => import('./pages/admin/AdminQueries').then(m => ({ default: m.AdminQueries })));
+const AdminApplications = lazy(() => import('./pages/admin/AdminApplications').then(m => ({ default: m.AdminApplications })));
+const MembershipApply = lazy(() => import('./pages/membership/MembershipApply').then(m => ({ default: m.MembershipApply })));
+const MembershipWaiting = lazy(() => import('./pages/membership/MembershipWaiting').then(m => ({ default: m.MembershipWaiting })));
 
 /** Scrolls to top on route change */
 function ScrollToTop() {
@@ -87,8 +103,18 @@ function App() {
         <ScrollToTop />
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/login" element={<LoginPage />} />
+            <Route path="/admin" element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="posts" element={<AdminPosts />} />
+              <Route path="events" element={<AdminEvents />} />
+              <Route path="zones" element={<AdminZones />} />
+              <Route path="members" element={<AdminMembers />} />
+              <Route path="applications" element={<AdminApplications />} />
+              <Route path="donations" element={<AdminDonations />} />
+              <Route path="queries" element={<AdminQueries />} />
+            </Route>
           </Routes>
         </Suspense>
       </>
@@ -116,6 +142,13 @@ function App() {
               <Route path="/news" element={<News isUrdu={isUrdu} />} />
               <Route path="/events" element={<Events isUrdu={isUrdu} />} />
               <Route path="/contact" element={<Contact isUrdu={isUrdu} />} />
+              <Route path="/login" element={<Navigate to="/user/login" replace />} />
+              <Route path="/user/login" element={<UserLogin />} />
+              <Route path="/signup" element={<UserSignup />} />
+              <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+              <Route path="/membership/apply" element={<ProtectedRoute><MembershipApply /></ProtectedRoute>} />
+              <Route path="/membership/waiting" element={<ProtectedRoute><MembershipWaiting /></ProtectedRoute>} />
+              <Route path="/logout" element={<Logout />} />
               <Route path="*" element={<NotFound isUrdu={isUrdu} />} />
             </Routes>
           </Suspense>

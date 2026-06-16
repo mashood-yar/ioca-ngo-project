@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, ArrowRight, ArrowLeft, CheckCircle2, CreditCard, Building2, Lock, Loader2 } from 'lucide-react';
 import { toUrduNumerals } from '../utils/formatters';
 import { saveDonation } from '../lib/saveDonation';
+import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
+import { fetchApi } from '../lib/apiClient';
+import { useAuth } from '../hooks/useAuth';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -25,7 +28,12 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
   const [donorPhone, setDonorPhone] = useState('');
   const [isAnon, setIsAnon] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+  const [donationId, setDonationId] = useState<string | null>(null);
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+
+  const { upload, uploading } = useCloudinaryUpload();
 
   // Reset state when opened
   useEffect(() => {
@@ -35,9 +43,9 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
       setAmount(5000);
       setCustomAmount('');
       setFundType('general');
-      setDonorName('');
-      setDonorEmail('');
-      setDonorPhone('');
+      setDonorName(user?.user_metadata?.full_name || '');
+      setDonorEmail(user?.email || '');
+      setDonorPhone(user?.user_metadata?.phone || '');
       setIsAnon(false);
       setPaymentMethod(null);
     }
@@ -106,15 +114,46 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
   if (!isOpen) return null;
 
   const handleNext = async () => {
-    if (step === 3 && paymentMethod === 'manual') {
-      const finalAmount = amount || parseInt(customAmount) || 0;
-      const message = `${campaign} • ${fundType}`;
-      await saveDonation(isAnon ? 'Anonymous' : donorName, donorEmail, donorPhone || 'N/A', paymentMethod, finalAmount, message);
-      setStep(4);
-    } else if (step === 3 && paymentMethod === 'online') {
-      setStep(4); // go to checkout
-    } else {
-      setStep(s => s + 1);
+    setIsProcessing(true);
+    try {
+      if (step === 3 && paymentMethod === 'manual') {
+        const finalAmount = amount || parseInt(customAmount) || 0;
+        const message = `${campaign} • ${fundType}`;
+        const { success, data } = await saveDonation(isAnon ? 'Anonymous' : donorName, donorEmail, donorPhone || 'N/A', paymentMethod, finalAmount, message, user?.id);
+        if (success && data?.id) {
+          setDonationId(data.id);
+        }
+        setStep(4);
+      } else if (step === 3 && paymentMethod === 'online') {
+        setStep(4); // go to checkout
+      } else {
+        setStep(s => s + 1);
+      }
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleManualComplete = async () => {
+    if (!donationId) return;
+    setIsProcessing(true);
+    try {
+      if (screenshotFile) {
+        const result = await upload(screenshotFile, 'ioca/donations');
+        if (result) {
+          await fetchApi(`/donations/${donationId}/screenshot`, {
+            method: 'POST',
+            body: JSON.stringify({ screenshotUrl: result.url, screenshotPublicId: result.publicId }),
+          });
+        }
+      }
+      setStep(5);
+    } catch (err) {
+      console.error(err);
+      // Still go to success step even if screenshot fails, they can contact support
+      setStep(5);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -126,7 +165,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
     
     const finalAmount = amount || parseInt(customAmount) || 0;
     const message = `${campaign} • ${fundType}`;
-    await saveDonation(isAnon ? 'Anonymous' : donorName, donorEmail, donorPhone || 'N/A', paymentMethod || 'online', finalAmount, message);
+    await saveDonation(isAnon ? 'Anonymous' : donorName, donorEmail, donorPhone || 'N/A', paymentMethod || 'online', finalAmount, message, user?.id);
     
     setIsProcessing(false);
     setStep(5); // Success step
@@ -403,31 +442,35 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                     {isUrdu ? 'دستی ٹرانسفر کی تفصیلات' : 'Manual Transfer Details'}
                   </h3>
                   <div className="bg-brand-gold/10 p-4 rounded-xl border border-brand-gold/20 mb-6">
-                    <p className={`text-brand-navy/80 font-medium ${isUrdu ? 'text-right' : ''}`}>
+                    <p className={`text-brand-navy/80 font-medium text-sm mb-4 ${isUrdu ? 'text-right' : ''}`}>
                       {isUrdu 
-                        ? 'رقم منتقل کرنے کے بعد، براہ کرم اپنے ای میل یا موبائل نمبر کے ساتھ ادائیگی کا اسکرین شاٹ ہمارے واٹس ایپ پر بھیجیں تاکہ ہم آپ کو رسید بھیج سکیں۔' 
-                        : 'After transferring the amount, please send the payment screenshot along with your email/mobile number to our WhatsApp so we can share your automated receipt.'}
+                        ? 'براہ کرم مندرجہ ذیل میں سے کسی بھی اکاؤنٹ میں رقم منتقل کریں اور پھر رسید کی تصویر (screenshot) نیچے اپلوڈ کریں۔' 
+                        : 'Please transfer the amount to any of the following accounts and upload the payment screenshot below to confirm your donation.'}
                     </p>
-                    <p className="mt-3 text-center font-black text-xl text-brand-navy">
-                      WhatsApp: <span className="text-brand-gold">+923200236963</span>
-                    </p>
+                    <div className="bg-white rounded-xl p-4 border border-brand-gold/20">
+                      <label className="block text-sm font-bold text-brand-navy mb-2">
+                        {isUrdu ? 'ادائیگی کا ثبوت (اسکرین شاٹ)' : 'Payment Proof (Screenshot)'}
+                      </label>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={e => setScreenshotFile(e.target.files?.[0] || null)}
+                        className="w-full text-sm text-brand-navy/70 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-teal/10 file:text-brand-teal hover:file:bg-brand-teal/20"
+                      />
+                    </div>
                   </div>
                   <div className="bg-brand-navy/5 p-4 rounded-xl space-y-4">
                     <div>
+                      <p className="text-xs font-bold text-brand-navy/50 uppercase">Bank Transfer</p>
+                      <p className="font-bold text-brand-navy">Meezan Bank: 1234 5678 9012 3456</p>
+                    </div>
+                    <div>
                       <p className="text-xs font-bold text-brand-navy/50 uppercase">EasyPaisa</p>
-                      <p className="font-bold text-brand-navy">0300 0000000 <span className="font-normal text-sm text-brand-navy/70">(Dummy Name)</span></p>
+                      <p className="font-bold text-brand-navy">0300 0000000 <span className="font-normal text-sm text-brand-navy/70">(IOCA Org)</span></p>
                     </div>
                     <div>
                       <p className="text-xs font-bold text-brand-navy/50 uppercase">JazzCash</p>
-                      <p className="font-bold text-brand-navy">0300 0000000 <span className="font-normal text-sm text-brand-navy/70">(Dummy Name)</span></p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-brand-navy/50 uppercase">SadaPay</p>
-                      <p className="font-bold text-brand-navy">0300 0000000 <span className="font-normal text-sm text-brand-navy/70">(Dummy Name)</span></p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-brand-navy/50 uppercase">NayaPay</p>
-                      <p className="font-bold text-brand-navy">0300 0000000 <span className="font-normal text-sm text-brand-navy/70">(Dummy Name)</span></p>
+                      <p className="font-bold text-brand-navy">0300 0000000 <span className="font-normal text-sm text-brand-navy/70">(IOCA Org)</span></p>
                     </div>
                   </div>
                 </div>
@@ -488,11 +531,14 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
               </button>
             ) : (
               <button 
-                onClick={handleNext}
-                disabled={(step === 1 && !amount && !customAmount) || (step === 2 && (!donorName || !donorEmail)) || (step === 3 && !paymentMethod)}
+                onClick={step === 4 && paymentMethod === 'manual' ? handleManualComplete : handleNext}
+                disabled={isProcessing || uploading || (step === 1 && !amount && !customAmount) || (step === 2 && (!donorName || !donorEmail)) || (step === 3 && !paymentMethod)}
                 className="flex-1 bg-brand-teal text-brand-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-teal/20"
               >
-                {step === 3 && paymentMethod === 'manual' ? (isUrdu ? 'ادائیگی مکمل کریں' : 'Complete Donation') : (isUrdu ? 'آگے بڑھیں' : 'Continue')}
+                {isProcessing || uploading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : null}
+                {step === 4 && paymentMethod === 'manual' ? (isUrdu ? 'ادائیگی مکمل کریں' : 'Complete Donation') : (isUrdu ? 'آگے بڑھیں' : 'Continue')}
                 {step < 3 && <ArrowRight className={`w-5 h-5 ${isUrdu ? 'rotate-180' : ''}`} />}
               </button>
             )}
