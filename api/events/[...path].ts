@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
-import { requireAdmin } from '../_lib/auth'
+import { requireAuth, requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
 import { processImageField } from '../_lib/upload'
 
@@ -27,6 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const segments = (req.query.path as string[]) ?? []
   const id = segments[0]
+  const action = segments[1]
 
   try {
     // 1. GET /api/events — Public: list all events
@@ -41,7 +42,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 2. GET /api/events/:id — Public: get single event
-    if (req.method === 'GET' && id) {
+    if (req.method === 'GET' && id && !action) {
       const { data: event, error } = await supabase
         .from('events')
         .select('*')
@@ -81,8 +82,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, event, 201)
     }
 
-    // 4. PUT /api/events/:id — Admin: update event
-    if (req.method === 'PUT' && id) {
+    // 4. POST /api/events/:id/register — User: register for an event
+    if (req.method === 'POST' && id && action === 'register') {
+      const user = await requireAuth(req, res)
+      if (!user) return
+
+      const { data: registration, error } = await supabase
+        .from('event_registrations')
+        .insert({
+          event_id: id,
+          user_id: user.id,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        if (error.code === '23505') { // Unique violation
+          return err(res, 'Already registered for this event', 409)
+        }
+        throw new Error(error.message)
+      }
+
+      return ok(res, registration, 201)
+    }
+
+    // 5. PUT /api/events/:id — Admin: update event
+    if (req.method === 'PUT' && id && !action) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
@@ -106,8 +131,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, event)
     }
 
-    // 5. DELETE /api/events/:id — Admin: delete event
-    if (req.method === 'DELETE' && id) {
+    // 6. DELETE /api/events/:id — Admin: delete event
+    if (req.method === 'DELETE' && id && !action) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
@@ -118,6 +143,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) throw new Error(error.message)
       return ok(res, { message: 'Event deleted' })
+    }
+
+    // 7. DELETE /api/events/:id/unregister — User: unregister from event
+    if (req.method === 'DELETE' && id && action === 'unregister') {
+      const user = await requireAuth(req, res)
+      if (!user) return
+
+      const { error } = await supabase
+        .from('event_registrations')
+        .delete()
+        .match({ event_id: id, user_id: user.id })
+
+      if (error) throw new Error(error.message)
+      return ok(res, { message: 'Successfully unregistered from event' })
     }
 
     return err(res, 'Method not allowed', 405)

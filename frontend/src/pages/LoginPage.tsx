@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Leaf } from 'lucide-react';
+import { hasSupabaseConfig } from '../lib/supabase';
 
 export function LoginPage() {
   const { user, isAdmin, loading, signInWithGoogle } = useAuth();
@@ -74,6 +75,13 @@ export function LoginPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl shadow-gray-200/50 sm:rounded-2xl sm:px-10 border border-gray-100">
           
+          {!hasSupabaseConfig && (
+            <div className="mb-4 bg-amber-50 text-amber-800 p-4 rounded-lg text-sm border border-amber-100 shadow-sm leading-relaxed">
+              <p className="font-semibold mb-1">⚠️ Setup Required:</p>
+              Supabase environment variables are missing in this build. Please configure <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-xs">VITE_SUPABASE_URL</code> and <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-xs">VITE_SUPABASE_ANON_KEY</code> in your Vercel project settings, then redeploy.
+            </div>
+          )}
+
           {error && (
             <div className="mb-4 bg-red-50 text-red-700 p-3 rounded-lg text-sm border border-red-100">
               {error}

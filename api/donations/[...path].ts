@@ -150,11 +150,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, data)
     }
 
-    // 6. PUT /api/donations/:id — Admin endpoint: upload screenshot
-    if (req.method === 'PUT' && first) {
-      const user = await requireAdmin(req, res)
-      if (!user) return
-
+    // 6. POST /api/donations/:id/screenshot OR PUT /api/donations/:id — Upload/update screenshot
+    if ((req.method === 'POST' && first && segments[1] === 'screenshot') || (req.method === 'PUT' && first)) {
       const { screenshotUrl, screenshotPublicId } = uploadScreenshotSchema.parse(req.body)
 
       const { data, error } = await supabase
