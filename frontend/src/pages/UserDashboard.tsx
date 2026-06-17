@@ -512,7 +512,7 @@ export function UserDashboard() {
 
       setZoneToSwitch(null);
       window.dispatchEvent(new CustomEvent('app-toast', { 
-        detail: { message: `Successfully switched to ${zoneToSwitch.name} chapter!`, variant: 'success' } 
+        detail: { message: `Successfully switched to ${zoneToSwitch.name} project!`, variant: 'success' } 
       }));
     } catch (err) {
       window.dispatchEvent(new CustomEvent('app-toast', { 
@@ -652,7 +652,7 @@ END:VCALENDAR`;
             { id: 'membership', label: 'Membership', icon: ShieldCheck },
             { id: 'donations', label: 'Donations', icon: Heart },
             { id: 'events', label: 'Events', icon: Calendar },
-            { id: 'zones', label: 'Chapters & Zones', icon: MapPin },
+            { id: 'zones', label: 'Projects & Zones', icon: MapPin },
           ].map(item => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -687,7 +687,48 @@ END:VCALENDAR`;
       </aside>
 
       {/* --- Main Dashboard Area --- */}
-      <main className="flex-1 p-6 md:p-8 max-w-5xl mx-auto w-full overflow-hidden">
+      <main className="flex-1 p-6 md:p-8 max-w-5xl mx-auto w-full overflow-hidden space-y-6">
+        
+        {/* Prominent Assignment Card */}
+        <div className="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <Globe className="w-6 h-6" />
+            </div>
+            <div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Current Assignment</span>
+              <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                <h4 className="text-sm font-extrabold text-slate-800">
+                  {activeZone ? activeZone.name : 'Unassigned Project'}
+                </h4>
+                {activeZone && (
+                  <>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full uppercase">
+                      <MapPin className="w-3 h-3" />
+                      {activeZone.city} Zone
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 self-stretch md:self-auto justify-end">
+            <button
+              onClick={() => setActiveTab('zones')}
+              className="flex-1 md:flex-initial text-center py-2.5 px-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5"
+            >
+              Switch Project
+            </button>
+            <button
+              onClick={() => setActiveTab('donations')}
+              className="flex-1 md:flex-initial text-center py-2.5 px-5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-md shadow-emerald-100 flex items-center justify-center gap-1.5"
+            >
+              Donate Now
+            </button>
+          </div>
+        </div>
+
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -724,7 +765,7 @@ END:VCALENDAR`;
                     { title: 'Membership', val: membershipStatus === 'active' ? 'Active member' : membershipStatus === 'pending' ? 'Pending Approval' : 'Not Active', sub: membership?.tier?.name || 'Apply Now', color: 'indigo' },
                     { title: 'Total Donations', val: `PKR ${totalDonations.toLocaleString('en-PK')}`, sub: `${donations.length} receipts`, color: 'emerald' },
                     { title: 'Registered Events', val: totalRegistrations, sub: 'Upcoming / Attended', color: 'amber' },
-                    { title: 'Active Chapter', val: activeZone?.name || 'Unassigned', sub: activeZone ? `${activeZone.city}` : 'Choose Zone', color: 'teal' }
+                    { title: 'Active Project', val: activeZone?.name || 'Unassigned', sub: activeZone ? `${activeZone.city}` : 'Choose Zone', color: 'teal' }
                   ].map((stat, i) => (
                     <div key={i} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{stat.title}</p>
@@ -744,7 +785,7 @@ END:VCALENDAR`;
                         { title: 'Make Donation', desc: 'Process payment', target: 'donations', color: 'bg-emerald-50 text-emerald-700' },
                         { title: 'Browse Events', desc: 'Book registrations', target: 'events', color: 'bg-amber-50 text-amber-700' },
                         { title: 'Membership Status', desc: 'Upgrade / Apply', target: 'membership', color: 'bg-indigo-50 text-indigo-700' },
-                        { title: 'Switch Chapter', desc: 'Switch local zone', target: 'zones', color: 'bg-teal-50 text-teal-700' }
+                        { title: 'Switch Project', desc: 'Switch local zone', target: 'zones', color: 'bg-teal-50 text-teal-700' }
                       ].map((item, idx) => (
                         <button
                           key={idx}
@@ -825,7 +866,7 @@ END:VCALENDAR`;
                       { label: 'CNIC', val: profile?.cnic || '—' },
                       { label: 'Occupation', val: profile?.occupation || '—' },
                       { label: 'Address', val: profile?.address || '—', span: true },
-                      { label: 'Local Chapter', val: activeZone ? `${activeZone.name} (${activeZone.city})` : 'Not assigned' }
+                      { label: 'Local Project', val: activeZone ? `${activeZone.name} (${activeZone.city})` : 'Not assigned' }
                     ].map((f, i) => (
                       <div key={i} className={`space-y-1 ${f.span ? 'md:col-span-2' : ''}`}>
                         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{f.label}</span>
@@ -930,14 +971,14 @@ END:VCALENDAR`;
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-1.5">Choose Chapter / Zone *</label>
+                            <label className="block text-slate-700 font-semibold mb-1.5">Choose Project / Zone *</label>
                             <select
                               required
                               className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white"
                               value={memberForm.zoneId}
                               onChange={e => setMemberForm(prev => ({ ...prev, zoneId: e.target.value }))}
                             >
-                              <option value="">Select Chapter</option>
+                              <option value="">Select Project</option>
                               {zones.map(z => (
                                 <option key={z.id} value={z.id}>{z.name} ({z.city})</option>
                               ))}
@@ -1467,8 +1508,8 @@ END:VCALENDAR`;
             {activeTab === 'zones' && (
               <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
                 <div className="pb-6 border-b border-slate-100 mb-6">
-                  <h2 className="text-lg font-bold text-slate-800">Zones & Chapters</h2>
-                  <p className="text-sm text-slate-500 mt-1">Switch or join regional chapters to participate in local services and meet fellow members.</p>
+                  <h2 className="text-lg font-bold text-slate-800">Projects & Zones</h2>
+                  <p className="text-sm text-slate-500 mt-1">Switch or join regional projects and zones to participate in local services and meet fellow members.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1553,7 +1594,7 @@ END:VCALENDAR`;
               </button>
 
               <h3 className="text-lg font-bold text-slate-800 mb-2">Edit Profile Details</h3>
-              <p className="text-xs text-slate-400 mb-6">Modify details to display in user dashboard lists and chapter directories.</p>
+              <p className="text-xs text-slate-400 mb-6">Modify details to display in user dashboard lists and project directories.</p>
 
               {profileErrorMsg && (
                 <div className="mb-4 bg-red-50 text-red-700 text-xs p-3 rounded-lg border border-red-100">
@@ -1737,7 +1778,7 @@ END:VCALENDAR`;
             >
               <h3 className="text-base font-bold text-slate-800">Switch Regional Zone?</h3>
               <p className="text-xs text-slate-500 mt-2">
-                Are you sure you want to switch your active chapter affiliation to **{zoneToSwitch.name} ({zoneToSwitch.city})**?
+                Are you sure you want to switch your active project assignment to **{zoneToSwitch.name} ({zoneToSwitch.city})**?
               </p>
 
               <div className="flex gap-2 w-full text-xs font-bold pt-6">
@@ -1826,7 +1867,7 @@ END:VCALENDAR`;
             >
               <h3 className="text-base font-bold text-slate-800">Cancel Membership?</h3>
               <p className="text-xs text-slate-500 mt-2">
-                Are you sure you want to cancel your IOCA membership plan? You will lose access to local workshops and chapter events.
+                Are you sure you want to cancel your IOCA membership plan? You will lose access to local workshops and project events.
               </p>
 
               <div className="flex gap-2 w-full text-xs font-bold pt-6">
