@@ -49,7 +49,7 @@ export function MembershipApply() {
       try {
         setLoading(true);
         // Check if user already has application/membership
-        const { data: myApp } = await fetchApi('/applications/me').catch(() => ({ data: null }));
+        const { data: myApp } = await fetchApi('/misc/applications/me').catch(() => ({ data: null }));
         if (myApp) {
           navigate('/membership/waiting', { replace: true });
           return;
@@ -87,7 +87,7 @@ export function MembershipApply() {
       setSubmitting(true);
       setError(null);
       
-      const { error: submitError } = await fetchApi('/applications', {
+      const { error: submitError } = await fetchApi('/misc/applications', {
         method: 'POST',
         body: JSON.stringify({
           zoneId: formData.zoneId,

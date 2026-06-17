@@ -18,7 +18,7 @@ export function useCloudinaryUpload() {
         reader.onerror = (err) => reject(err);
       });
 
-      const { data, error: apiError } = await fetchApi<{ url: string; publicId: string }>('/upload', {
+      const { data, error: apiError } = await fetchApi<{ url: string; publicId: string }>('/misc/upload', {
         method: 'POST',
         body: JSON.stringify({ file: base64Str, folder }),
       });
