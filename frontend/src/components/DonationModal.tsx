@@ -30,12 +30,15 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [donationId, setDonationId] = useState<string | null>(null);
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [transactionId, setTransactionId] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
 
   const { upload, uploading } = useCloudinaryUpload();
 
-  // Reset state when opened
+  // Reset state when opened and fetch projects
   useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -48,18 +51,36 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
       setDonorPhone(user?.user_metadata?.phone || '');
       setIsAnon(false);
       setPaymentMethod(null);
+      setTransactionId('');
+      setSelectedProjectId('');
+
+      const loadProjects = async () => {
+        const { data, error } = await fetchApi<{ id: string; title: string }[]>('/projects');
+        if (!error && data) {
+          setProjects(data);
+          if (initialCampaign) {
+            const matched = data.find(p => p.title.toLowerCase() === initialCampaign.toLowerCase());
+            if (matched) {
+              setSelectedProjectId(matched.id);
+              setCampaign(matched.title);
+            } else {
+              setSelectedProjectId('');
+              setCampaign(initialCampaign);
+            }
+          } else {
+            setSelectedProjectId('');
+            setCampaign('General Fund');
+          }
+        } else {
+          setSelectedProjectId('');
+          setCampaign(initialCampaign || 'General Fund');
+        }
+      };
+      loadProjects();
     }
-  }, [isOpen]);
+  }, [isOpen, initialCampaign, user]);
 
   const presetAmounts = [1000, 2000, 5000, 10000];
-
-  // Update campaign if prop changes
-  useEffect(() => {
-    if (initialCampaign) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCampaign(initialCampaign);
-    }
-  }, [initialCampaign]);
 
   // Handle Escape key and body scroll lock
   useEffect(() => {
@@ -119,7 +140,17 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
       if (step === 3 && paymentMethod === 'manual') {
         const finalAmount = amount || parseInt(customAmount) || 0;
         const message = `${campaign} • ${fundType}`;
-        const { success, data } = await saveDonation(isAnon ? 'Anonymous' : donorName, donorEmail, donorPhone || 'N/A', paymentMethod, finalAmount, message, user?.id);
+        const { success, data } = await saveDonation(
+          isAnon ? 'Anonymous' : donorName, 
+          donorEmail, 
+          donorPhone || 'N/A', 
+          paymentMethod, 
+          finalAmount, 
+          message, 
+          user?.id,
+          selectedProjectId || undefined,
+          transactionId || undefined
+        );
         if (success && data?.id) {
           setDonationId(data.id);
         }
@@ -138,19 +169,29 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
     if (!donationId) return;
     setIsProcessing(true);
     try {
+      let screenshotUrl = '';
+      let screenshotPublicId = '';
       if (screenshotFile) {
         const result = await upload(screenshotFile, 'ioca/donations');
         if (result) {
-          await fetchApi(`/donations/${donationId}/screenshot`, {
-            method: 'POST',
-            body: JSON.stringify({ screenshotUrl: result.url, screenshotPublicId: result.publicId }),
-          });
+          screenshotUrl = result.url;
+          screenshotPublicId = result.publicId;
         }
       }
+      
+      // Update screenshot and/or transactionId
+      await fetchApi(`/donations/${donationId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ 
+          screenshotUrl: screenshotUrl || undefined, 
+          screenshotPublicId: screenshotPublicId || undefined,
+          transactionId: transactionId || undefined
+        }),
+      });
       setStep(5);
     } catch (err) {
       console.error(err);
-      // Still go to success step even if screenshot fails, they can contact support
+      // Still go to success step even if screenshot/TRX ID fails
       setStep(5);
     } finally {
       setIsProcessing(false);
@@ -165,7 +206,17 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
     
     const finalAmount = amount || parseInt(customAmount) || 0;
     const message = `${campaign} • ${fundType}`;
-    await saveDonation(isAnon ? 'Anonymous' : donorName, donorEmail, donorPhone || 'N/A', paymentMethod || 'online', finalAmount, message, user?.id);
+    await saveDonation(
+      isAnon ? 'Anonymous' : donorName, 
+      donorEmail, 
+      donorPhone || 'N/A', 
+      paymentMethod || 'online', 
+      finalAmount, 
+      message, 
+      user?.id,
+      selectedProjectId || undefined,
+      transactionId || undefined
+    );
     
     setIsProcessing(false);
     setStep(5); // Success step
@@ -268,14 +319,35 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                   </label>
                   <select 
                     id="campaign-select"
-                    value={campaign}
-                    onChange={(e) => setCampaign(e.target.value)}
+                    value={selectedProjectId}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSelectedProjectId(val);
+                      if (val === '') {
+                        setCampaign('General Fund');
+                      } else {
+                        const matched = projects.find(p => p.id === val);
+                        if (matched) {
+                          setCampaign(matched.title);
+                        }
+                      }
+                    }}
                     className="w-full px-4 py-3 rounded-xl border-2 border-brand-navy/10 font-medium text-brand-navy focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-teal/50 bg-white"
                   >
-                    <option value="General Fund">{isUrdu ? 'جنرل فنڈ' : 'General Fund (Where needed most)'}</option>
-                    <option value="Maternal Health Care">{isUrdu ? 'زچہ و بچہ کی صحت' : 'Maternal Health Care'}</option>
-                    <option value="Girls Education Fund">{isUrdu ? 'لڑکیوں کی تعلیم' : 'Girls Education Fund'}</option>
-                    <option value="Flood Relief & Rehab">{isUrdu ? 'سیلاب کی بحالی' : 'Flood Relief & Rehab'}</option>
+                    <option value="">{isUrdu ? 'جنرل فنڈ (جہاں سب سے زیادہ ضرورت ہو)' : 'General Fund (Where needed most)'}</option>
+                    {projects.length === 0 ? (
+                      <>
+                        <option value="Maternal Health Care">{isUrdu ? 'زچہ و بچہ کی صحت' : 'Maternal Health Care'}</option>
+                        <option value="Girls Education Fund">{isUrdu ? 'لڑکیوں کی تعلیم' : 'Girls Education Fund'}</option>
+                        <option value="Flood Relief & Rehab">{isUrdu ? 'سیلاب کی بحالی' : 'Flood Relief & Rehab'}</option>
+                      </>
+                    ) : (
+                      projects.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.title}
+                        </option>
+                      ))
+                    )}
                   </select>
                 </div>
                 
@@ -456,6 +528,19 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                         accept="image/*"
                         onChange={e => setScreenshotFile(e.target.files?.[0] || null)}
                         className="w-full text-sm text-brand-navy/70 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-teal/10 file:text-brand-teal hover:file:bg-brand-teal/20"
+                      />
+                    </div>
+                    <div className="bg-white rounded-xl p-4 border border-brand-gold/20 mt-4">
+                      <label htmlFor="transaction-id" className="block text-sm font-bold text-brand-navy mb-2">
+                        {isUrdu ? 'ٹرانزیکشن آئی ڈی / حوالہ نمبر (اختیاری)' : 'Transaction ID / Reference Number (Optional)'}
+                      </label>
+                      <input 
+                        id="transaction-id"
+                        type="text"
+                        placeholder="e.g. TRX-12345678"
+                        value={transactionId}
+                        onChange={e => setTransactionId(e.target.value)}
+                        className="w-full px-4 py-2.5 rounded-xl border border-brand-navy/20 focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-teal/50 font-mono text-brand-navy"
                       />
                     </div>
                   </div>

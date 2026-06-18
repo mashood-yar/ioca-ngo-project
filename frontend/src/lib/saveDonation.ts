@@ -7,7 +7,9 @@ export const saveDonation = async (
   paymentMethod: string, 
   amount: number, 
   message: string,
-  userId?: string
+  userId?: string,
+  projectId?: string,
+  transactionId?: string
 ) => {
   const { data, error } = await fetchApi<{ id: string }>('/donations', {
     method: 'POST',
@@ -19,6 +21,8 @@ export const saveDonation = async (
       amount,
       message,
       userId,
+      projectId,
+      transactionId,
     }),
   });
   return { success: !error, data };

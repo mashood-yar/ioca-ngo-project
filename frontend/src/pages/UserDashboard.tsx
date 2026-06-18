@@ -58,6 +58,11 @@ interface DonationData {
   payment_method: string;
   status?: string;
   message?: string;
+  receipt_number?: string;
+  transaction_id?: string;
+  projects?: {
+    title: string;
+  };
 }
 
 interface EventData {
@@ -571,10 +576,12 @@ END:VCALENDAR`;
               <h1 class="title">IOCA Donation Receipt</h1>
               <p style="margin:5px 0 0 0; color:#64748b; font-size:14px;">International Organization For Community Advancement</p>
             </div>
+            ${receipt.receiptNumber ? `<div class="row"><span class="label">Receipt Number</span><span class="val" style="font-family:monospace; font-weight:bold; color:#1a5632; font-size:15px;">${receipt.receiptNumber}</span></div>` : ''}
             <div class="row"><span class="label">Transaction ID</span><span class="val" style="font-family:monospace;">${receipt.transactionId}</span></div>
             <div class="row"><span class="label">Date</span><span class="val">${new Date(receipt.date).toLocaleDateString('en-PK')}</span></div>
             <div class="row"><span class="label">Payment Method</span><span class="val">${receipt.paymentMethod}</span></div>
-            <div class="row"><span class="label">Dedication</span><span class="val">${receipt.dedication || 'General Fund'}</span></div>
+            <div class="row"><span class="label">Project / Cause</span><span class="val">${receipt.projectTitle || 'General Fund'}</span></div>
+            ${receipt.dedication && receipt.dedication !== (receipt.projectTitle || 'General Fund') ? `<div class="row"><span class="label">Dedication / Notes</span><span class="val">${receipt.dedication}</span></div>` : ''}
             <hr style="border:none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
             <div class="row" style="font-size: 18px; font-weight: bold;"><span class="label" style="color:#0f172a;">Total Amount</span><span class="val" style="color:#4f46e5;">PKR ${receipt.amount.toLocaleString('en-PK')}</span></div>
             <div class="footer">Thank you for your generous support to help local communities.</div>
@@ -627,8 +634,9 @@ END:VCALENDAR`;
     ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
     : (parts[0]?.[0] || 'U').toUpperCase();
 
-  const totalDonations = donations.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
-  const donationsThisYear = donations
+  const confirmedDonations = donations.filter(d => d.status === 'confirmed');
+  const totalDonations = confirmedDonations.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+  const donationsThisYear = confirmedDonations
     .filter(d => new Date(d.created_at).getFullYear() === new Date().getFullYear())
     .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
   const totalRegistrations = eventRegistrations.length;
@@ -773,7 +781,7 @@ END:VCALENDAR`;
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {[
                     { title: 'Membership', val: membershipStatus === 'active' ? 'Active member' : membershipStatus === 'pending' ? 'Pending Approval' : 'Not Active', sub: membership?.tier?.name || 'Apply Now', color: 'indigo' },
-                    { title: 'Total Donations', val: `PKR ${totalDonations.toLocaleString('en-PK')}`, sub: `${donations.length} receipts`, color: 'emerald' },
+                    { title: 'Total Donations', val: `PKR ${totalDonations.toLocaleString('en-PK')}`, sub: `${confirmedDonations.length} confirmed receipts`, color: 'emerald' },
                     { title: 'Registered Events', val: totalRegistrations, sub: 'Upcoming / Attended', color: 'amber' },
                     { title: 'Active Project', val: activeZone?.name || 'Unassigned', sub: activeZone ? `${activeZone.city}` : 'Choose Zone', color: 'teal' }
                   ].map((stat, i) => (
@@ -1292,11 +1300,11 @@ END:VCALENDAR`;
                         <table className="w-full text-xs text-left border-collapse">
                           <thead>
                             <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
-                              <th className="py-3 px-4">Transaction ID</th>
+                              <th className="py-3 px-4">Receipt / Trans ID</th>
                               <th className="py-3 px-4">Date</th>
                               <th className="py-3 px-4">Amount (PKR)</th>
                               <th className="py-3 px-4">Method</th>
-                              <th className="py-3 px-4">Cause / Dedication</th>
+                              <th className="py-3 px-4">Project / Cause</th>
                               <th className="py-3 px-4">Status</th>
                               <th className="py-3 px-4 text-center">Receipt</th>
                             </tr>
@@ -1304,11 +1312,30 @@ END:VCALENDAR`;
                           <tbody className="divide-y divide-slate-50 text-slate-700 font-medium">
                             {paginatedDonations.map(row => (
                               <tr key={row.id} className="hover:bg-slate-50/50">
-                                <td className="py-3.5 px-4 font-mono text-xs text-slate-600">{row.id}</td>
+                                <td className="py-3.5 px-4 font-mono text-xs text-slate-600">
+                                  {row.receipt_number ? (
+                                    <span className="font-mono font-bold text-green-700 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded text-[11px]">
+                                      {row.receipt_number}
+                                    </span>
+                                  ) : (
+                                    <span className="text-slate-400">
+                                      {row.transaction_id || row.id.substring(0, 8) + '...'}
+                                    </span>
+                                  )}
+                                </td>
                                 <td className="py-3.5 px-4 whitespace-nowrap">{formatDate(row.created_at)}</td>
                                 <td className="py-3.5 px-4 font-bold text-slate-900">PKR {Number(row.amount).toLocaleString('en-PK')}</td>
                                 <td className="py-3.5 px-4 capitalize text-slate-500">{row.payment_method}</td>
-                                <td className="py-3.5 px-4 truncate max-w-[150px]">{row.message || 'General Advancement'}</td>
+                                <td className="py-3.5 px-4">
+                                  <div className="font-semibold text-slate-800 truncate max-w-[160px]" title={row.projects?.title || 'General Fund'}>
+                                    {row.projects?.title || 'General Fund'}
+                                  </div>
+                                  {row.message && row.message !== (row.projects?.title || 'General Fund') && (
+                                    <div className="text-[10px] text-slate-400 truncate max-w-[160px]" title={row.message}>
+                                      {row.message}
+                                    </div>
+                                  )}
+                                </td>
                                 <td className="py-3.5 px-4">
                                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md capitalize ${
                                     row.status === 'confirmed' ? 'bg-green-50 text-green-700 border border-green-100' :
@@ -1321,7 +1348,9 @@ END:VCALENDAR`;
                                 <td className="py-3.5 px-4 text-center">
                                   <button
                                     onClick={() => triggerReceiptPrint({
-                                      transactionId: row.id,
+                                      transactionId: row.transaction_id || row.id,
+                                      receiptNumber: row.receipt_number,
+                                      projectTitle: row.projects?.title || 'General Fund',
                                       amount: row.amount,
                                       dedication: row.message,
                                       paymentMethod: row.payment_method,

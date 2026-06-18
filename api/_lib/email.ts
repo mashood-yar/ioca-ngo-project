@@ -7,7 +7,9 @@ export const sendDonationConfirmationEmail = async (
   email: string, 
   amount: number | string, 
   paymentMethod: string, 
-  confirmedAt: string
+  confirmedAt: string,
+  receiptNumber?: string,
+  projectTitle?: string
 ) => {
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@example.com';
   
@@ -15,20 +17,58 @@ export const sendDonationConfirmationEmail = async (
     const data = await resend.emails.send({
       from: fromEmail,
       to: email,
-      subject: 'Donation Confirmation',
+      subject: `Donation Receipt - ${receiptNumber || 'Confirmed'} - IOCA`,
       html: `
-        <h1>Thank you for your donation, ${donorName}!</h1>
-        <p>We have successfully received and confirmed your donation.</p>
-        <p><strong>Amount:</strong> PKR ${amount}</p>
-        <p><strong>Payment Method:</strong> ${paymentMethod}</p>
-        <p><strong>Confirmation Date:</strong> ${new Date(confirmedAt).toLocaleString()}</p>
-        <p>Your support makes a huge difference!</p>
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #eaeaea; border-radius: 8px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 25px;">
+            <h2 style="color: #1a5632; margin: 0; font-size: 24px;">Donation Receipt</h2>
+            <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">International Organization For Community Advancement (IOCA)</p>
+          </div>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p style="font-size: 16px; color: #333;">Dear <strong>${donorName}</strong>,</p>
+          <p style="font-size: 14px; color: #555; line-height: 1.5;">Thank you for your generous contribution. We are pleased to confirm that your donation has been successfully processed and verified. Below are your receipt details:</p>
+          
+          <table style="width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 14px;">
+            <tbody>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px 0; color: #666; font-weight: 500; width: 40%;">Receipt Number</td>
+                <td style="padding: 10px 0; color: #111; font-family: monospace; font-weight: bold; font-size: 15px;">${receiptNumber || 'N/A'}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px 0; color: #666; font-weight: 500;">Project / Cause</td>
+                <td style="padding: 10px 0; color: #111; font-weight: 500;">${projectTitle || 'General Fund'}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px 0; color: #666; font-weight: 500;">Amount</td>
+                <td style="padding: 10px 0; color: #1a5632; font-weight: bold; font-size: 16px;"><strong>PKR ${Number(amount).toLocaleString('en-PK')}</strong></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px 0; color: #666; font-weight: 500;">Payment Method</td>
+                <td style="padding: 10px 0; color: #111;">${paymentMethod}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #666; font-weight: 500;">Confirmed On</td>
+                <td style="padding: 10px 0; color: #111;">${new Date(confirmedAt).toLocaleString('en-PK', { timeZone: 'Asia/Karachi' })} PKT</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="background-color: #f4fcf6; border-left: 4px solid #1a5632; padding: 15px; border-radius: 4px; margin-top: 20px;">
+            <p style="margin: 0; font-size: 13px; color: #1a5632; line-height: 1.5; font-style: italic;">"Your support plays a vital role in our community projects. Together, we are creating sustainable advancements."</p>
+          </div>
+          
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;" />
+          <div style="text-align: center; color: #888; font-size: 11px;">
+            <p style="margin: 0 0 5px 0;">This is an automatically generated receipt for your donation.</p>
+            <p style="margin: 0;">&copy; ${new Date().getFullYear()} IOCA. All rights reserved.</p>
+          </div>
+        </div>
       `
     });
     return data;
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Failed to send contact notification email: ${errorMessage}`);
+    console.error(`Failed to send donation confirmation email: ${errorMessage}`);
   }
 }
 
