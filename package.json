@@ -2,7 +2,7 @@
   "name": "ioca",
   "private": true,
   "engines": {
-    "node": "24.x"
+    "node": "20.x"
   },
   "workspaces": [
     "frontend",
@@ -11,13 +11,10 @@
   "scripts": {
     "dev": "npm run dev --prefix frontend",
     "build": "npm run build --prefix frontend",
-    "start": "vercel start",
-    "postinstall": "prisma generate"
+    "start": "vercel start"
   },
   "dependencies": {
-    "@prisma/client": "5.22.0",
     "@supabase/supabase-js": "^2.49.8",
-    "@vercel/node": "^3.0.0",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -27,8 +24,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
+    "@vercel/node": "5.5.15",
     "concurrently": "^8.2.2",
-    "prisma": "5.22.0",
     "typescript": "^5.6.3",
     "vercel": "^34.0.0"
   }

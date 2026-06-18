@@ -4,6 +4,7 @@ import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
+import { sendContactNotification } from '../_lib/email'
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -38,6 +39,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .single()
 
       if (error) throw new Error(error.message)
+
+      // Send email notification non-blocking
+      sendContactNotification(validatedData.name, validatedData.email, 'IOCA Website Contact Submission', validatedData.message).catch(e => {
+        console.error('Failed to send contact notification email:', e)
+      })
+
       return ok(res, data, 201)
     }
 

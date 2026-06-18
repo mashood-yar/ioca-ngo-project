@@ -84,3 +84,32 @@ export async function sendApplicationRejected(to: string, name: string, adminNot
     console.error('Failed to send rejection email:', error);
   }
 }
+
+export async function sendContactNotification(
+  name: string,
+  email: string,
+  subject: string,
+  message: string
+): Promise<void> {
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@example.com';
+  try {
+    await resend.emails.send({
+      from: fromEmail,
+      to: fromEmail,
+      subject: `New Contact Submission: ${subject}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
+          <h2 style="color: #1a5632; margin-top: 0;">New Contact Form Message</h2>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Message:</strong></p>
+          <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #1a5632; margin-top: 10px; white-space: pre-wrap;">${message}</div>
+        </div>
+      `
+    });
+  } catch (error) {
+    console.error('Failed to send contact notification email:', error);
+  }
+}
