@@ -5,6 +5,7 @@ import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useSearchParams } from 'react-router-dom';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
+import { optimizeImage } from '../../lib/optimizeImage';
 
 interface Zone {
   id: string;
@@ -199,9 +200,13 @@ export function AdminMembers() {
                   <td className="p-4 pl-6">
                     <div className="flex items-center gap-3">
                       <img 
-                        src={member.profile_image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.full_name)}&background=random`} 
+                        src={member.profile_image_url ? optimizeImage(member.profile_image_url, { width: 80 }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(member.full_name)}&background=random`} 
                         alt={member.full_name} 
                         className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                        width={40}
+                        height={40}
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div>
                         <p className="font-medium text-gray-900">{member.full_name}</p>

@@ -32,6 +32,8 @@ import userRouter from './routes/user';
 import tiersRouter from './routes/tiers';
 import applicationsRouter from './routes/applications';
 import adminApplicationsRouter from './routes/adminApplications';
+import auditRouter from './routes/audit';
+
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -72,6 +74,8 @@ app.use('/api', userRouter);
 app.use('/api/tiers', tiersRouter);
 app.use('/api/applications', applicationsRouter);
 app.use('/api/admin/applications', adminApplicationsRouter);
+app.use('/api/audit', auditRouter);
+
 
 // In production: serve the React build as static files
 if (isProd) {

@@ -4,6 +4,7 @@ import { fetchApi } from '../../lib/apiClient';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { Modal } from '../../components/ui/Modal';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
+import { optimizeImage } from '../../lib/optimizeImage';
 
 interface Donation {
   id: string;
@@ -139,7 +140,7 @@ export function AdminDonations() {
                         onClick={() => { setLightboxImage(donation.screenshot_url!); setIsLightboxOpen(true); }}
                         className="relative group block w-16 h-12 rounded-lg overflow-hidden border border-gray-200"
                       >
-                        <img src={donation.screenshot_url} alt="Proof" className="w-full h-full object-cover" />
+                        <img src={optimizeImage(donation.screenshot_url, { width: 150 })} alt="Proof" className="w-full h-full object-cover" width={64} height={48} loading="lazy" decoding="async" />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <Search className="w-4 h-4 text-white" />
                         </div>
@@ -217,7 +218,7 @@ export function AdminDonations() {
       />
 
       <Modal isOpen={isLightboxOpen} onClose={() => setIsLightboxOpen(false)} title="Payment Proof" maxWidth="max-w-3xl">
-        <img src={lightboxImage} alt="Payment Proof Full" className="w-full h-auto rounded-lg" />
+        <img src={optimizeImage(lightboxImage, { width: 1000 })} alt="Payment Proof Full" className="w-full h-auto rounded-lg" width={800} height={600} decoding="async" />
       </Modal>
     </div>
   );

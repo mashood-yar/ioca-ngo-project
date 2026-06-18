@@ -5,6 +5,7 @@ import { MapPin, Calendar, Check, Plus } from 'lucide-react';
 import { getEvents } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { fetchApi } from '../lib/apiClient';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface EventItem {
   id: string;
@@ -112,10 +113,13 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
                 >
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={event.image_url ?? '/assets/hero-community.webp'}
+                      src={event.image_url ? optimizeImage(event.image_url, { width: 400 }) : '/assets/hero-community.webp'}
                       alt={event.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       loading="lazy"
+                      decoding="async"
+                      width={400}
+                      height={192}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                   </div>

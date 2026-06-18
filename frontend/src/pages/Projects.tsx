@@ -6,6 +6,7 @@ import { MapPin, Calendar, CheckCircle2, Clock, Heart } from 'lucide-react';
 import { getProjects } from '../services/api';
 import type { Project } from '../types';
 import { toUrduNumerals } from '../utils/formatters';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface ProjectsProps {
   isUrdu: boolean;
@@ -105,10 +106,13 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
               >
                 <div className="relative h-28 md:h-48 overflow-hidden">
                   <img
-                    src={project.image}
+                    src={optimizeImage(project.image, { width: 400 })}
                     alt={isUrdu ? project.titleUr : project.titleEn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
+                    decoding="async"
+                    width={400}
+                    height={192}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                   {/* Status Badge */}

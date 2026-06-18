@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import DonationModal from './components/DonationModal';
+import { PageLoadingSpinner } from './components/PageLoadingSpinner';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
@@ -75,11 +76,7 @@ class ErrorBoundary extends React.Component<
 }
 
 /** Loading spinner for Suspense fallback */
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="w-10 h-10 border-4 border-brand-teal/20 border-t-brand-teal rounded-full animate-spin" />
-  </div>
-);
+const PageLoader = () => <PageLoadingSpinner />;
 
 function App() {
   const location = useLocation();

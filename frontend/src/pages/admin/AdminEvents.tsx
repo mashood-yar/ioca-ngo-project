@@ -4,6 +4,7 @@ import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
+import { optimizeImage } from '../../lib/optimizeImage';
 
 interface Event {
   id: string;
@@ -156,7 +157,7 @@ export function AdminEvents() {
                 <tr key={event.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="p-4 pl-6 w-24">
                     {event.image_url ? (
-                      <img src={event.image_url} alt={event.title} className="w-16 h-12 object-cover rounded-lg border border-gray-200" />
+                      <img src={optimizeImage(event.image_url, { width: 80 })} alt={event.title} className="w-16 h-12 object-cover rounded-lg border border-gray-200" width={64} height={48} loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
                         <ImageIcon className="w-5 h-5 text-gray-400" />

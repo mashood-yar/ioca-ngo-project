@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { optimizeImage } from '../../lib/optimizeImage';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -87,9 +88,13 @@ export function AdminLayout() {
       <div className="p-4 border-t border-gray-800">
         <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-gray-800/50">
           <img 
-            src={user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.user_metadata?.full_name || 'Admin'}`} 
+            src={user?.user_metadata?.avatar_url ? optimizeImage(user.user_metadata.avatar_url, { width: 80 }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.user_metadata?.full_name || 'Admin')}`} 
             alt="Profile" 
             className="w-8 h-8 rounded-full"
+            width={32}
+            height={32}
+            loading="lazy"
+            decoding="async"
           />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate text-white">{user?.user_metadata?.full_name || 'Admin User'}</p>
@@ -147,7 +152,7 @@ export function AdminLayout() {
                 className="focus:outline-none flex items-center justify-center rounded-full transition-transform hover:scale-105"
               >
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt={fullName} className="w-9 h-9 rounded-full object-cover border border-gray-200" />
+                  <img src={optimizeImage(avatarUrl, { width: 80 })} alt={fullName} className="w-9 h-9 rounded-full object-cover border border-gray-200" width={36} height={36} loading="lazy" decoding="async" />
                 ) : (
                   <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">
                     {initials}

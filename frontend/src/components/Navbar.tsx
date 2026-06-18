@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface NavbarProps {
   isUrdu: boolean;
@@ -213,7 +214,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
                   aria-label="User menu"
                 >
                   {avatarUrl ? (
-                    <img src={avatarUrl} alt={fullName} className="w-10 h-10 rounded-full object-cover border-2 border-brand-teal/30" />
+                    <img src={optimizeImage(avatarUrl, { width: 80 })} alt={fullName} className="w-10 h-10 rounded-full object-cover border-2 border-brand-teal/30" width={40} height={40} loading="lazy" decoding="async" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-brand-teal text-white flex items-center justify-center text-sm font-bold shadow-sm">
                       {initials}

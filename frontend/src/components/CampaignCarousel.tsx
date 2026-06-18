@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Heart } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { campaigns } from '../data/mockData';
 import { toUrduNumerals } from '../utils/formatters';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface CampaignCarouselProps {
   isUrdu: boolean;
@@ -84,11 +85,13 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
                 {/* Image */}
                 <div className="relative h-40 md:h-48 overflow-hidden">
                   <img
-                    src={campaign.image}
+                    src={optimizeImage(campaign.image, { width: 400 })}
                     alt={isUrdu ? campaign.titleUr : campaign.titleEn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
                     decoding="async"
+                    width={400}
+                    height={192}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   <span className={`absolute top-4 ${isUrdu ? 'right-4' : 'left-4'} text-[11px] font-bold uppercase px-3 py-1 rounded-full ${campaign.isUrgent ? 'bg-red-500 text-white' : 'bg-brand-white/90 text-brand-navy'}`}>

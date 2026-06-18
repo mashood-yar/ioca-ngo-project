@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { fetchApi } from '../lib/apiClient';
 import { formatDate, memberSince } from '../lib/formatDate';
+import { optimizeImage } from '../lib/optimizeImage';
 import {
   Calendar,
   MapPin,
@@ -585,27 +586,36 @@ END:VCALENDAR`;
   };
 
   // Filtered lists
-  const filteredDonations = donations
-    .filter(d => 
-      d.payment_method.toLowerCase().includes(donationSearch.toLowerCase()) || 
-      (d.message && d.message.toLowerCase().includes(donationSearch.toLowerCase())) ||
-      d.id.toLowerCase().includes(donationSearch.toLowerCase())
-    )
-    .sort((a, b) => {
-      const aVal = new Date(a.created_at).getTime();
-      const bVal = new Date(b.created_at).getTime();
-      return donationSortOrder === 'desc' ? bVal - aVal : aVal - bVal;
+  const filteredDonations = useMemo(() => {
+    return donations
+      .filter(d => 
+        d.payment_method.toLowerCase().includes(donationSearch.toLowerCase()) || 
+        (d.message && d.message.toLowerCase().includes(donationSearch.toLowerCase())) ||
+        d.id.toLowerCase().includes(donationSearch.toLowerCase())
+      )
+      .sort((a, b) => {
+        const aVal = new Date(a.created_at).getTime();
+        const bVal = new Date(b.created_at).getTime();
+        return donationSortOrder === 'desc' ? bVal - aVal : aVal - bVal;
+      });
+  }, [donations, donationSearch, donationSortOrder]);
+
+  const donationPageCount = useMemo(() => {
+    return Math.ceil(filteredDonations.length / 5);
+  }, [filteredDonations.length]);
+
+  const paginatedDonations = useMemo(() => {
+    return filteredDonations.slice((donationPage - 1) * 5, donationPage * 5);
+  }, [filteredDonations, donationPage]);
+
+  const filteredEvents = useMemo(() => {
+    return availableEvents.filter(e => {
+      const matchesSearch = e.title.toLowerCase().includes(eventSearch.toLowerCase()) || 
+                            e.location.toLowerCase().includes(eventSearch.toLowerCase());
+      const matchesCategory = eventCategoryFilter === 'All' || (e.category === eventCategoryFilter);
+      return matchesSearch && matchesCategory;
     });
-
-  const donationPageCount = Math.ceil(filteredDonations.length / 5);
-  const paginatedDonations = filteredDonations.slice((donationPage - 1) * 5, donationPage * 5);
-
-  const filteredEvents = availableEvents.filter(e => {
-    const matchesSearch = e.title.toLowerCase().includes(eventSearch.toLowerCase()) || 
-                          e.location.toLowerCase().includes(eventSearch.toLowerCase());
-    const matchesCategory = eventCategoryFilter === 'All' || (e.category === eventCategoryFilter);
-    return matchesSearch && matchesCategory;
-  });
+  }, [availableEvents, eventSearch, eventCategoryFilter]);
 
   // Init variables for rendering
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
@@ -632,7 +642,7 @@ END:VCALENDAR`;
         {/* User Card */}
         <div className="p-6 border-b border-slate-100 flex items-center gap-4">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={fullName} className="w-11 h-11 rounded-full object-cover shadow-sm border border-slate-100" />
+            <img src={optimizeImage(avatarUrl, { width: 100 })} alt={fullName} className="w-11 h-11 rounded-full object-cover shadow-sm border border-slate-100" width={44} height={44} loading="lazy" decoding="async" />
           ) : (
             <div className="w-11 h-11 rounded-full bg-indigo-50 text-indigo-700 font-bold flex items-center justify-center shadow-inner">
               {initials}
@@ -846,7 +856,7 @@ END:VCALENDAR`;
                   {/* Photo details */}
                   <div className="w-full md:w-1/3 flex flex-col items-center p-6 bg-slate-50/50 rounded-2xl border border-slate-100 text-center">
                     {avatarUrl ? (
-                      <img src={avatarUrl} alt={fullName} className="w-24 h-24 rounded-full object-cover shadow-md border-2 border-white mb-4" />
+                      <img src={optimizeImage(avatarUrl, { width: 200 })} alt={fullName} className="w-24 h-24 rounded-full object-cover shadow-md border-2 border-white mb-4" width={96} height={96} loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-24 h-24 rounded-full bg-indigo-100 text-indigo-700 font-bold text-3xl flex items-center justify-center shadow-inner mb-4">
                         {initials}

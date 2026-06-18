@@ -4,6 +4,7 @@ import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
+import { optimizeImage } from '../../lib/optimizeImage';
 
 interface NewsPost {
   id: string;
@@ -148,7 +149,7 @@ export function AdminPosts() {
                 <tr key={post.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="p-4 pl-6 w-24">
                     {post.image_url ? (
-                      <img src={post.image_url} alt={post.title} className="w-16 h-12 object-cover rounded-lg border border-gray-200" />
+                      <img src={optimizeImage(post.image_url, { width: 80 })} alt={post.title} className="w-16 h-12 object-cover rounded-lg border border-gray-200" width={64} height={48} loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
                         <ImageIcon className="w-5 h-5 text-gray-400" />
