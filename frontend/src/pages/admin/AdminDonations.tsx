@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fetchApi } from '../../lib/apiClient';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
 import { optimizeImage } from '../../lib/optimizeImage';
+import { AdminButton } from './AdminButton';
 
 interface Donation {
   id: string;
@@ -287,13 +288,13 @@ export function AdminDonations() {
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Donations Portal</h1>
           <p className="text-slate-500 mt-1.5 font-medium">Verify bank receipts, allocate project funds, and audit donation distributions.</p>
         </div>
-        <button
+        <AdminButton
           onClick={downloadCSV}
-          className="flex items-center gap-2 px-5 py-3 bg-brand-teal text-white rounded-2xl font-bold hover:opacity-90 shadow-lg shadow-brand-teal/20 transition-all text-sm cursor-pointer"
+          variant="ghost"
+          icon={<FileSpreadsheet className="w-4 h-4" />}
         >
-          <FileSpreadsheet className="w-4 h-4" />
           Export Audit Log (CSV)
-        </button>
+        </AdminButton>
       </div>
 
       {/* Modern Segmented Navigation Tabs */}
@@ -313,8 +314,8 @@ export function AdminDonations() {
               }}
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${
                 activeTab === tab.id
-                  ? 'bg-white text-slate-800 shadow-md border border-slate-200/20'
-                  : 'text-slate-500 hover:text-slate-800 hover:bg-white/40'
+                  ? 'bg-[#1D2D49] text-white shadow-md'
+                  : 'text-[#6B7280] hover:text-[#1D2D49] hover:bg-[#F3F4F6]'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -447,7 +448,7 @@ export function AdminDonations() {
                 placeholder="Search by donor, receipt, trx ID, or project..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/50 font-medium text-sm bg-white"
+                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-[#E5E7EB] outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] font-medium text-sm bg-white text-[#111827]"
               />
             </div>
 
@@ -458,8 +459,8 @@ export function AdminDonations() {
                   onClick={() => setStatusFilter(status)}
                   className={`px-4 py-2 rounded-lg text-xs font-bold capitalize transition-all ${
                     statusFilter === status
-                      ? 'bg-white text-slate-800 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-800'
+                      ? 'bg-[#1D2D49] text-white shadow-sm'
+                      : 'text-[#6B7280] hover:text-[#1D2D49] hover:bg-[#F3F4F6]'
                   }`}
                 >
                   {status}
@@ -559,10 +560,10 @@ export function AdminDonations() {
                         )}
                       </td>
                       <td className="p-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold capitalize border ${
-                          d.status === 'confirmed' ? 'bg-green-50 text-green-700 border-green-100' :
-                          d.status === 'rejected' ? 'bg-red-50 text-red-700 border-red-100' :
-                          'bg-yellow-50 text-yellow-700 border-yellow-100'
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize ${
+                          d.status === 'confirmed' ? 'bg-[#D1FAE5] text-[#065F46] border-[#D1FAE5]' :
+                          d.status === 'rejected' ? 'bg-[#FEE2E2] text-[#991B1B] border-[#FEE2E2]' :
+                          'bg-[#FEF3C7] text-[#92400E] border-[#FEF3C7]'
                         }`}>
                           {d.status}
                         </span>
@@ -570,20 +571,22 @@ export function AdminDonations() {
                       <td className="p-4 pr-6 text-center">
                         {d.status === 'pending' ? (
                           <div className="flex items-center justify-center gap-1.5">
-                            <button
+                            <AdminButton
+                              variant="success"
+                              size="sm"
                               onClick={() => { setSelectedDonation(d); setActionType('confirm'); }}
-                              className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
                               title="Approve Donation"
                             >
-                              <CheckCircle className="w-5 h-5" />
-                            </button>
-                            <button
+                              <CheckCircle className="w-4 h-4" />
+                            </AdminButton>
+                            <AdminButton
+                              variant="danger"
+                              size="sm"
                               onClick={() => { setSelectedDonation(d); setActionType('reject'); }}
-                              className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                               title="Reject Donation"
                             >
-                              <XCircle className="w-5 h-5" />
-                            </button>
+                              <XCircle className="w-4 h-4" />
+                            </AdminButton>
                           </div>
                         ) : (
                           <span className="text-[11px] text-slate-400 font-bold">Processed</span>
@@ -613,7 +616,7 @@ export function AdminDonations() {
               placeholder="Search directory by donor name or email..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/50 font-medium text-sm bg-white"
+              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-[#E5E7EB] outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] font-medium text-sm bg-white text-[#111827]"
             />
           </div>
 
@@ -706,7 +709,7 @@ export function AdminDonations() {
                 </p>
 
                 <div>
-                  <label htmlFor="action-notes" className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                  <label htmlFor="action-notes" className="block text-xs font-semibold text-[#111827] mb-2">
                     Internal Review Notes (Optional)
                   </label>
                   <textarea
@@ -715,29 +718,29 @@ export function AdminDonations() {
                     placeholder="Input verification details or reasons for rejection..."
                     value={notes}
                     onChange={e => setNotes(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:border-brand-teal text-slate-700 text-sm bg-white"
+                    className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
                   />
                 </div>
 
-                <div className="flex gap-3 pt-4 border-t border-slate-50">
-                  <button
+                <div className="flex gap-3 pt-4 border-t border-[#E5E7EB]">
+                  <AdminButton
+                    type="button"
+                    variant="ghost"
+                    className="flex-1"
                     onClick={() => setSelectedDonation(null)}
-                    className="flex-1 py-3 border border-slate-200 rounded-xl text-slate-600 font-bold hover:bg-slate-50 transition-colors text-sm"
+                    disabled={isActionProcessing}
                   >
                     Cancel
-                  </button>
-                  <button
+                  </AdminButton>
+                  <AdminButton
+                    type="button"
+                    variant={actionType === 'confirm' ? 'success' : 'danger'}
+                    className="flex-1"
                     onClick={handleAction}
-                    disabled={isActionProcessing}
-                    className={`flex-1 py-3 text-white rounded-xl font-bold transition-all text-sm flex items-center justify-center gap-1.5 ${
-                      actionType === 'confirm' 
-                        ? 'bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-100' 
-                        : 'bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-100'
-                    }`}
+                    isLoading={isActionProcessing}
                   >
-                    {isActionProcessing && <Loader2 className="w-4 h-4 animate-spin" />}
                     {actionType === 'confirm' ? 'Confirm & Send' : 'Reject'}
-                  </button>
+                  </AdminButton>
                 </div>
               </div>
             </motion.div>
@@ -837,10 +840,10 @@ export function AdminDonations() {
                                 <span className="font-mono text-xs font-bold text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-100">
                                   {item.receipt_number || 'TRX ID: ' + (item.transaction_id || item.id.substring(0,8))}
                                 </span>
-                                <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold capitalize border ${
-                                  item.status === 'confirmed' ? 'bg-green-50 text-green-700 border-green-100' :
-                                  item.status === 'rejected' ? 'bg-red-50 text-red-700 border-red-100' :
-                                  'bg-yellow-50 text-yellow-700 border-yellow-100'
+                                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold capitalize border ${
+                                  item.status === 'confirmed' ? 'bg-[#D1FAE5] text-[#065F46] border-[#D1FAE5]' :
+                                  item.status === 'rejected' ? 'bg-[#FEE2E2] text-[#991B1B] border-[#FEE2E2]' :
+                                  'bg-[#FEF3C7] text-[#92400E] border-[#FEF3C7]'
                                 }`}>
                                   {item.status}
                                 </span>
