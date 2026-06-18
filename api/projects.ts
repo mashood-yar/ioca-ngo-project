@@ -1,123 +1,129 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
-import { supabase } from '../_lib/supabase'
-import { ok, err } from '../_lib/response'
-import { requireAdmin } from '../_lib/auth'
-import { cors } from '../_lib/cors'
-import { processImageField } from '../_lib/upload'
+import { supabase } from './_lib/supabase'
+import { ok, err } from './_lib/response'
+import { requireAdmin } from './_lib/auth'
+import { cors } from './_lib/cors'
+import { processImageField } from './_lib/upload'
 
-const createNewsSchema = z.object({
+const createProjectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  content: z.string().min(1, 'Content is required'),
+  description: z.string().min(1, 'Description is required'),
+  status: z.string().optional(),
   imageUrl: z.string().optional(),
 })
 
-const updateNewsSchema = z.object({
+const updateProjectSchema = z.object({
   title: z.string().optional(),
-  content: z.string().optional(),
+  description: z.string().optional(),
+  status: z.string().optional(),
   imageUrl: z.string().optional(),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
 
-  const segments = (req.query.path as string[]) ?? []
+  const pathVal = req.query.path
+  const segments = Array.isArray(pathVal)
+    ? pathVal
+    : typeof pathVal === 'string'
+      ? pathVal.split('/').filter(Boolean)
+      : []
   const id = segments[0]
 
   try {
-    // 1. GET /api/news — Public: list all news articles
+    // 1. GET /api/projects — Public: list all projects
     if (req.method === 'GET' && !id) {
-      const { data: news, error } = await supabase
-        .from('news')
+      const { data: projects, error } = await supabase
+        .from('projects')
         .select('*')
         .order('created_at', { ascending: false })
 
       if (error) throw new Error(error.message)
-      return ok(res, news)
+      return ok(res, projects)
     }
 
-    // 2. GET /api/news/:id — Public: get single news article
+    // 2. GET /api/projects/:id — Public: get single project
     if (req.method === 'GET' && id) {
-      const { data: news, error } = await supabase
-        .from('news')
+      const { data: project, error } = await supabase
+        .from('projects')
         .select('*')
         .eq('id', id)
         .single()
 
       if (error) {
         if (error.code === 'PGRST116') {
-          return err(res, 'News article not found', 404)
+          return err(res, 'Project not found', 404)
         }
         throw new Error(error.message)
       }
 
-      return ok(res, news)
+      return ok(res, project)
     }
 
-    // 3. POST /api/news — Admin: create news article
+    // 3. POST /api/projects — Admin: create project
     if (req.method === 'POST' && !id) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const { title, content, imageUrl } = createNewsSchema.parse(req.body)
+      const { title, description, status, imageUrl } = createProjectSchema.parse(req.body)
 
-      const { data: news, error } = await supabase
-        .from('news')
+      const { data: project, error } = await supabase
+        .from('projects')
         .insert({
           title,
-          content,
+          description,
+          status,
           image_url: await processImageField(imageUrl),
-          published_at: new Date().toISOString(),
         })
         .select()
         .single()
 
       if (error) throw new Error(error.message)
-      return ok(res, news, 201)
+      return ok(res, project, 201)
     }
 
-    // 4. PUT /api/news/:id — Admin: update news article
+    // 4. PUT /api/projects/:id — Admin: update project
     if (req.method === 'PUT' && id) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const { title, content, imageUrl } = updateNewsSchema.parse(req.body)
+      const { title, description, status, imageUrl } = updateProjectSchema.parse(req.body)
 
-      const updates: Record<string, any> = {
-        updated_at: new Date().toISOString()
-      }
+      const updates: Record<string, any> = { updated_at: new Date().toISOString() }
       if (title !== undefined) updates.title = title
-      if (content !== undefined) updates.content = content
+      if (description !== undefined) updates.description = description
+      if (status !== undefined) updates.status = status
       if (imageUrl !== undefined) updates.image_url = await processImageField(imageUrl)
 
-      const { data: news, error } = await supabase
-        .from('news')
+      const { data: project, error } = await supabase
+        .from('projects')
         .update(updates)
         .eq('id', id)
         .select()
         .single()
 
       if (error) throw new Error(error.message)
-      return ok(res, news)
+      return ok(res, project)
     }
 
-    // 5. DELETE /api/news/:id — Admin: delete news article
+    // 5. DELETE /api/projects/:id — Admin: delete project
     if (req.method === 'DELETE' && id) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
       const { error } = await supabase
-        .from('news')
+        .from('projects')
         .delete()
         .eq('id', id)
 
       if (error) throw new Error(error.message)
-      return ok(res, { message: 'News article deleted' })
+      return ok(res, { message: 'Project deleted' })
     }
 
     return err(res, 'Method not allowed', 405)
   } catch (e) {
-    console.error('News error:', e)
+    console.error('Projects error:', e)
     if (e instanceof z.ZodError) {
       return err(res, e.errors[0]?.message || 'Validation error', 400)
     }

@@ -22,6 +22,11 @@
     { "source": "/api/zones/(.*)", "destination": "/api/misc/zones/$1" },
     { "source": "/api/tiers", "destination": "/api/misc/tiers" },
     { "source": "/api/tiers/(.*)", "destination": "/api/misc/tiers/$1" },
+    { "source": "/api/contacts/(.*)", "destination": "/api/contacts?path=$1" },
+    { "source": "/api/donations/(.*)", "destination": "/api/donations?path=$1" },
+    { "source": "/api/events/(.*)", "destination": "/api/events?path=$1" },
+    { "source": "/api/news/(.*)", "destination": "/api/news?path=$1" },
+    { "source": "/api/projects/(.*)", "destination": "/api/projects?path=$1" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
