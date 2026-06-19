@@ -12,15 +12,23 @@ const fadeUp = (delay: number) => ({
   transition: { duration: 0.6, delay },
 });
 
-const HERO_IMAGES = [
-  '/assets/hero-slider/خدمتِ خلق.webp',
-  '/assets/hero-slider/امید کی کرن.webp',
-  '/assets/hero-slider/صحت مند معاشرہ.webp',
+const HERO_IMAGES_URDU = [
+  '/assets/hero-slider/Urdu Hero Section/خدمتِ خلق.webp',
+  '/assets/hero-slider/Urdu Hero Section/امید کی کرن.webp',
+  '/assets/hero-slider/Urdu Hero Section/صحت مند معاشرہ.webp',
+];
+
+const HERO_IMAGES_ENGLISH = [
+  '/assets/hero-slider/English Hero Section/service-to-humanity.webp',
+  '/assets/hero-slider/English Hero Section/a-ray-of-hope.webp',
+  '/assets/hero-slider/English Hero Section/a-healthy-society.webp',
 ];
 
 const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
   const [showSticky, setShowSticky] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  const currentImages = isUrdu ? HERO_IMAGES_URDU : HERO_IMAGES_ENGLISH;
 
   // Scroll handler for sticky mobile bar with requestAnimationFrame throttling
   useEffect(() => {
@@ -42,7 +50,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
   // Slider interval
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+      setCurrentSlide((prev) => (prev + 1) % currentImages.length);
     }, 4000); // Change every 4 seconds
     return () => clearInterval(timer);
   }, []);
@@ -52,7 +60,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
       <section className="relative w-full min-h-[75vh] md:min-h-[calc(100vh-120px)] max-h-[850px] flex flex-col justify-end md:justify-center overflow-hidden bg-brand-navy">
         
         {/* Background Slider */}
-        {HERO_IMAGES.map((src, index) => (
+        {currentImages.map((src, index) => (
           <img
             key={src}
             src={src}
