@@ -14,15 +14,15 @@ const fadeUp = (delay: number) => ({
 });
 
 const HERO_IMAGES_URDU = [
-  '/assets/hero-slider/Urdu Hero Section/خدمتِ خلق.webp',
-  '/assets/hero-slider/Urdu Hero Section/امید کی کرن.webp',
-  '/assets/hero-slider/Urdu Hero Section/صحت مند معاشرہ.webp',
+  '/assets/hero-slider/service-to-humanity.webp',
+  '/assets/hero-slider/a-ray-of-hope.webp',
+  '/assets/hero-slider/a-healthy-society.webp',
 ];
 
 const HERO_IMAGES_ENGLISH = [
-  '/assets/hero-slider/English Hero Section/service-to-humanity.webp',
-  '/assets/hero-slider/English Hero Section/a-ray-of-hope.webp',
-  '/assets/hero-slider/English Hero Section/a-healthy-society.webp',
+  '/assets/hero-slider/service-to-humanity.webp',
+  '/assets/hero-slider/a-ray-of-hope.webp',
+  '/assets/hero-slider/a-healthy-society.webp',
 ];
 
 const SLIDE_ALT_EN = [
