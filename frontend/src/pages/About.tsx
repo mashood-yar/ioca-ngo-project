@@ -60,7 +60,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
       <div className="bg-brand-gray min-h-screen pb-24">
         {/* Hero Section */}
         <section className="relative h-[40vh] md:h-[50vh] flex items-center justify-center bg-brand-navy overflow-hidden">
-          <div className="absolute inset-0 bg-black/50 z-10" />
+          <div className="absolute inset-0 bg-brand-navy/60 z-10" />
           <img
             src="/assets/hero-community.webp"
             alt={isUrdu ? 'ہمارے بارے میں' : 'About IOCA'}

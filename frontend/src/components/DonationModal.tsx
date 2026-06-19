@@ -11,9 +11,29 @@ interface DonationModalProps {
   onClose: () => void;
   isUrdu: boolean;
   initialCampaign?: string;
+  /** H1-08: Pre-select amount passed from DonatePage */
+  initialAmount?: number | null;
 }
 
-const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, initialCampaign }) => {
+/** H1-07: Impact label for each preset amount */
+const IMPACT_LABELS_EN: Record<number, string> = {
+  1000: 'Feeds a family for a week',
+  2000: 'School supplies for a child',
+  5000: 'Funds a medical checkup camp',
+  10000: 'Sponsors a student for a term',
+};
+const IMPACT_LABELS_UR: Record<number, string> = {
+  1000: 'ایک ہفتے کے لیے خوراک',
+  2000: 'ایک بچے کا اسکول سامان',
+  5000: 'ایک طبی کیمپ',
+  10000: 'ایک طالب علم کا سمسٹر',
+};
+
+/** H1-06: Step labels for progress bar */
+const STEP_LABELS_EN = ['Amount', 'Your Info', 'Payment', 'Confirm'];
+const STEP_LABELS_UR = ['رقم', 'معلومات', 'ادائیگی', 'تصدیق'];
+
+const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, initialCampaign, initialAmount }) => {
   const [step, setStep] = useState<number>(1); // 1 to 5
   const [isProcessing, setIsProcessing] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
@@ -43,7 +63,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setStep(1);
-      setAmount(5000);
+      // H1-08: use initialAmount if provided, otherwise default to 5000
+      setAmount(initialAmount ?? 5000);
       setCustomAmount('');
       setFundType('general');
       setDonorName(user?.user_metadata?.full_name || '');
@@ -78,7 +99,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
       };
       loadProjects();
     }
-  }, [isOpen, initialCampaign, user]);
+  }, [isOpen, initialCampaign, initialAmount, user]);
 
   const presetAmounts = [1000, 2000, 5000, 10000];
 
@@ -255,13 +276,44 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
           </button>
         </div>
 
-        {/* Progress indicator */}
-        {step < 4 && (
-          <div className="w-full bg-brand-navy/5 h-1.5 shrink-0" aria-hidden="true">
-            <div 
-              className="bg-brand-gold h-full transition-all duration-500 ease-out" 
-              style={{ width: `${(step / 3) * 100}%` }}
-            />
+        {/* H1-06: Branded Step Progress Bar — replaces the plain bar */}
+        {step < 5 && (
+          <div className="px-6 pt-4 pb-3 shrink-0" aria-label={isUrdu ? `مرحلہ ${step} از 4` : `Step ${step} of 4`}>
+            <div className="flex items-center justify-between gap-1">
+              {(isUrdu ? STEP_LABELS_UR : STEP_LABELS_EN).map((label, idx) => {
+                const stepNum = idx + 1;
+                const isComplete = step > stepNum;
+                const isActive = step === stepNum;
+                return (
+                  <React.Fragment key={label}>
+                    <div className="flex flex-col items-center gap-1 min-w-0">
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                          isComplete
+                            ? 'bg-brand-gold text-brand-navy'
+                            : isActive
+                            ? 'bg-brand-teal text-brand-white ring-2 ring-brand-teal ring-offset-2'
+                            : 'bg-brand-navy/10 text-brand-navy/40'
+                        }`}
+                        aria-current={isActive ? 'step' : undefined}
+                      >
+                        {isComplete ? '✓' : stepNum}
+                      </div>
+                      <span className={`text-[9px] leading-tight text-center transition-colors ${
+                        isComplete ? 'text-brand-gold font-semibold' : isActive ? 'text-brand-teal font-bold' : 'text-brand-navy/30'
+                      } ${isUrdu ? 'font-urduBody' : ''}`}>
+                        {label}
+                      </span>
+                    </div>
+                    {idx < 3 && (
+                      <div className={`flex-1 h-0.5 mb-3 transition-all duration-300 ${
+                        step > stepNum ? 'bg-brand-gold' : 'bg-brand-navy/10'
+                      }`} />
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -285,9 +337,19 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                       key={preset}
                       onClick={() => { setAmount(preset); setCustomAmount(''); }}
                       aria-pressed={amount === preset}
-                      className={`py-3.5 rounded-xl font-bold border-2 transition-all focus:outline-none focus:ring-2 focus:ring-brand-teal ${amount === preset ? 'border-brand-teal bg-brand-teal/5 text-brand-teal' : 'border-brand-navy/10 text-brand-navy hover:border-brand-navy/30'}`}
+                      className={`py-3 rounded-xl font-bold border-2 transition-all focus:outline-none focus:ring-2 focus:ring-brand-teal flex flex-col items-center gap-0.5 ${
+                        amount === preset
+                          ? 'border-brand-teal bg-brand-teal/5 text-brand-teal'
+                          : 'border-brand-navy/10 text-brand-navy hover:border-brand-navy/30'
+                      }`}
                     >
-                      Rs {displayNum(preset.toLocaleString())}
+                      <span className="text-[15px]">Rs {displayNum(preset.toLocaleString())}</span>
+                      {/* H1-07: Impact label */}
+                      <span className={`text-[10px] font-normal opacity-70 leading-tight text-center ${
+                        amount === preset ? 'text-brand-teal' : 'text-brand-navy/60'
+                      } ${isUrdu ? 'font-urduBody' : ''}`}>
+                        {isUrdu ? IMPACT_LABELS_UR[preset] : IMPACT_LABELS_EN[preset]}
+                      </span>
                     </button>
                   ))}
                   <div className="col-span-2 relative">

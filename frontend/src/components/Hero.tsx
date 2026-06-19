@@ -24,11 +24,29 @@ const HERO_IMAGES_ENGLISH = [
   '/assets/hero-slider/English Hero Section/a-healthy-society.webp',
 ];
 
+const SLIDE_ALT_EN = [
+  'Volunteers serving the community across Pakistan',
+  'A ray of hope — IOCA changing lives in underserved areas',
+  "Building a healthy society through IOCA's health programs",
+];
+
+const SLIDE_ALT_UR = [
+  'رضاکار پاکستان بھر میں کمیونٹی کی خدمت کر رہے ہیں',
+  'امید کی کرن — IOCA محروم علاقوں میں زندگیاں بدل رہا ہے',
+  'IOCA کے صحت پروگراموں کے ذریعے ایک صحت مند معاشرے کی تعمیر',
+];
+
 const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
   const [showSticky, setShowSticky] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const currentImages = isUrdu ? HERO_IMAGES_URDU : HERO_IMAGES_ENGLISH;
+  const currentAlts = isUrdu ? SLIDE_ALT_UR : SLIDE_ALT_EN;
+
+  // H1-03 FIX: Reset slide index when language changes
+  useEffect(() => {
+    setCurrentSlide(0);
+  }, [isUrdu]);
 
   // Scroll handler for sticky mobile bar with requestAnimationFrame throttling
   useEffect(() => {
@@ -47,13 +65,13 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Slider interval
+  // H1-03 FIX: Add currentImages.length to deps to avoid stale closure
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % currentImages.length);
-    }, 4000); // Change every 4 seconds
+    }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [currentImages.length]);
 
   return (
     <>
@@ -64,7 +82,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
           <img
             key={src}
             src={src}
-            alt="Hero background"
+            alt={currentAlts[index]}
             className={`absolute inset-0 w-full h-full object-cover object-center z-0 transition-opacity duration-1000 ease-in-out ${
               index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
@@ -77,13 +95,11 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
         ))}
 
         {/* Cinematic Gradient Overlays */}
-        {/* Darkens the entire image slightly for text readability */}
         <div className="absolute inset-0 bg-brand-navy/30 z-10 pointer-events-none" aria-hidden="true" />
-        {/* Deep gradient from the bottom to ensure bottom-placed text pops completely */}
         <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/40 to-transparent z-10 pointer-events-none" aria-hidden="true" />
         
         {/* Content Container */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:px-16 pt-32 pb-12 md:pt-12 md:pb-16 flex flex-col">
+        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:px-16 pt-32 pb-16 md:pt-12 md:pb-20 flex flex-col">
           <div className={`w-full max-w-3xl ${isUrdu ? 'ml-auto text-right' : 'mr-auto text-left'}`}>
             
             {/* Logo Icon */}
@@ -91,21 +107,21 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
               <img src="/assets/logos/logo-icon-white.webp" alt="" className="h-12 md:h-16 w-auto object-contain drop-shadow-lg" aria-hidden="true" fetchPriority="high" decoding="sync" />
             </motion.div>
             
-            {/* Eyebrow */}
+            {/* Eyebrow — H1-01: Updated copy */}
             <motion.p
               className={`text-[11px] font-semibold tracking-[0.15em] uppercase text-brand-gold mb-3 drop-shadow-md ${isUrdu ? "font-urduBody" : ""}`}
               {...fadeUp(0.2)}
             >
-              ✓ {isUrdu ? 'پی سی پی مصدقہ این جی او' : 'PCP Certified NGO'}
+              ✓ {isUrdu ? 'پی سی پی مصدقہ این جی او' : 'PCP Certified NGO — Since 2004'}
             </motion.p>
 
-            {/* Headline */}
+            {/* Headline — H1-01: Strong, cause-specific copy */}
             <motion.div className="mb-2 md:mb-4" {...fadeUp(0.3)}>
               <span className={`block font-extrabold leading-[1.1] text-[28px] md:text-[36px] lg:text-[48px] text-brand-white tracking-tight drop-shadow-xl ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? 'پاکستان کو بااختیار بنانا' : 'The Smarter'}
+                {isUrdu ? 'پاکستان میں تبدیلی لا رہے ہیں' : 'Transforming Communities'}
               </span>
-              <span className={`block font-normal leading-snug text-[16px] md:text-[20px] lg:text-[24px] text-brand-white/90 mt-1.5 drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? 'ایک روشن مستقبل کے لیے' : 'Path to Creating Lasting Change'}
+              <span className={`block font-normal leading-snug text-[16px] md:text-[20px] lg:text-[26px] text-brand-white/90 mt-1.5 drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
+                {isUrdu ? 'ایک زندگی، ایک کمیونٹی' : 'Across Pakistan — One Life at a Time'}
               </span>
             </motion.div>
 
@@ -136,6 +152,28 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
               </Link>
             </motion.div>
           </div>
+        </div>
+
+        {/* H1-02: Slide Indicator Dots */}
+        <div
+          className={`absolute bottom-5 z-30 flex items-center gap-2.5 ${isUrdu ? 'right-4 md:right-16' : 'left-4 md:left-16'}`}
+          role="tablist"
+          aria-label={isUrdu ? 'سلائیڈ انڈیکیٹر' : 'Slide indicators'}
+        >
+          {currentImages.map((_, idx) => (
+            <button
+              key={idx}
+              role="tab"
+              aria-selected={idx === currentSlide}
+              aria-label={isUrdu ? `سلائیڈ ${idx + 1}` : `Slide ${idx + 1}`}
+              onClick={() => setCurrentSlide(idx)}
+              className={`transition-all duration-300 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold ${
+                idx === currentSlide
+                  ? 'w-6 h-2 bg-brand-gold'
+                  : 'w-2 h-2 bg-brand-white/50 hover:bg-brand-white/80'
+              }`}
+            />
+          ))}
         </div>
 
       </section>

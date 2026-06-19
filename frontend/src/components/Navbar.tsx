@@ -209,7 +209,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
               <div className="relative" ref={dropdownRef}>
                 <button 
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="focus:outline-none flex items-center justify-center rounded-full transition-transform hover:scale-105 ml-1 md:ml-2"
+                  className="focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal focus-visible:ring-offset-2 flex items-center justify-center rounded-full transition-transform hover:scale-105 ml-1 md:ml-2"
                   aria-expanded={isDropdownOpen}
                   aria-label="User menu"
                 >
@@ -333,28 +333,28 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
                   </AnimatePresence>
                 </div>
 
-                <Link to="/projects" onClick={closeMenu} className={`py-2 border-b border-brand-navy/5 ${isActive('/projects') ? 'text-brand-gold font-bold' : ''}`}>
+                <Link to="/projects" onClick={closeMenu} className={`min-h-[48px] flex items-center border-b border-brand-navy/5 ${isActive('/projects') ? 'text-brand-gold font-bold' : ''}`}>
                   {isUrdu ? 'پروجیکٹس' : 'Projects'}
                 </Link>
-                <Link to="/impact-stories" onClick={closeMenu} className={`py-2 border-b border-brand-navy/5 ${isActive('/impact-stories') ? 'text-brand-gold font-bold' : ''}`}>
+                <Link to="/impact-stories" onClick={closeMenu} className={`min-h-[48px] flex items-center border-b border-brand-navy/5 ${isActive('/impact-stories') ? 'text-brand-gold font-bold' : ''}`}>
                   {isUrdu ? 'کہانیاں' : 'Impact Stories'}
                 </Link>
-                <Link to="/gallery" onClick={closeMenu} className={`py-2 border-b border-brand-navy/5 ${isActive('/gallery') ? 'text-brand-gold font-bold' : ''}`}>
+                <Link to="/gallery" onClick={closeMenu} className={`min-h-[48px] flex items-center border-b border-brand-navy/5 ${isActive('/gallery') ? 'text-brand-gold font-bold' : ''}`}>
                   {isUrdu ? 'گیلری' : 'Gallery'}
                 </Link>
-                <Link to="/contact" onClick={closeMenu} className={`py-2 border-b border-brand-navy/5 ${isActive('/contact') ? 'text-brand-gold font-bold' : ''}`}>
+                <Link to="/contact" onClick={closeMenu} className={`min-h-[48px] flex items-center border-b border-brand-navy/5 ${isActive('/contact') ? 'text-brand-gold font-bold' : ''}`}>
                   {isUrdu ? 'رابطہ کریں' : 'Contact'}
                 </Link>
-                <Link to="/volunteer" onClick={closeMenu} className="py-2 border-b border-brand-navy/5 font-bold text-brand-teal">
+                <Link to="/volunteer" onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-bold text-brand-teal">
                   {isUrdu ? 'رضاکار بنیں' : 'Volunteer'}
                 </Link>
 
                 {!user ? (
                   <>
-                    <Link to="/user/login" onClick={closeMenu} className="py-2 border-b border-brand-navy/5 font-semibold text-brand-teal">
+                    <Link to="/user/login" onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-semibold text-brand-teal">
                       {isUrdu ? 'لاگ ان کریں' : 'Sign In'}
                     </Link>
-                    <Link to="/user/signup" onClick={closeMenu} className="py-2 border-b border-brand-navy/5 font-semibold text-brand-teal">
+                    <Link to="/user/signup" onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-semibold text-brand-teal">
                       {isUrdu ? 'سائن اپ کریں' : 'Sign Up'}
                     </Link>
                     <button
@@ -367,13 +367,13 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
                   </>
                 ) : (
                   <>
-                    <Link to={isAdmin ? '/admin/dashboard' : '/dashboard'} onClick={closeMenu} className="py-2 border-b border-brand-navy/5 font-semibold text-brand-teal flex items-center gap-2">
+                    <Link to={isAdmin ? '/admin/dashboard' : '/dashboard'} onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-semibold text-brand-teal gap-2">
                       <LayoutDashboard className="w-4 h-4" />
                       {isUrdu ? 'ڈیش بورڈ' : 'Dashboard'}
                     </Link>
                     <button
                       onClick={() => { closeMenu(); handleSignOut(); }}
-                      className="py-2 text-red-600 font-semibold text-left flex items-center gap-2"
+                      className="min-h-[48px] flex items-center text-red-600 font-semibold text-left gap-2 w-full"
                     >
                       <LogOut className="w-4 h-4" />
                       {isUrdu ? 'لاگ آؤٹ' : 'Sign Out'}

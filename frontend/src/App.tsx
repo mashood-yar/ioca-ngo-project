@@ -85,13 +85,16 @@ function App() {
   const [isUrdu, setIsUrdu] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+  const [initialAmount, setInitialAmount] = useState<number | null>(null);
 
   React.useEffect(() => {
     document.documentElement.lang = isUrdu ? 'ur' : 'en';
   }, [isUrdu]);
 
-  const handleDonateClick = (campaignName: string | null = null) => {
+  // H1-08: accept optional amount to pre-populate the modal from DonatePage
+  const handleDonateClick = (campaignName: string | null = null, amount: number | null = null) => {
     setSelectedCampaign(campaignName);
+    setInitialAmount(amount);
     setIsModalOpen(true);
   };
 
@@ -121,7 +124,7 @@ function App() {
   }
 
   return (
-    <div className={`min-h-screen bg-brand-gray text-brand-navy selection:bg-brand-gold selection:text-white pb-[72px] md:pb-0 ${isUrdu ? 'font-urduBody' : 'font-sans'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-brand-gray text-brand-navy selection:bg-brand-navy selection:text-brand-white pb-[72px] md:pb-0 ${isUrdu ? 'font-urduBody' : 'font-sans'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
       <ToastContainer />
       <ScrollToTop />
       <Navbar isUrdu={isUrdu} setIsUrdu={setIsUrdu} onDonateClick={() => handleDonateClick(null)} />
@@ -136,7 +139,8 @@ function App() {
               <Route path="/programs/:id" element={<ProgramDetails isUrdu={isUrdu} />} />
               <Route path="/projects" element={<Projects isUrdu={isUrdu} />} />
               <Route path="/impact-stories" element={<ImpactStories isUrdu={isUrdu} />} />
-              <Route path="/donate" element={<DonatePage isUrdu={isUrdu} onDonateClick={() => handleDonateClick(null)} />} />
+              {/* H1-08: pass handleDonateClick with amount so DonatePage can pre-fill the modal */}
+              <Route path="/donate" element={<DonatePage isUrdu={isUrdu} onDonateClick={(amount) => handleDonateClick(null, amount)} />} />
               <Route path="/volunteer" element={<Volunteer isUrdu={isUrdu} />} />
               <Route path="/gallery" element={<Gallery isUrdu={isUrdu} />} />
               <Route path="/news" element={<News isUrdu={isUrdu} />} />
@@ -156,7 +160,7 @@ function App() {
       </main>
 
       <Footer isUrdu={isUrdu} />
-      <DonationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialCampaign={selectedCampaign || undefined} isUrdu={isUrdu} />
+      <DonationModal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setInitialAmount(null); }} initialCampaign={selectedCampaign || undefined} initialAmount={initialAmount} isUrdu={isUrdu} />
     </div>
   );
 }

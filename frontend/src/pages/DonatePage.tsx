@@ -5,7 +5,8 @@ import { Heart, CreditCard, Building2, CheckCircle2, Shield, BookOpen } from 'lu
 
 interface DonatePageProps {
   isUrdu: boolean;
-  onDonateClick: () => void;
+  /** H1-08: accepts the selected amount so the modal can pre-populate it */
+  onDonateClick: (amount: number | null) => void;
 }
 
 const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
@@ -18,7 +19,8 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
   const handleDonate = () => {
     const amount = selectedAmount || parseInt(customAmount) || 0;
     if (amount > 0) {
-      onDonateClick();
+      // H1-08: pass the actual amount so modal pre-selects it
+      onDonateClick(amount);
     }
   };
 
