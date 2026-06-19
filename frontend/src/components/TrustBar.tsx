@@ -31,7 +31,7 @@ const TrustBar: React.FC<TrustBarProps> = ({ isUrdu }) => {
   ];
 
   return (
-    <div className="bg-brand-navy border-y border-brand-white/10 relative overflow-hidden">
+    <div className="bg-brand-teal border-y border-brand-white/10 relative overflow-hidden">
       <div
         className="absolute inset-0 opacity-5 mix-blend-overlay pointer-events-none"
         aria-hidden="true"
