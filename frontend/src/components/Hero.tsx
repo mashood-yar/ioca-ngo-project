@@ -117,15 +117,13 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             </motion.p>
 
             {/* Headline — H1-01: Strong, cause-specific copy */}
-            <motion.div className="mb-3 md:mb-5 max-w-2xl" {...fadeUp(0.3)}>
-              <h1 className={`font-black leading-[1.05] text-[32px] md:text-[42px] lg:text-[56px] text-brand-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)] ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? 'آپ کا ایک قدم، کسی کی پوری دنیا بدل سکتا ہے' : 'Your Kindness Can Change a Life Today.'}
+            <motion.div className="mb-2 md:mb-4" {...fadeUp(0.3)}>
+              <h1 className={`font-extrabold leading-[1.1] text-[28px] md:text-[36px] lg:text-[48px] text-brand-white tracking-tight drop-shadow-xl ${isUrdu ? 'font-urduHeading' : ''}`}>
+                {isUrdu ? 'پاکستان میں تبدیلی لا رہے ہیں' : 'Transforming Communities'}
               </h1>
-              <p className={`font-medium leading-relaxed text-[15px] md:text-[18px] lg:text-[20px] text-brand-white/95 mt-4 drop-shadow-md ${isUrdu ? 'font-urduBody text-xl' : ''}`}>
-                {isUrdu 
-                  ? 'تعلیم، صحت اور بھلائی کے ذریعے مستحقین کی مدد کریں۔ آپ کا عطیہ 100% شفافیت کے ساتھ ان تک پہنچتا ہے جنہیں اس کی سب سے زیادہ ضرورت ہے۔' 
-                  : 'Join thousands of compassionate donors bringing education, healthcare, and vital relief to underserved communities across Pakistan.'}
-              </p>
+              <span className={`block font-normal leading-snug text-[16px] md:text-[20px] lg:text-[26px] text-brand-white/90 mt-1.5 drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
+                {isUrdu ? 'ایک زندگی، ایک کمیونٹی' : 'Across Pakistan — One Life at a Time'}
+              </span>
             </motion.div>
 
             {/* Pills */}

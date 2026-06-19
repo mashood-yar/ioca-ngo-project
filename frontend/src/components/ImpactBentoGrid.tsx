@@ -94,10 +94,10 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
           transition={{ duration: 0.6 }}
         >
           <h2 className={`text-3xl md:text-5xl font-extrabold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
-            {isUrdu ? 'آپ کا عطیہ، ہمارا مشترکہ اثر' : 'Your Generosity in Action'}
+            {isUrdu ? 'ہمارا اثر - ارقام میں' : 'Our Impact - In Numbers'}
           </h2>
           <p className={`text-brand-navy/60 text-base md:text-lg max-w-2xl ${isUrdu ? 'font-urduBody' : ''}`}>
-            {isUrdu ? 'ہر عدد ایک کہانی بیان کرتا ہے - ایک زندگی بدلی، ایک خاندان بچایا گیا، ایک کمیونٹی مضبوط ہوئی۔' : 'These aren\'t just numbers. Every single digit represents a real life changed, a family fed, or a child educated—made possible because of you.'}
+            {isUrdu ? 'ہر عدد ایک کہانی بیان کرتا ہے - ایک زندگی بدلی، ایک کمیونٹی مضبوط ہوئی۔' : 'Every number tells a story - a life changed, a community strengthened.'}
           </p>
         </motion.div>
 

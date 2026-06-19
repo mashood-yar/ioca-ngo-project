@@ -346,35 +346,21 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
 
               {/* Amounts */}
               <div>
-                <div className="flex justify-between items-end mb-3">
-                  <label className="block text-sm font-semibold text-brand-navy/80" id="amount-label">
-                    {isUrdu ? 'عطیہ کی رقم منتخب کریں (Rs)' : 'Select Amount (Rs)'}
-                  </label>
-                  <span className="text-[10px] font-bold text-brand-teal bg-brand-teal/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-teal"></span>
-                    </span>
-                    {isUrdu ? 'اس ہفتے 2,400+ افراد نے عطیہ دیا' : '2,400+ donated this week'}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mt-4" role="group" aria-labelledby="amount-label">
+                <label className="block text-sm font-semibold text-brand-navy/80 mb-3" id="amount-label">
+                  {isUrdu ? 'عطیہ کی رقم منتخب کریں (Rs)' : 'Select Amount (Rs)'}
+                </label>
+                <div className="grid grid-cols-2 gap-3" role="group" aria-labelledby="amount-label">
                   {presetAmounts.map(preset => (
                     <button
                       key={preset}
                       onClick={() => { setAmount(preset); setCustomAmount(''); }}
                       aria-pressed={amount === preset}
-                      className={`py-3 rounded-lg font-bold border-2 transition-all focus:outline-none focus:ring-2 focus:ring-brand-teal flex flex-col items-center gap-0.5 relative mt-1 ${
+                      className={`py-3 rounded-lg font-bold border-2 transition-all focus:outline-none focus:ring-2 focus:ring-brand-teal flex flex-col items-center gap-0.5 ${
                         amount === preset
-                          ? 'border-brand-teal bg-brand-teal/5 text-brand-teal scale-[1.02] shadow-sm'
+                          ? 'border-brand-teal bg-brand-teal/5 text-brand-teal'
                           : 'border-brand-navy/10 text-brand-navy hover:border-brand-navy/30'
                       }`}
                     >
-                      {preset === 5000 && (
-                        <span className="absolute -top-3 bg-brand-gold text-brand-navy text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider shadow-sm z-10 border border-white">
-                          {isUrdu ? 'مقبول ترین' : 'Most Popular'}
-                        </span>
-                      )}
                       <span className="text-[15px]">Rs {displayNum(preset.toLocaleString())}</span>
                       {/* H1-07: Impact label */}
                       <span className={`text-[10px] font-normal opacity-70 leading-tight text-center ${

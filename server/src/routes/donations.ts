@@ -9,11 +9,10 @@ import {
 } from '../controllers/donations';
 import { requireAuth } from '../middleware/requireAuth';
 import { requireAdmin } from '../middleware/requireAdmin';
-import { strictLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
-router.post('/', strictLimiter, createDonation);
+router.post('/', createDonation);
 router.get('/', requireAuth, requireAdmin, listDonations);
 router.get('/:id', requireAuth, requireAdmin, getDonation);
 router.patch('/:id/status', requireAuth, requireAdmin, updateDonationStatus);
