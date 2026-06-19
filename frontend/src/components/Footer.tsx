@@ -11,7 +11,7 @@ const Footer: React.FC<FooterProps> = ({ isUrdu }) => {
   // Do NOT show fake confirmation — social follow is the honest CTA for now.
 
   return (
-    <footer className="bg-brand-navy text-brand-white pt-20 md:pt-32 pb-8 px-4 md:px-16 rounded-t-[3rem] mt-[-3rem] relative z-20 overflow-hidden">
+    <footer className="bg-brand-navy text-brand-white pt-20 md:pt-32 pb-8 px-4 md:px-16 border-t-4 border-brand-gold relative z-20 overflow-hidden">
       <div
         className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none"
         aria-hidden="true"

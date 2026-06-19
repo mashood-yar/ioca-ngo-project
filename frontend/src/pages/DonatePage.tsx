@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { Heart, CreditCard, Building2, CheckCircle2, Shield, BookOpen } from 'lucide-react';
 
 interface DonatePageProps {
   isUrdu: boolean;
   /** H1-08: accepts the selected amount so the modal can pre-populate it */
-  onDonateClick: (amount: number | null) => void;
+  onDonateClick: (amount: number | null, isMonthly?: boolean) => void;
 }
 
 const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(5000);
   const [customAmount, setCustomAmount] = useState('');
-
+  const [isMonthly, setIsMonthly] = useState<boolean>(false);
 
   const presetAmounts = [1000, 2500, 5000, 10000, 25000, 50000];
 
@@ -20,7 +20,7 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
     const amount = selectedAmount || parseInt(customAmount) || 0;
     if (amount > 0) {
       // H1-08: pass the actual amount so modal pre-selects it
-      onDonateClick(amount);
+      onDonateClick(amount, isMonthly);
     }
   };
 
@@ -50,10 +50,11 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
 
   return (
     <>
-      <Helmet>
-        <title>{isUrdu ? 'عطیہ کریں | IOCA' : 'Donate | IOCA'}</title>
-        <meta name="description" content="Support IOCA's mission to transform communities in Pakistan. Your donation funds education, healthcare, and emergency relief programs." />
-      </Helmet>
+      <SEO 
+        title={isUrdu ? 'عطیہ کریں | IOCA' : 'Donate | IOCA'}
+        description="Support IOCA's mission to transform communities in Pakistan. Your donation funds education, healthcare, and emergency relief programs."
+        isUrdu={isUrdu}
+      />
 
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-16">
@@ -77,12 +78,28 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
             {/* Donation Card */}
             <motion.div
-              className="lg:col-span-3 bg-brand-white rounded-[2.5rem] p-8 md:p-10 shadow-xl"
+              className="lg:col-span-3 bg-brand-white rounded-xl p-8 md:p-10 shadow-xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
 
+
+              {/* Frequency Toggle */}
+              <div className="bg-brand-gray p-1.5 rounded-lg flex mb-8">
+                <button
+                  onClick={() => setIsMonthly(false)}
+                  className={`flex-1 py-3 text-sm md:text-base font-bold rounded-md transition-all ${!isMonthly ? 'bg-white shadow-sm text-brand-navy' : 'text-brand-navy/60 hover:text-brand-navy'}`}
+                >
+                  {isUrdu ? 'ایک بار کا عطیہ' : 'One-time Donation'}
+                </button>
+                <button
+                  onClick={() => setIsMonthly(true)}
+                  className={`flex-1 py-3 text-sm md:text-base font-bold rounded-md transition-all ${isMonthly ? 'bg-white shadow-sm text-brand-navy' : 'text-brand-navy/60 hover:text-brand-navy'}`}
+                >
+                  {isUrdu ? 'ماہانہ عطیہ' : 'Monthly Donation'}
+                </button>
+              </div>
 
               {/* Amount Presets */}
               <h3 className={`font-bold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
@@ -93,7 +110,7 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
                   <button
                     key={amount}
                     onClick={() => { setSelectedAmount(amount); setCustomAmount(''); }}
-                    className={`p-4 rounded-xl font-bold text-lg transition-all ${
+                    className={`p-4 rounded-lg font-bold text-lg transition-all ${
                       selectedAmount === amount
                         ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20 scale-105'
                         : 'bg-brand-gray text-brand-navy border border-brand-navy/10 hover:border-brand-teal/50'
@@ -118,7 +135,7 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
                     value={customAmount}
                     onChange={e => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
                     placeholder="0"
-                    className="w-full pl-12 pr-4 py-4 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-lg font-bold"
+                    className="w-full pl-12 pr-4 py-4 rounded-lg border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-lg font-bold"
                   />
                 </div>
               </div>
@@ -126,7 +143,7 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
               {/* Donate Button */}
               <button
                 onClick={handleDonate}
-                className="w-full bg-brand-teal text-brand-white font-bold py-4 rounded-xl text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-3 shadow-lg shadow-brand-teal/20"
+                className="w-full bg-brand-teal text-brand-white font-bold py-4 rounded-lg text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-3 shadow-lg shadow-brand-teal/20"
               >
                 <Heart className="w-5 h-5" />
                 {isUrdu ? 'ابھی عطیہ کریں' : 'Donate Now'}
@@ -147,13 +164,13 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
                 return (
                   <motion.div
                     key={idx}
-                    className="bg-brand-white rounded-2xl p-6 border border-brand-navy/5 hover:shadow-lg transition-shadow"
+                    className="bg-brand-white rounded-xl p-6 border border-brand-navy/5 hover:shadow-lg transition-shadow"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 + idx * 0.1 }}
                   >
                     <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-brand-teal/10 flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-brand-teal/10 flex items-center justify-center shrink-0">
                         <Icon className="w-5 h-5 text-brand-teal" />
                       </div>
                       <div>

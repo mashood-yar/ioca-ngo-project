@@ -65,7 +65,7 @@ class ErrorBoundary extends React.Component<
             <p className="text-brand-navy/70 mb-6">
               {isUrdu ? 'براہ کرم صفحہ ریفریش کریں یا بعد میں دوبارہ کوشش کریں۔' : 'Please refresh the page or try again later.'}
             </p>
-            <button onClick={() => window.location.reload()} className="bg-brand-teal text-brand-white px-6 py-3 rounded-full font-semibold">
+            <button onClick={() => window.location.reload()} className="bg-brand-teal text-brand-white px-6 py-3 rounded-lg font-semibold">
               {isUrdu ? 'صفحہ ریفریش کریں' : 'Refresh Page'}
             </button>
           </div>
@@ -86,15 +86,17 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
   const [initialAmount, setInitialAmount] = useState<number | null>(null);
+  const [initialIsMonthly, setInitialIsMonthly] = useState<boolean>(false);
 
   React.useEffect(() => {
     document.documentElement.lang = isUrdu ? 'ur' : 'en';
   }, [isUrdu]);
 
   // H1-08: accept optional amount to pre-populate the modal from DonatePage
-  const handleDonateClick = (campaignName: string | null = null, amount: number | null = null) => {
+  const handleDonateClick = (campaignName: string | null = null, amount: number | null = null, isMonthly: boolean = false) => {
     setSelectedCampaign(campaignName);
     setInitialAmount(amount);
+    setInitialIsMonthly(isMonthly);
     setIsModalOpen(true);
   };
 
@@ -140,7 +142,7 @@ function App() {
               <Route path="/projects" element={<Projects isUrdu={isUrdu} />} />
               <Route path="/impact-stories" element={<ImpactStories isUrdu={isUrdu} />} />
               {/* H1-08: pass handleDonateClick with amount so DonatePage can pre-fill the modal */}
-              <Route path="/donate" element={<DonatePage isUrdu={isUrdu} onDonateClick={(amount) => handleDonateClick(null, amount)} />} />
+              <Route path="/donate" element={<DonatePage isUrdu={isUrdu} onDonateClick={(amount, isMonthly) => handleDonateClick(null, amount, isMonthly)} />} />
               <Route path="/volunteer" element={<Volunteer isUrdu={isUrdu} />} />
               <Route path="/gallery" element={<Gallery isUrdu={isUrdu} />} />
               <Route path="/news" element={<News isUrdu={isUrdu} />} />
@@ -160,7 +162,7 @@ function App() {
       </main>
 
       <Footer isUrdu={isUrdu} />
-      <DonationModal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setInitialAmount(null); }} initialCampaign={selectedCampaign || undefined} initialAmount={initialAmount} isUrdu={isUrdu} />
+      <DonationModal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setInitialAmount(null); }} initialCampaign={selectedCampaign || undefined} initialAmount={initialAmount} initialIsMonthly={initialIsMonthly} isUrdu={isUrdu} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface HeroProps {
   isUrdu: boolean;
@@ -81,7 +82,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
         {currentImages.map((src, index) => (
           <img
             key={src}
-            src={src}
+            src={optimizeImage(src, { width: 1920 })}
             alt={currentAlts[index]}
             className={`absolute inset-0 w-full h-full object-cover object-center z-0 transition-opacity duration-1000 ease-in-out ${
               index === currentSlide ? 'opacity-100' : 'opacity-0'
@@ -117,9 +118,9 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
 
             {/* Headline — H1-01: Strong, cause-specific copy */}
             <motion.div className="mb-2 md:mb-4" {...fadeUp(0.3)}>
-              <span className={`block font-extrabold leading-[1.1] text-[28px] md:text-[36px] lg:text-[48px] text-brand-white tracking-tight drop-shadow-xl ${isUrdu ? 'font-urduHeading' : ''}`}>
+              <h1 className={`font-extrabold leading-[1.1] text-[28px] md:text-[36px] lg:text-[48px] text-brand-white tracking-tight drop-shadow-xl ${isUrdu ? 'font-urduHeading' : ''}`}>
                 {isUrdu ? 'پاکستان میں تبدیلی لا رہے ہیں' : 'Transforming Communities'}
-              </span>
+              </h1>
               <span className={`block font-normal leading-snug text-[16px] md:text-[20px] lg:text-[26px] text-brand-white/90 mt-1.5 drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
                 {isUrdu ? 'ایک زندگی، ایک کمیونٹی' : 'Across Pakistan — One Life at a Time'}
               </span>
@@ -196,8 +197,9 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
           </div>
           
           <Link
+            tabIndex={showSticky ? 0 : -1}
             to="/donate"
-            className="bg-brand-teal text-brand-white font-bold text-[13px] px-6 rounded-md min-h-[44px] flex items-center justify-center whitespace-nowrap hover:opacity-90 transition-opacity"
+            className="bg-brand-teal text-brand-white font-bold text-[13px] px-6 rounded-lg min-h-[44px] flex items-center justify-center whitespace-nowrap hover:opacity-90 transition-opacity"
           >
             {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
           </Link>

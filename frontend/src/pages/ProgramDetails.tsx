@@ -74,13 +74,13 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 md:px-8 -mt-24 relative z-30">
         <motion.div
-          className="bg-brand-white rounded-[2.5rem] shadow-xl p-8 md:p-12"
+          className="bg-brand-white rounded-xl shadow-xl p-8 md:p-12"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           {/* Impact Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-10 p-6 bg-brand-gray rounded-2xl">
+          <div className="grid grid-cols-3 gap-4 mb-10 p-6 bg-brand-gray rounded-xl">
             {stats.map((stat, idx) => {
               const Icon = stat.icon;
               return (

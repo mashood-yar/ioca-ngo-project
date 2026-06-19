@@ -200,7 +200,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
 
             <button
               onClick={onDonateClick}
-              className="hidden md:flex bg-brand-teal text-brand-white px-6 py-2.5 min-h-[48px] items-center justify-center rounded-full font-semibold hover:opacity-90 transition-all shadow-md shadow-brand-teal/20"
+              className="hidden md:flex bg-brand-teal text-brand-white px-6 py-2.5 min-h-[48px] items-center justify-center rounded-lg font-semibold hover:opacity-90 transition-all shadow-md shadow-brand-teal/20"
             >
               {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
             </button>

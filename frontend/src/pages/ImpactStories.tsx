@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Quote, Calendar, Tag } from 'lucide-react';
 import { impactStories } from '../data/mockData';
@@ -11,19 +11,36 @@ interface ImpactStoriesProps {
 
 const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
   const [expandedStory, setExpandedStory] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const ref = useRef(null);
+  const storyRefs = useRef<{ [key: string]: HTMLElement | null }>({});
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
+  React.useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   const toggleStory = (id: string) => {
-    setExpandedStory(prev => prev === id ? null : id);
+    setExpandedStory(prev => {
+      const isExpanding = prev !== id;
+      if (isExpanding) {
+        setTimeout(() => {
+          // Scroll the story into view smoothly after it expands
+          storyRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
+      }
+      return isExpanding ? id : null;
+    });
   };
 
   return (
     <>
-      <Helmet>
-        <title>{isUrdu ? 'کہانیاں | IOCA' : 'Impact Stories | IOCA'}</title>
-        <meta name="description" content="Read inspiring stories of transformation - real people, real communities, real impact through IOCA's programs." />
-      </Helmet>
+      <SEO 
+        title={isUrdu ? 'کہانیاں | IOCA' : 'Impact Stories | IOCA'}
+        description="Read inspiring stories of transformation - real people, real communities, real impact through IOCA's programs."
+        isUrdu={isUrdu}
+      />
 
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-16">
@@ -46,12 +63,34 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
 
           {/* Stories */}
           <div ref={ref} className="space-y-8">
-            {impactStories.map((story, idx) => {
+            {loading ? (
+              // Skeleton Loader
+              <>
+                {[1, 2].map((i) => (
+                  <div key={i} className="bg-brand-white rounded-xl overflow-hidden shadow-sm border border-brand-navy/5 animate-pulse">
+                    <div className="grid grid-cols-1 md:grid-cols-5">
+                      <div className="md:col-span-2 h-48 md:h-full bg-brand-navy/10" />
+                      <div className="md:col-span-3 p-6 md:p-10 space-y-4">
+                        <div className="h-4 bg-brand-navy/10 rounded w-1/4" />
+                        <div className="h-6 bg-brand-navy/10 rounded w-3/4" />
+                        <div className="space-y-2 mt-4">
+                          <div className="h-3 bg-brand-navy/5 rounded w-full" />
+                          <div className="h-3 bg-brand-navy/5 rounded w-full" />
+                          <div className="h-3 bg-brand-navy/5 rounded w-5/6" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+            impactStories.map((story, idx) => {
               const isExpanded = expandedStory === story.id;
               return (
                 <motion.article
                   key={story.id}
-                  className="bg-brand-white rounded-[2rem] overflow-hidden shadow-md"
+                  ref={(el) => { storyRefs.current[story.id] = el; }}
+                  className="bg-brand-white rounded-xl overflow-hidden shadow-md"
                   initial={{ opacity: 0, y: 30 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: idx * 0.15 }}
@@ -129,7 +168,8 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
                   </div>
                 </motion.article>
               );
-            })}
+            })
+            )}
           </div>
         </div>
       </div>

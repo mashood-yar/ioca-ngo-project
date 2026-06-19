@@ -66,7 +66,7 @@ const ProcessBlocks: React.FC<ProcessBlocksProps> = ({ isUrdu }) => {
 
       <div className="max-w-7xl mx-auto px-4 md:px-16 relative z-10">
         <motion.div
-          className="text-center mb-8 md:mb-16"
+          className={`mb-8 md:mb-16 ${isUrdu ? 'text-right' : 'text-left'}`}
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -74,7 +74,7 @@ const ProcessBlocks: React.FC<ProcessBlocksProps> = ({ isUrdu }) => {
           <h2 className={`text-3xl md:text-5xl font-extrabold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
             {isUrdu ? 'ہم کیسے کام کرتے ہیں' : 'How We Work'}
           </h2>
-          <p className={`text-brand-navy/60 text-base md:text-lg max-w-2xl mx-auto ${isUrdu ? 'font-urduBody' : ''}`}>
+          <p className={`text-brand-navy/60 text-base md:text-lg max-w-2xl ${isUrdu ? 'font-urduBody' : ''}`}>
             {isUrdu ? 'شناخت سے اثر تک - ہمارا ثابت شدہ طریقہ کار' : 'From identification to impact - our proven methodology'}
           </p>
         </motion.div>
@@ -86,7 +86,7 @@ const ProcessBlocks: React.FC<ProcessBlocksProps> = ({ isUrdu }) => {
           {orderedSteps.map((step, idx) => (
             <motion.li
               key={step.id}
-              className={`${widthClasses[step.id]} ${step.bg} rounded-[2rem] p-4 md:p-6 flex flex-col justify-between relative overflow-hidden hover:shadow-xl transition-shadow group min-h-[160px] md:min-h-[240px]`}
+              className={`${widthClasses[step.id]} ${step.bg} rounded-xl p-4 md:p-6 flex flex-col justify-between relative overflow-hidden hover:shadow-xl transition-shadow group min-h-[160px] md:min-h-[240px] ${isUrdu ? 'text-right' : 'text-left'}`}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: idx * 0.12 }}

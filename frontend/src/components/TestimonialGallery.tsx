@@ -18,7 +18,7 @@ const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
 
       <div className="max-w-7xl mx-auto px-4 md:px-16 relative z-10">
         <motion.div
-          className="mb-12"
+          className={`mb-12 ${isUrdu ? 'text-right' : 'text-left'}`}
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -37,7 +37,7 @@ const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
             return (
               <motion.div
                 key={t.id}
-                className={`rounded-[1.5rem] md:rounded-[2.5rem] p-5 md:p-8 flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all ${
+                className={`rounded-xl p-5 md:p-8 flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all ${
                   isTeal ? 'bg-brand-teal text-brand-white' : 'bg-brand-white text-brand-navy border border-brand-navy/5'
                 } ${idx === 2 ? 'md:hidden lg:block' : ''}`}
                 initial={{ opacity: 0, y: 30 }}

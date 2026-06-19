@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { MapPin, Calendar, CheckCircle2, Clock, Heart } from 'lucide-react';
@@ -47,10 +47,11 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
 
   return (
     <>
-      <Helmet>
-        <title>{isUrdu ? 'پروجیکٹس | IOCA' : 'Projects | IOCA'}</title>
-        <meta name="description" content="Discover IOCA's ongoing and completed projects across Pakistan - from clean water initiatives to flood relief and school reconstruction." />
-      </Helmet>
+      <SEO 
+        title={isUrdu ? 'پروجیکٹس | IOCA' : 'Projects | IOCA'}
+        description="Discover IOCA's ongoing and completed projects across Pakistan - from clean water initiatives to flood relief and school reconstruction."
+        isUrdu={isUrdu}
+      />
 
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-16">
@@ -90,7 +91,24 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
 
           {/* Projects Grid */}
           {loading ? (
-            <p className="text-brand-navy/60 text-center py-16">{isUrdu ? 'لوڈ ہو رہا ہے...' : 'Loading...'}</p>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-brand-white rounded-xl overflow-hidden shadow-sm border border-brand-navy/5 animate-pulse">
+                  <div className="h-28 md:h-48 bg-brand-navy/10" />
+                  <div className="p-4 md:p-6 space-y-4">
+                    <div className="h-4 md:h-5 bg-brand-navy/10 rounded-md w-3/4" />
+                    <div className="flex items-center gap-2">
+                      <div className="h-3 bg-brand-navy/5 rounded-md w-1/4" />
+                      <div className="h-3 bg-brand-navy/5 rounded-md w-1/4" />
+                    </div>
+                    <div className="space-y-2 mt-4">
+                      <div className="h-2 bg-brand-navy/5 rounded-md w-full" />
+                      <div className="h-2 bg-brand-navy/5 rounded-md w-5/6" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : fetchError ? (
             <p className="text-red-600 text-center py-16">{fetchError}</p>
           ) : (
@@ -98,7 +116,7 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
             {filtered.map((project, idx) => (
               <motion.div
                 key={project.id}
-                className="bg-brand-white rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-all group"
+                className="bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all group"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}

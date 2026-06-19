@@ -44,14 +44,14 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
           <div className="flex items-center gap-3">
             <button
               onClick={() => scroll('left')}
-              className="hidden md:flex w-12 h-12 rounded-full border-2 border-brand-navy/20 items-center justify-center text-brand-navy hover:bg-brand-navy hover:text-brand-white transition-colors"
+              className="hidden md:flex w-12 h-12 rounded-lg border-2 border-brand-navy/20 items-center justify-center text-brand-navy hover:bg-brand-navy hover:text-brand-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
               aria-label={isUrdu ? 'پچھلا' : 'Scroll left'}
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="hidden md:flex w-12 h-12 rounded-full border-2 border-brand-navy/20 items-center justify-center text-brand-navy hover:bg-brand-navy hover:text-brand-white transition-colors"
+              className="hidden md:flex w-12 h-12 rounded-lg border-2 border-brand-navy/20 items-center justify-center text-brand-navy hover:bg-brand-navy hover:text-brand-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
               aria-label={isUrdu ? 'اگلا' : 'Scroll right'}
             >
               <ArrowRight className="w-5 h-5" />
@@ -77,7 +77,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
             return (
               <motion.div
                 key={campaign.id}
-                className="group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 border-brand-teal/20 hover:border-brand-teal will-change-transform"
+                className="group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 border-brand-teal/20 hover:border-brand-teal will-change-transform"
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: idx * 0.15 }}
@@ -136,7 +136,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
 
                     <button
                       onClick={() => onDonateClick(isUrdu ? campaign.titleUr : campaign.titleEn)}
-                      className="w-full py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors bg-brand-teal text-brand-white hover:opacity-90 shadow-md shadow-brand-teal/20"
+                      className="w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors bg-brand-teal text-brand-white hover:opacity-90 shadow-md shadow-brand-teal/20"
                     >
                       <Heart className="w-4 h-4" />
                       {campaign.isUrgent
