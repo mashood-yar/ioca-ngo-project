@@ -6,6 +6,7 @@ import { ArrowLeft, Users, FolderOpen, UserCheck } from 'lucide-react';
 import { programs } from '../data/mockData';
 import { formatCompact } from '../utils/formatters';
 import type { Program } from '../types';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface ProgramDetailsProps {
   isUrdu: boolean;
@@ -47,7 +48,15 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
 
       {/* Hero */}
       <div className="relative h-[40vh] md:h-[60vh]">
-        <img src={program.heroImage || program.image} alt={isUrdu ? program.titleUr : program.titleEn} className="w-full h-full object-cover" />
+        <img
+          src={optimizeImage(program.heroImage || program.image, { width: 1200 })}
+          alt={isUrdu ? program.titleUr : program.titleEn}
+          className="w-full h-full object-cover"
+          width={1200}
+          height={600}
+          loading="eager"
+          decoding="async"
+        />
         <div className="absolute inset-0 bg-black/60 z-10" aria-hidden="true" />
         <div className="absolute inset-0 z-20 flex flex-col justify-end px-6 md:px-16 pt-6 md:pt-16 pb-32 md:pb-40 max-w-7xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -121,7 +130,15 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
               {relatedPrograms.map(rp => (
                 <Link key={rp.id} to={`/programs/${rp.id}`} className="group bg-brand-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                   <div className="h-24 md:h-32 overflow-hidden">
-                    <img src={rp.image} alt={isUrdu ? rp.titleUr : rp.titleEn} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    <img
+                      src={optimizeImage(rp.image, { width: 300 })}
+                      alt={isUrdu ? rp.titleUr : rp.titleEn}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
+                      width={300}
+                      height={128}
+                    />
                   </div>
                   <div className="p-3 md:p-4">
                     <h3 className={`font-bold text-sm md:text-base text-brand-navy ${isUrdu ? 'font-urduHeading' : ''}`}>

@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Calendar } from 'lucide-react';
 import { getNews } from '../services/api';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface NewsItem {
   id: string;
@@ -91,10 +92,13 @@ const News: React.FC<NewsProps> = ({ isUrdu }) => {
                       {post.image_url && (
                         <div className="md:col-span-2 h-48 md:h-full overflow-hidden">
                           <img
-                            src={post.image_url}
+                            src={optimizeImage(post.image_url, { width: 400 })}
                             alt={post.title}
                             className="w-full h-full object-cover"
                             loading="lazy"
+                            decoding="async"
+                            width={400}
+                            height={300}
                           />
                         </div>
                       )}

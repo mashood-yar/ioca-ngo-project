@@ -4,6 +4,8 @@ import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
+import { optimizeImage } from '../../lib/optimizeImage';
+import { AdminButton } from './AdminButton';
 
 interface NewsPost {
   id: string;
@@ -123,61 +125,63 @@ export function AdminPosts() {
           <h1 className="text-2xl font-bold text-gray-900">News & Posts</h1>
           <p className="text-gray-500 mt-1">Manage public news articles</p>
         </div>
-        <button
+        <AdminButton
           onClick={() => handleOpenForm()}
-          className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-sm shadow-primary/20"
+          variant="accent"
+          icon={<Plus className="w-5 h-5" />}
         >
-          <Plus className="w-5 h-5" />
           New Post
-        </button>
+        </AdminButton>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white border border-[#E5E7EB] rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-100 text-sm font-semibold text-gray-600">
+              <tr className="bg-[#F9FAFB] border-b border-[#E5E7EB] text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
                 <th className="p-4 pl-6">Cover</th>
                 <th className="p-4">Title</th>
                 <th className="p-4">Status</th>
                 <th className="p-4 text-right pr-6">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-[#E5E7EB]">
               {posts.map((post) => (
-                <tr key={post.id} className="hover:bg-gray-50/50 transition-colors">
+                <tr key={post.id} className="hover:bg-[#F9FAFB] transition-colors duration-100 text-[#111827] text-sm">
                   <td className="p-4 pl-6 w-24">
                     {post.image_url ? (
-                      <img src={post.image_url} alt={post.title} className="w-16 h-12 object-cover rounded-lg border border-gray-200" />
+                      <img src={optimizeImage(post.image_url, { width: 80 })} alt={post.title} className="w-16 h-12 object-cover rounded-lg border border-[#E5E7EB]" width={64} height={48} loading="lazy" decoding="async" />
                     ) : (
-                      <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                      <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-[#E5E7EB]">
                         <ImageIcon className="w-5 h-5 text-gray-400" />
                       </div>
                     )}
                   </td>
-                  <td className="p-4 font-medium text-gray-900">{post.title}</td>
+                  <td className="p-4 font-medium">{post.title}</td>
                   <td className="p-4">
                     {post.published_at ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Published</span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#D1FAE5] text-[#065F46]">Published</span>
                     ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Draft</span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#F3F4F6] text-[#4B5563]">Draft</span>
                     )}
                   </td>
                   <td className="p-4 pr-6 text-right space-x-2">
-                    <button
+                    <AdminButton
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleOpenForm(post)}
-                      className="p-2 text-gray-400 hover:text-primary transition-colors rounded-lg hover:bg-primary/10 inline-flex"
                       title="Edit"
                     >
                       <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
+                    </AdminButton>
+                    <AdminButton
+                      variant="danger"
+                      size="sm"
                       onClick={() => { setSelectedPost(post); setIsDeleteOpen(true); }}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50 inline-flex"
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                    </AdminButton>
                   </td>
                 </tr>
               ))}
@@ -198,62 +202,62 @@ export function AdminPosts() {
       >
         <form onSubmit={handleSave} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <label className="block text-sm font-semibold text-[#111827] mb-1">Title</label>
             <input
               type="text"
               required
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+            <label className="block text-sm font-semibold text-[#111827] mb-1">Content</label>
             <textarea
               required
               rows={6}
               value={formData.content}
               onChange={e => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Publish Date (Optional)</label>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Publish Date (Optional)</label>
               <input
                 type="datetime-local"
                 value={formData.published_at}
                 onChange={e => setFormData({ ...formData, published_at: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Cover Image</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={e => setSelectedFile(e.target.files?.[0] || null)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#0D9488]/10 file:text-[#0D9488] hover:file:bg-[#0D9488]/20"
               />
             </div>
           </div>
           
           <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-            <button
+            <AdminButton
               type="button"
               onClick={() => setIsFormOpen(false)}
-              className="px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+              variant="ghost"
               disabled={saving || uploading}
             >
               Cancel
-            </button>
-            <button
+            </AdminButton>
+            <AdminButton
               type="submit"
-              disabled={saving || uploading}
-              className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
+              variant="accent"
+              isLoading={saving || uploading}
             >
-              {saving || uploading ? 'Saving...' : 'Save Post'}
-            </button>
+              Save Post
+            </AdminButton>
           </div>
         </form>
       </Modal>

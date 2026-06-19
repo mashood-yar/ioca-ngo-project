@@ -22,9 +22,19 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
   const [showSticky, setShowSticky] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Scroll handler for sticky mobile bar
+  // Scroll handler for sticky mobile bar with requestAnimationFrame throttling
   useEffect(() => {
-    const handleScroll = () => setShowSticky(window.scrollY > 220);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isSticky = window.scrollY > 220;
+          setShowSticky(prev => prev !== isSticky ? isSticky : prev);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -52,6 +62,9 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             }`}
             fetchPriority={index === 0 ? "high" : "auto"}
             decoding={index === 0 ? "sync" : "async"}
+            loading={index === 0 ? "eager" : "lazy"}
+            width={1920}
+            height={1080}
           />
         ))}
 

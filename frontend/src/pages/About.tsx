@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Target, Eye, Users, ShieldCheck, Heart, Lightbulb, UsersRound, ArrowRight, Mail } from 'lucide-react';
 import { teamMembers } from '../data/mockData';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface AboutProps {
   isUrdu: boolean;
@@ -64,6 +65,10 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
             src="/assets/hero-community.webp"
             alt={isUrdu ? 'ہمارے بارے میں' : 'About IOCA'}
             className="absolute inset-0 w-full h-full object-cover"
+            width={1200}
+            height={400}
+            loading="eager"
+            decoding="async"
           />
           <motion.div
             className="relative z-20 text-center px-4"
@@ -188,10 +193,13 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
               >
                 <div className="overflow-hidden">
                   <img
-                    src={member.image}
+                    src={optimizeImage(member.image, { width: 300 })}
                     alt={isUrdu ? member.nameUr : member.nameEn}
                     className="w-full h-36 md:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
+                    decoding="async"
+                    width={300}
+                    height={256}
                   />
                 </div>
                 <div className="p-4 md:p-6 text-center flex-grow flex flex-col justify-center">

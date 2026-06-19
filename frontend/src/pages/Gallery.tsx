@@ -4,6 +4,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { galleryItems } from '../data/mockData';
 import type { GalleryItem } from '../types';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface GalleryProps {
   isUrdu: boolean;
@@ -97,10 +98,13 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
               >
                 <img
-                  src={item.image}
+                  src={optimizeImage(item.image, { width: 400 })}
                   alt={isUrdu ? item.titleUr : item.titleEn}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   loading="lazy"
+                  decoding="async"
+                  width={400}
+                  height={400}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4 md:p-6">
                   <h3 className={`text-white text-lg md:text-xl font-bold mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ${isUrdu ? 'font-urduHeading text-right' : ''}`}>
@@ -144,9 +148,12 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
             <div className="relative bg-white rounded-2xl overflow-hidden max-w-5xl w-full flex flex-col md:flex-row shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="w-full md:w-3/5 bg-black flex items-center justify-center relative">
                 <img
-                  src={selectedImage.image}
+                  src={optimizeImage(selectedImage.image, { width: 1000 })}
                   alt={isUrdu ? selectedImage.titleUr : selectedImage.titleEn}
                   className="w-full max-h-[50vh] md:max-h-[85vh] object-contain"
+                  width={800}
+                  height={600}
+                  decoding="async"
                 />
               </div>
               <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-center overflow-y-auto max-h-[50vh] md:max-h-[85vh]">

@@ -1,0 +1,295 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+  VOLUNTEER
+}
+
+enum MemberStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+}
+
+enum DonationStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  PAST
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  CONFIRMED
+  CANCELLED
+  WAITLIST
+}
+
+enum VolunteerStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum MessageStatus {
+  UNREAD
+  READ
+  REPLIED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  UNSUBSCRIBED
+}
+
+model User {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String   @unique
+  name      String
+  avatar    String?
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  member             Member?
+  donations          Donation[]
+  eventRegistrations EventRegistration[]
+  volunteer          Volunteer?
+  contactMessages    ContactMessage[]
+  impactStories      ImpactStory[]       @relation("AuthorStories")
+  galleryUploads     Gallery[]           @relation("UploaderGallery")
+  notifications      Notification[]
+
+  @@index([email])
+}
+
+model Member {
+  id           String       @id @default(cuid())
+  userId       String       @unique @db.Uuid
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  membershipId String       @unique
+  joinDate     DateTime     @default(now())
+  status       MemberStatus @default(ACTIVE)
+  zoneId       String?      @db.Uuid
+  zone         Zone?        @relation(fields: [zoneId], references: [id])
+  projectId    String?      @db.Uuid
+  project      Project?     @relation(fields: [projectId], references: [id])
+  phone        String?
+  address      String?
+  bio          String?
+  skills       String[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([zoneId])
+  @@index([projectId])
+}
+
+model Project {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  description   String
+  status        ProjectStatus @default(ACTIVE)
+  zoneId        String?       @db.Uuid
+  zone          Zone?         @relation(fields: [zoneId], references: [id], onDelete: SetNull)
+  startDate     DateTime
+  endDate       DateTime?
+  budget        Float?
+  impact        String?
+  image         String?
+  members       Member[]
+  donations     Donation[]
+  volunteers    Volunteer[]
+  impactStories ImpactStory[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([zoneId])
+  @@index([status])
+}
+
+model Zone {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  region           String
+  coordinator      String?
+  coordinatorEmail String?
+  projects         Project[]
+  members          Member[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Donation {
+  id              String         @id @default(cuid())
+  userId          String         @db.Uuid
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount          Float
+  currency        String         @default("USD")
+  status          DonationStatus @default(PENDING)
+  paymentIntentId String?
+  message         String?
+  anonymous       Boolean        @default(false)
+  projectId       String?        @db.Uuid
+  project         Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  receiptSent     Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Event {
+  id            String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title         String
+  description   String
+  date          DateTime
+  endDate       DateTime?
+  location      String
+  capacity      Int?
+  registered    Int                 @default(0)
+  image         String?
+  status        EventStatus         @default(UPCOMING)
+  registrations EventRegistration[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([date])
+  @@index([status])
+}
+
+model EventRegistration {
+  id           String             @id @default(cuid())
+  eventId      String             @db.Uuid
+  event        Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId       String             @db.Uuid
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status       RegistrationStatus @default(CONFIRMED)
+  checkIn      Boolean            @default(false)
+  registeredAt DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+}
+
+model ImpactStory {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  image     String?
+  category  String
+  published Boolean  @default(false)
+  authorId  String   @db.Uuid
+  author    User     @relation("AuthorStories", fields: [authorId], references: [id], onDelete: Cascade)
+  projectId String?  @db.Uuid
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([projectId])
+  @@index([published])
+}
+
+model Gallery {
+  id         String   @id @default(cuid())
+  title      String
+  image      String
+  caption    String?
+  category   String
+  uploadedBy String   @db.Uuid
+  uploader   User     @relation("UploaderGallery", fields: [uploadedBy], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([uploadedBy])
+}
+
+model Volunteer {
+  id           String          @id @default(cuid())
+  userId       String          @unique @db.Uuid
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills       String[]
+  availability String
+  status       VolunteerStatus @default(PENDING)
+  hoursLogged  Int             @default(0)
+  projectId    String?         @db.Uuid
+  project      Project?        @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  joinedAt     DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    MessageStatus @default(UNREAD)
+  userId    String?       @db.Uuid
+  user      User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  repliedAt DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([email])
+  @@index([status])
+}
+
+model Subscriber {
+  id           String             @id @default(cuid())
+  email        String             @unique
+  subscribedAt DateTime           @default(now())
+  status       SubscriptionStatus @default(ACTIVE)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@index([email])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([read])
+}

@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Quote, Calendar, Tag } from 'lucide-react';
 import { impactStories } from '../data/mockData';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface ImpactStoriesProps {
   isUrdu: boolean;
@@ -59,10 +60,13 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
                     {/* Image */}
                     <div className="md:col-span-2 h-48 md:h-full overflow-hidden">
                       <img
-                        src={story.image}
+                        src={optimizeImage(story.image, { width: 400 })}
                         alt={isUrdu ? story.titleUr : story.titleEn}
                         className="w-full h-full object-cover"
                         loading="lazy"
+                        decoding="async"
+                        width={400}
+                        height={300}
                       />
                     </div>
 

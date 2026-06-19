@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { z } from 'zod';
 import { uploadBase64Image } from '../lib/upload';
 import { asyncHandler } from '../middleware/asyncHandler';

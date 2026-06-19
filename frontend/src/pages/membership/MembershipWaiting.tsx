@@ -23,7 +23,7 @@ export function MembershipWaiting() {
     async function fetchApp() {
       try {
         setLoading(true);
-        const { data, error } = await fetchApi<Application>('/applications/me');
+        const { data, error } = await fetchApi<Application>('/misc/applications/me');
         if (error || !data) {
           // No application found, send to apply
           navigate('/membership/apply', { replace: true });
@@ -46,7 +46,7 @@ export function MembershipWaiting() {
 
   const handleReapply = async () => {
     try {
-      await fetchApi('/applications/me', { method: 'DELETE' });
+      await fetchApi('/misc/applications/me', { method: 'DELETE' });
       navigate('/membership/apply');
     } catch (err) {
       console.error('Failed to delete rejected app', err);

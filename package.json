@@ -1,12 +1,32 @@
 {
   "name": "ioca",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
+  "workspaces": [
+    "frontend",
+    "server"
+  ],
   "scripts": {
-    "dev": "concurrently --names \"SERVER,CLIENT\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix server\" \"npm run dev --prefix frontend\"",
-    "build": "npm run build --prefix frontend && npm run build --prefix server",
-    "start": "npm run start --prefix server"
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "start": "vercel start"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
+    "cloudinary": "^2.5.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "helmet": "^7.1.0",
+    "resend": "^4.5.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@types/node": "^20.12.7",
+    "@vercel/node": "5.5.15",
+    "concurrently": "^8.2.2",
+    "typescript": "^5.6.3",
+    "vercel": "^34.0.0"
   }
 }

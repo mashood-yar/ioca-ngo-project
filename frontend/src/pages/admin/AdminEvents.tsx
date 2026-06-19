@@ -4,6 +4,8 @@ import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
+import { optimizeImage } from '../../lib/optimizeImage';
+import { AdminButton } from './AdminButton';
 
 interface Event {
   id: string;
@@ -130,20 +132,20 @@ export function AdminEvents() {
           <h1 className="text-2xl font-bold text-gray-900">Events</h1>
           <p className="text-gray-500 mt-1">Manage upcoming and past events</p>
         </div>
-        <button
+        <AdminButton
           onClick={() => handleOpenForm()}
-          className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-sm shadow-primary/20"
+          variant="accent"
+          icon={<Plus className="w-5 h-5" />}
         >
-          <Plus className="w-5 h-5" />
           New Event
-        </button>
+        </AdminButton>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white border border-[#E5E7EB] rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-100 text-sm font-semibold text-gray-600">
+              <tr className="bg-[#F9FAFB] border-b border-[#E5E7EB] text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
                 <th className="p-4 pl-6">Cover</th>
                 <th className="p-4">Title</th>
                 <th className="p-4">Date & Time</th>
@@ -151,36 +153,40 @@ export function AdminEvents() {
                 <th className="p-4 text-right pr-6">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-[#E5E7EB]">
               {events.map((event) => (
-                <tr key={event.id} className="hover:bg-gray-50/50 transition-colors">
+                <tr key={event.id} className="hover:bg-[#F9FAFB] transition-colors duration-100 text-[#111827] text-sm">
                   <td className="p-4 pl-6 w-24">
                     {event.image_url ? (
-                      <img src={event.image_url} alt={event.title} className="w-16 h-12 object-cover rounded-lg border border-gray-200" />
+                      <img src={optimizeImage(event.image_url, { width: 80 })} alt={event.title} className="w-16 h-12 object-cover rounded-lg border border-[#E5E7EB]" width={64} height={48} loading="lazy" decoding="async" />
                     ) : (
-                      <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                      <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-[#E5E7EB]">
                         <ImageIcon className="w-5 h-5 text-gray-400" />
                       </div>
                     )}
                   </td>
-                  <td className="p-4 font-medium text-gray-900">{event.title}</td>
+                  <td className="p-4 font-medium">{event.title}</td>
                   <td className="p-4 text-gray-600">
                     {event.event_date ? new Date(event.event_date).toLocaleString() : 'TBD'}
                   </td>
                   <td className="p-4 text-gray-600 truncate max-w-xs">{event.location || 'TBD'}</td>
                   <td className="p-4 pr-6 text-right space-x-2">
-                    <button
+                    <AdminButton
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleOpenForm(event)}
-                      className="p-2 text-gray-400 hover:text-primary transition-colors rounded-lg hover:bg-primary/10 inline-flex"
+                      title="Edit"
                     >
                       <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
+                    </AdminButton>
+                    <AdminButton
+                      variant="danger"
+                      size="sm"
                       onClick={() => { setSelectedEvent(event); setIsDeleteOpen(true); }}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50 inline-flex"
+                      title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                    </AdminButton>
                   </td>
                 </tr>
               ))}
@@ -201,59 +207,59 @@ export function AdminEvents() {
       >
         <form onSubmit={handleSave} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <label className="block text-sm font-semibold text-[#111827] mb-1">Title</label>
             <input
               type="text"
               required
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-semibold text-[#111827] mb-1">Description</label>
             <textarea
               required
               rows={4}
               value={formData.description}
               onChange={e => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Event Date & Time</label>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Event Date & Time</label>
               <input
                 type="datetime-local"
                 required
                 value={formData.event_date}
                 onChange={e => setFormData({ ...formData, event_date: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Cover Image</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={e => setSelectedFile(e.target.files?.[0] || null)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#0D9488]/10 file:text-[#0D9488] hover:file:bg-[#0D9488]/20"
               />
             </div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+          <div className="bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB]">
             <div className="flex items-center gap-3 mb-3">
               <input
                 type="checkbox"
                 id="is_online"
                 checked={formData.is_online}
                 onChange={e => setFormData({ ...formData, is_online: e.target.checked })}
-                className="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary"
+                className="w-4 h-4 text-[#0D9488] rounded border-gray-300 focus:ring-[#0D9488]"
               />
-              <label htmlFor="is_online" className="text-sm font-medium text-gray-700">This is an online event</label>
+              <label htmlFor="is_online" className="text-sm font-medium text-[#111827]">This is an online event</label>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-[#111827] mb-1">
                 {formData.is_online ? 'Meeting URL (Zoom, Meet, etc)' : 'Physical Location'}
               </label>
               <input
@@ -261,27 +267,27 @@ export function AdminEvents() {
                 placeholder={formData.is_online ? 'https://zoom.us/j/123...' : '123 Main St...'}
                 value={formData.location}
                 onChange={e => setFormData({ ...formData, location: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
               />
             </div>
           </div>
           
-          <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-            <button
+          <div className="pt-4 border-t border-[#E5E7EB] flex justify-end gap-3">
+            <AdminButton
               type="button"
               onClick={() => setIsFormOpen(false)}
-              className="px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+              variant="ghost"
               disabled={saving || uploading}
             >
               Cancel
-            </button>
-            <button
+            </AdminButton>
+            <AdminButton
               type="submit"
-              disabled={saving || uploading}
-              className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
+              variant="accent"
+              isLoading={saving || uploading}
             >
-              {saving || uploading ? 'Saving...' : 'Save Event'}
-            </button>
+              Save Event
+            </AdminButton>
           </div>
         </form>
       </Modal>

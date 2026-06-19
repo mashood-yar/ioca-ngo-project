@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { optimizeImage } from '../../lib/optimizeImage';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -50,14 +51,14 @@ export function AdminLayout() {
   ];
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full text-white bg-gray-900">
-      <div className="flex items-center gap-3 px-6 py-8 border-b border-gray-800">
-        <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
-          <span className="font-bold text-primary">IO</span>
+    <div className="flex flex-col h-full text-white bg-[#1D2D49]">
+      <div className="flex items-center gap-3 px-6 py-8 border-b border-white/10 bg-[#162238]">
+        <div className="w-10 h-10 bg-[#0D9488]/20 rounded-xl flex items-center justify-center">
+          <span className="font-bold text-[#0D9488]">IO</span>
         </div>
         <div>
           <h2 className="font-bold text-lg leading-tight">IOCA Admin</h2>
-          <p className="text-xs text-gray-400">Management Portal</p>
+          <p className="text-xs text-white/60">Management Portal</p>
         </div>
       </div>
 
@@ -72,8 +73,8 @@ export function AdminLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   isActive 
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    ? 'bg-[#0D9488] text-white border-l-[3px] border-[#0D9488] shadow-lg shadow-[#0D9488]/20' 
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`
               }
             >
@@ -84,21 +85,25 @@ export function AdminLayout() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-800">
-        <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-gray-800/50">
+      <div className="p-4 border-t border-white/10">
+        <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-white/5">
           <img 
-            src={user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.user_metadata?.full_name || 'Admin'}`} 
+            src={user?.user_metadata?.avatar_url ? optimizeImage(user.user_metadata.avatar_url, { width: 80 }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.user_metadata?.full_name || 'Admin')}`} 
             alt="Profile" 
             className="w-8 h-8 rounded-full"
+            width={32}
+            height={32}
+            loading="lazy"
+            decoding="async"
           />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate text-white">{user?.user_metadata?.full_name || 'Admin User'}</p>
-            <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+            <p className="text-xs text-white/60 truncate">{user?.email}</p>
           </div>
         </div>
         <button
           onClick={handleSignOut}
-          className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-medium text-red-400 rounded-lg hover:text-red-300 hover:bg-red-400/10 transition-colors"
+          className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
         >
           <LogOut className="w-4 h-4" />
           Sign Out
@@ -132,10 +137,10 @@ export function AdminLayout() {
         {/* Header */}
         <header className="bg-white border-b px-4 py-3 flex items-center justify-between z-30">
           <div className="flex items-center gap-3 lg:hidden">
-            <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-primary text-xs">IO</span>
+            <div className="w-8 h-8 bg-[#0D9488]/20 rounded-lg flex items-center justify-center">
+              <span className="font-bold text-[#0D9488] text-xs">IO</span>
             </div>
-            <span className="font-bold">IOCA Admin</span>
+            <span className="font-bold text-[#1D2D49]">IOCA Admin</span>
           </div>
 
           {/* Right side: Avatar & Mobile menu */}
@@ -147,9 +152,9 @@ export function AdminLayout() {
                 className="focus:outline-none flex items-center justify-center rounded-full transition-transform hover:scale-105"
               >
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt={fullName} className="w-9 h-9 rounded-full object-cover border border-gray-200" />
+                  <img src={optimizeImage(avatarUrl, { width: 80 })} alt={fullName} className="w-9 h-9 rounded-full object-cover border border-gray-200" width={36} height={36} loading="lazy" decoding="async" />
                 ) : (
-                  <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">
+                  <div className="w-9 h-9 rounded-full bg-[#1D2D49] text-white flex items-center justify-center text-sm font-bold">
                     {initials}
                   </div>
                 )}
@@ -175,7 +180,7 @@ export function AdminLayout() {
 
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              className="lg:hidden p-2 text-[#1D2D49] hover:bg-[#F3F4F6] rounded-lg"
             >
               <Menu className="w-6 h-6" />
             </button>

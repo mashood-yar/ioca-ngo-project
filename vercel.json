@@ -1,6 +1,26 @@
 {
-  "installCommand": "npm install && cd frontend && npm install",
-  "buildCommand": "cd frontend && npm run build",
+  "buildCommand": "npm run build --prefix frontend",
   "outputDirectory": "frontend/dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "framework": null,
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node@5.5.15"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/contacts", "destination": "/api/contacts/index" },
+    { "source": "/api/donations", "destination": "/api/donations/index" },
+    { "source": "/api/events", "destination": "/api/events/index" },
+    { "source": "/api/news", "destination": "/api/news/index" },
+    { "source": "/api/projects", "destination": "/api/projects/index" },
+    { "source": "/api/admin(.*)", "destination": "/api/misc/admin$1" },
+    { "source": "/api/profile(.*)", "destination": "/api/misc/profile$1" },
+    { "source": "/api/memberships(.*)", "destination": "/api/misc/memberships$1" },
+    { "source": "/api/event-registrations(.*)", "destination": "/api/misc/event-registrations$1" },
+    { "source": "/api/members(.*)", "destination": "/api/misc/members$1" },
+    { "source": "/api/zones(.*)", "destination": "/api/misc/zones$1" },
+    { "source": "/api/tiers(.*)", "destination": "/api/misc/tiers$1" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

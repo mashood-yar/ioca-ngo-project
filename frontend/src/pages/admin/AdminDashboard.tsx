@@ -87,29 +87,29 @@ export function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Donations */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-gray-900">Recent Donations</h2>
-            <Link to="/admin/donations" className="text-sm text-primary hover:text-primary-dark font-medium flex items-center gap-1">
+        <div className="bg-white border border-[#E5E7EB] rounded-2xl shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-[#E5E7EB] flex items-center justify-between">
+            <h2 className="text-lg font-bold text-[#111827]">Recent Donations</h2>
+            <Link to="/admin/donations" className="text-sm text-[#0D9488] hover:text-[#0F766E] font-medium flex items-center gap-1">
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#E5E7EB]">
             {recentDonations.length === 0 ? (
               <div className="p-6 text-center text-gray-500 text-sm">No donations found.</div>
             ) : (
               recentDonations.map(d => (
-                <div key={d.id} className="p-4 sm:px-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                <div key={d.id} className="p-4 sm:px-6 flex items-center justify-between hover:bg-[#F9FAFB] transition-colors">
                   <div>
-                    <p className="font-medium text-gray-900">{d.donor_name}</p>
-                    <p className="text-sm text-gray-500">{new Date(d.created_at).toLocaleDateString()}</p>
+                    <p className="font-medium text-[#111827]">{d.donor_name}</p>
+                    <p className="text-sm text-[#6B7280]">{new Date(d.created_at).toLocaleDateString()}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900">Rs {d.amount}</p>
-                    <span className={`inline-block px-2 py-1 mt-1 text-xs font-medium rounded-full ${
-                      d.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                      d.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                      'bg-yellow-100 text-yellow-800'
+                    <p className="font-bold text-[#111827]">Rs {d.amount}</p>
+                    <span className={`inline-block px-2.5 py-0.5 mt-1 text-xs font-medium rounded-full ${
+                      d.status === 'confirmed' ? 'bg-[#D1FAE5] text-[#065F46]' :
+                      d.status === 'rejected' ? 'bg-[#FEE2E2] text-[#991B1B]' :
+                      'bg-[#FEF3C7] text-[#92400E]'
                     }`}>
                       {d.status || 'pending'}
                     </span>
@@ -121,19 +121,19 @@ export function AdminDashboard() {
         </div>
 
         {/* Recent Queries */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-gray-900">Unread Queries</h2>
-            <Link to="/admin/queries" className="text-sm text-primary hover:text-primary-dark font-medium flex items-center gap-1">
+        <div className="bg-white border border-[#E5E7EB] rounded-2xl shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-[#E5E7EB] flex items-center justify-between">
+            <h2 className="text-lg font-bold text-[#111827]">Unread Queries</h2>
+            <Link to="/admin/queries" className="text-sm text-[#0D9488] hover:text-[#0F766E] font-medium flex items-center gap-1">
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#E5E7EB]">
             {recentQueries.length === 0 ? (
               <div className="p-6 text-center text-gray-500 text-sm">No unread queries.</div>
             ) : (
               recentQueries.map(q => (
-                <div key={q.id} className="p-4 sm:px-6 hover:bg-gray-50 transition-colors">
+                <div key={q.id} className="p-4 sm:px-6 hover:bg-[#F9FAFB] transition-colors">
                   <div className="flex justify-between items-start mb-1">
                     <p className="font-medium text-gray-900">{q.name}</p>
                     <span className="text-xs text-gray-500">{new Date(q.created_at).toLocaleDateString()}</span>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, useInView } from 'framer-motion';
 import { programs } from '../data/mockData';
+import { optimizeImage } from '../lib/optimizeImage';
 
 interface ProgramsProps {
   isUrdu: boolean;
@@ -53,10 +54,13 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                 >
                   <div className="relative h-32 md:h-64 overflow-hidden">
                     <img
-                      src={prog.image}
+                      src={optimizeImage(prog.image, { width: 400 })}
                       alt={isUrdu ? prog.titleUr : prog.titleEn}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       loading="lazy"
+                      decoding="async"
+                      width={400}
+                      height={256}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent group-hover:from-transparent transition-all duration-500" />
 

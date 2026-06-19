@@ -30,7 +30,7 @@ const Footer: React.FC<FooterProps> = ({ isUrdu }) => {
           {/* Brand Column */}
           <div className="md:col-span-2 flex flex-col items-center md:items-start text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start mb-6">
-              <img src="/assets/logos/vertical-main-logo-white.webp" alt="IOCA Logo" className="h-32 md:h-40 w-auto object-contain" loading="lazy" decoding="async" />
+              <img src="/assets/logos/vertical-main-logo-white.webp" alt="IOCA Logo" className="h-32 md:h-40 w-auto object-contain" loading="lazy" decoding="async" width={160} height={160} />
             </div>
             <p className={`text-brand-white/70 text-lg max-w-sm leading-relaxed mb-6 mx-auto md:mx-0 ${isUrdu ? 'font-urduBody' : ''}`}>
               {isUrdu
