@@ -105,7 +105,7 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
               {events.map((event, idx) => (
                 <motion.div
                   key={event.id}
-                  className="bg-brand-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-xl transition-all group"
+                  className="bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all group"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-50px' }}

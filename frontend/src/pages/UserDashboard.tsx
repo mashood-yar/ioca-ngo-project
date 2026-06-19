@@ -708,7 +708,7 @@ END:VCALENDAR`;
       <main className="flex-1 p-6 md:p-8 max-w-5xl mx-auto w-full overflow-hidden space-y-6">
         
         {/* Prominent Assignment Card */}
-        <div className="bg-white border border-brand-navy/10/80 rounded-3xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white border border-brand-navy/10/80 rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-brand-teal/10 text-brand-teal rounded-2xl flex items-center justify-center flex-shrink-0">
               <Globe className="w-6 h-6" />
@@ -763,7 +763,7 @@ END:VCALENDAR`;
             {activeTab === 'overview' && (
               <>
                 {/* Greeting Banner */}
-                <div className="bg-gradient-to-r from-brand-teal to-brand-navy rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-brand-teal/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="bg-gradient-to-r from-brand-teal to-brand-navy rounded-xl p-6 md:p-8 text-white shadow-xl shadow-brand-teal/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div className="space-y-1">
                     <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Assalam-o-Alaikum, {fullName}!</h1>
                     <p className="text-indigo-100/90 text-sm md:text-base font-medium">Thank you for advancement of community programs with IOCA.</p>
@@ -796,7 +796,7 @@ END:VCALENDAR`;
                 {/* Quick Shortcuts */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Shortcut List */}
-                  <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm">
+                  <div className="bg-white border border-brand-navy/10 rounded-xl p-6 shadow-sm">
                     <h3 className="text-base font-bold text-brand-navy/80 mb-4">Quick Shortcuts</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {[
@@ -818,7 +818,7 @@ END:VCALENDAR`;
                   </div>
 
                   {/* Info block */}
-                  <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 text-white shadow-sm flex flex-col justify-between">
+                  <div className="bg-gradient-to-br from-brand-navy to-brand-navy/80 rounded-xl p-6 text-white shadow-sm flex flex-col justify-between">
                     <div className="space-y-3">
                       <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                         <Info className="w-5 h-5" />
@@ -845,7 +845,7 @@ END:VCALENDAR`;
             {/* TABS 2: PROFILE INFORMATION */}
             {/* ============================================================== */}
             {activeTab === 'profile' && (
-              <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 md:p-8 shadow-sm">
+              <div className="bg-white border border-brand-navy/10 rounded-xl p-6 md:p-8 shadow-sm">
                 <div className="flex justify-between items-center pb-6 border-b border-brand-navy/5 mb-6">
                   <div>
                     <h2 className="text-lg font-bold text-brand-navy/80">Profile Information</h2>
@@ -906,7 +906,7 @@ END:VCALENDAR`;
               <>
                 {/* NOT a member -> Application Form */}
                 {membershipStatus === 'none' && (
-                  <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 md:p-8 shadow-sm">
+                  <div className="bg-white border border-brand-navy/10 rounded-xl p-6 md:p-8 shadow-sm">
                     <div className="pb-6 border-b border-brand-navy/5 mb-6">
                       <h2 className="text-lg font-bold text-brand-navy/80">Apply for Membership</h2>
                       <p className="text-sm text-brand-navy/50 mt-1">Fill in the fields below to submit your official membership request to our admin panel.</p>
@@ -1052,7 +1052,7 @@ END:VCALENDAR`;
                 {membershipStatus !== 'none' && membership && (
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Management details */}
-                    <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm lg:col-span-2 flex flex-col justify-between">
+                    <div className="bg-white border border-brand-navy/10 rounded-xl p-6 shadow-sm lg:col-span-2 flex flex-col justify-between">
                       <div className="space-y-6">
                         <div className="flex justify-between items-start pb-4 border-b border-brand-navy/5">
                           <div>
@@ -1106,7 +1106,7 @@ END:VCALENDAR`;
                     </div>
 
                     {/* Quick helper card */}
-                    <div className="bg-brand-navy text-white rounded-3xl p-6 flex flex-col justify-between">
+                    <div className="bg-brand-navy text-white rounded-xl p-6 flex flex-col justify-between">
                       <div className="space-y-4">
                         <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                           <Award className="w-5 h-5" />
@@ -1144,7 +1144,7 @@ END:VCALENDAR`;
                 {/* Donations form & stats */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Donations Form */}
-                  <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm lg:col-span-2">
+                  <div className="bg-white border border-brand-navy/10 rounded-xl p-6 shadow-sm lg:col-span-2">
                     <h2 className="text-lg font-bold text-brand-navy/80 mb-2">Process Donation Contribution</h2>
                     <p className="text-sm text-brand-navy/50 mb-6">Process a custom or preset donation to directly support active community programs.</p>
 
@@ -1244,7 +1244,7 @@ END:VCALENDAR`;
                   </div>
 
                   {/* Summary Stats */}
-                  <div className="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-3xl p-6 flex flex-col justify-between shadow-lg">
+                  <div className="bg-gradient-to-br from-brand-navy to-brand-navy/80 text-white rounded-xl p-6 flex flex-col justify-between shadow-lg">
                     <div className="space-y-6">
                       <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                         <TrendingUp className="w-5 h-5" />
@@ -1271,7 +1271,7 @@ END:VCALENDAR`;
                 </div>
 
                 {/* Donation history table list */}
-                <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm">
+                <div className="bg-white border border-brand-navy/10 rounded-xl p-6 shadow-sm">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                     <h3 className="font-bold text-brand-navy/80">Donation Contribution Records</h3>
                     <div className="flex gap-2 w-full sm:w-auto">
@@ -1404,7 +1404,7 @@ END:VCALENDAR`;
             {activeTab === 'events' && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Available events list */}
-                <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm lg:col-span-2 space-y-6">
+                <div className="bg-white border border-brand-navy/10 rounded-xl p-6 shadow-sm lg:col-span-2 space-y-6">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-brand-navy/5">
                     <div>
                       <h2 className="text-lg font-bold text-brand-navy/80">Browse & Register Events</h2>
@@ -1491,7 +1491,7 @@ END:VCALENDAR`;
                 </div>
 
                 {/* My registered events */}
-                <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                <div className="bg-white border border-brand-navy/10 rounded-xl p-6 shadow-sm flex flex-col justify-between">
                   <div className="space-y-4">
                     <h3 className="font-bold text-brand-navy/80 pb-3 border-b border-brand-navy/5">My Registrations</h3>
                     {eventRegistrations.length > 0 ? (
@@ -1545,7 +1545,7 @@ END:VCALENDAR`;
             {/* TABS 6: ZONES */}
             {/* ============================================================== */}
             {activeTab === 'zones' && (
-              <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+              <div className="bg-white border border-brand-navy/10 rounded-xl p-6 md:p-8 shadow-sm space-y-6">
                 <div className="pb-6 border-b border-brand-navy/5 mb-6">
                   <h2 className="text-lg font-bold text-brand-navy/80">Projects & Zones</h2>
                   <p className="text-sm text-brand-navy/50 mt-1">Switch or join regional projects and zones to participate in local services and meet fellow members.</p>
@@ -1622,7 +1622,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 overflow-hidden"
+              className="relative w-full max-w-md bg-white rounded-xl shadow-2xl p-6 overflow-hidden"
             >
               <button
                 disabled={isSaving}
@@ -1745,7 +1745,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 flex flex-col items-center text-center overflow-hidden"
+              className="relative w-full max-w-sm bg-white rounded-xl shadow-2xl p-6 flex flex-col items-center text-center overflow-hidden"
             >
               <div className="w-12 h-12 bg-brand-teal/10 text-brand-teal rounded-full flex items-center justify-center mb-4">
                 <Check className="w-6 h-6" />
@@ -1813,7 +1813,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 text-center overflow-hidden"
+              className="relative w-full max-w-sm bg-white rounded-xl shadow-2xl p-6 text-center overflow-hidden"
             >
               <h3 className="text-base font-bold text-brand-navy/80">Switch Regional Zone?</h3>
               <p className="text-xs text-brand-navy/50 mt-2">
@@ -1854,7 +1854,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 overflow-hidden"
+              className="relative w-full max-w-sm bg-white rounded-xl shadow-2xl p-6 overflow-hidden"
             >
               <h3 className="text-base font-bold text-brand-navy/80 mb-4">Upgrade Membership Tier</h3>
               <p className="text-xs text-brand-navy/40 mb-6">Select a higher membership tier. Upgrading will reset your renewal date for 1 full year.</p>
@@ -1902,7 +1902,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 text-center overflow-hidden"
+              className="relative w-full max-w-sm bg-white rounded-xl shadow-2xl p-6 text-center overflow-hidden"
             >
               <h3 className="text-base font-bold text-brand-navy/80">Cancel Membership?</h3>
               <p className="text-xs text-brand-navy/50 mt-2">
@@ -1943,7 +1943,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 text-center overflow-hidden"
+              className="relative w-full max-w-sm bg-white rounded-xl shadow-2xl p-6 text-center overflow-hidden"
             >
               <h3 className="text-base font-bold text-brand-navy/80">Renew Membership?</h3>
               <p className="text-xs text-brand-navy/50 mt-2">

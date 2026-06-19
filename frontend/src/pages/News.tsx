@@ -82,7 +82,7 @@ const News: React.FC<NewsProps> = ({ isUrdu }) => {
                 return (
                   <motion.article
                     key={post.id}
-                    className="bg-brand-white rounded-[2rem] overflow-hidden shadow-md"
+                    className="bg-brand-white rounded-xl overflow-hidden shadow-md"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '-50px' }}

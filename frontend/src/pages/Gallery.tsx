@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { galleryItems } from '../data/mockData';
@@ -13,8 +13,14 @@ interface GalleryProps {
 const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);
+  const [loading, setLoading] = useState(true);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filters = [
     { key: 'all', labelEn: 'All', labelUr: 'سب' },
@@ -45,10 +51,11 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
 
   return (
     <>
-      <Helmet>
-        <title>{isUrdu ? 'گیلری | IOCA' : 'Gallery | IOCA'}</title>
-        <meta name="description" content="Browse photos from IOCA's events, programs, and community outreach across Pakistan." />
-      </Helmet>
+      <SEO 
+        title={isUrdu ? 'گیلری | IOCA' : 'Gallery | IOCA'}
+        description="Browse photos from IOCA's events, programs, and community outreach across Pakistan."
+        isUrdu={isUrdu}
+      />
 
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-16">
@@ -88,11 +95,19 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
 
           {/* Gallery Grid */}
           <div ref={ref} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-            {filtered.map((item, idx) => (
+            {loading ? (
+              // Skeleton Loader
+              <>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <div key={i} className="rounded-xl bg-brand-navy/10 animate-pulse aspect-square shadow-sm border border-brand-navy/5" />
+                ))}
+              </>
+            ) : (
+            filtered.map((item, idx) => (
               <motion.button
                 key={item.id}
                 onClick={() => setSelectedImage(item)}
-                className="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow aspect-square cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-gold"
+                className="group relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow aspect-square cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-gold"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={isInView ? { opacity: 1, scale: 1 } : {}}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
@@ -111,13 +126,14 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
                     {isUrdu ? item.titleUr : item.titleEn}
                   </h3>
                   <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
-                    <span className="inline-block bg-brand-teal text-white text-xs md:text-sm px-4 py-2 rounded-full font-medium hover:bg-brand-navy transition-colors">
+                    <span className="inline-block bg-brand-teal text-white text-xs md:text-sm px-4 py-2 rounded-lg font-medium hover:bg-brand-navy transition-colors">
                       {isUrdu ? 'مزید جانیں' : 'Learn More'}
                     </span>
                   </div>
                 </div>
               </motion.button>
-            ))}
+            ))
+            )}
           </div>
 
           {filtered.length === 0 && (
@@ -145,7 +161,7 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
             >
               <X className="w-8 h-8" />
             </button>
-            <div className="relative bg-white rounded-2xl overflow-hidden max-w-5xl w-full flex flex-col md:flex-row shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="relative bg-white rounded-xl overflow-hidden max-w-5xl w-full flex flex-col md:flex-row shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="w-full md:w-3/5 bg-black flex items-center justify-center relative">
                 <img
                   src={optimizeImage(selectedImage.image, { width: 1000 })}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Target, Eye, Users, ShieldCheck, Heart, Lightbulb, UsersRound, ArrowRight, Mail } from 'lucide-react';
@@ -45,22 +45,20 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
 
   return (
     <>
-      <Helmet>
-        <title>{isUrdu ? 'ہمارے بارے میں | IOCA' : 'About Us | IOCA'}</title>
-        <meta
-          name="description"
-          content={
-            isUrdu
-              ? 'IOCA کے مشن، وژن، اقدار اور ٹیم کے بارے میں جانیں۔ ہم پاکستان بھر میں کمیونٹیز کو بااختیار بنا رہے ہیں۔'
-              : 'Learn about IOCA\'s mission, vision, values, and the dedicated team empowering communities across Pakistan.'
-          }
-        />
-      </Helmet>
+      <SEO 
+        title={isUrdu ? 'ہمارے بارے میں | IOCA' : 'About Us | IOCA'}
+        description={
+          isUrdu
+            ? 'IOCA کے مشن، وژن، اقدار اور ٹیم کے بارے میں جانیں۔ ہم پاکستان بھر میں کمیونٹیز کو بااختیار بنا رہے ہیں۔'
+            : 'Learn about IOCA\'s mission, vision, values, and the dedicated team empowering communities across Pakistan.'
+        }
+        isUrdu={isUrdu}
+      />
 
       <div className="bg-brand-gray min-h-screen pb-24">
         {/* Hero Section */}
         <section className="relative h-[40vh] md:h-[50vh] flex items-center justify-center bg-brand-navy overflow-hidden">
-          <div className="absolute inset-0 bg-black/50 z-10" />
+          <div className="absolute inset-0 bg-brand-navy/60 z-10" />
           <img
             src="/assets/hero-community.webp"
             alt={isUrdu ? 'ہمارے بارے میں' : 'About IOCA'}
@@ -91,7 +89,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
         <section className="max-w-7xl mx-auto px-4 md:px-16 py-20">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <motion.div
-              className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-brand-navy/5 flex flex-col items-center text-center"
+              className="bg-white p-8 md:p-10 rounded-xl shadow-xl border border-brand-navy/5 flex flex-col items-center text-center"
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -111,7 +109,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
             </motion.div>
 
             <motion.div
-              className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-brand-navy/5 flex flex-col items-center text-center"
+              className="bg-white p-8 md:p-10 rounded-xl shadow-xl border border-brand-navy/5 flex flex-col items-center text-center"
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -148,7 +146,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
             {values.map((val, i) => (
               <motion.div
                 key={val.titleEn}
-                className="bg-white p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-lg border border-brand-navy/5 text-center flex flex-col items-center will-change-transform transform-gpu"
+                className="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-brand-navy/5 text-center flex flex-col items-center"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
@@ -185,7 +183,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
             {teamMembers.map((member, i) => (
               <motion.div
                 key={member.id}
-                className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-lg border border-brand-navy/5 flex flex-col group will-change-transform transform-gpu"
+                className="bg-white rounded-xl overflow-hidden shadow-lg border border-brand-navy/5 flex flex-col group"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
@@ -221,7 +219,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
         {/* Bottom CTA Section */}
         <section className="max-w-7xl mx-auto px-4 md:px-16 py-16">
           <motion.div
-            className="bg-brand-navy rounded-3xl p-8 md:p-16 text-center relative overflow-hidden will-change-transform transform-gpu"
+            className="bg-brand-navy rounded-xl p-8 md:p-16 text-center relative overflow-hidden"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}

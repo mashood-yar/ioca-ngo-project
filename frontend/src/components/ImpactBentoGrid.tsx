@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Droplets, GraduationCap, HeartPulse, CheckCircle2 } from 'lucide-react';
+import { Droplets, GraduationCap, HeartPulse } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { toUrduNumerals } from '../utils/formatters';
 
@@ -107,7 +107,7 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
             return (
               <motion.div
                 key={stat.id}
-                className={`${stat.colSpan} ${stat.bg} ${stat.textColor} rounded-[2rem] p-5 md:p-8 flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all min-h-[150px] md:min-h-[220px]`}
+                className={`${stat.colSpan} ${stat.bg} ${stat.textColor} rounded-xl p-5 md:p-8 flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all min-h-[150px] md:min-h-[220px]`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
@@ -132,39 +132,6 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
             );
           })}
 
-          {/* Full-width certification box */}
-          <motion.div
-            className="col-span-2 bg-brand-navy text-brand-white rounded-[2rem] p-5 md:p-8 flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg transition-all relative overflow-hidden min-h-[150px] md:min-h-[220px]"
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <div
-              className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none"
-              aria-hidden="true"
-              style={{ backgroundImage: 'url("/assets/pattern-jali-accent.webp")', backgroundSize: '200px' }}
-            />
-            <div className="relative z-10 flex flex-col justify-between h-full">
-              <p className={`text-2xl md:text-4xl font-extrabold text-brand-white ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? '٪100' : '100%'}
-              </p>
-              <div className="mt-4 md:mt-0">
-                <p className={`text-sm md:text-lg text-brand-white/80 mb-3 ${isUrdu ? 'font-urduBody' : ''}`}>
-                  {isUrdu ? 'آپ کا عطیہ مستحقین تک پہنچتا ہے' : 'of your donation reaches those in need'}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="flex items-center gap-1.5 text-xs bg-white/10 border border-white/20 rounded-full px-3 py-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-brand-gold" aria-hidden="true" />
-                    {isUrdu ? 'PCP تصدیق شدہ' : 'PCP Certified'}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-xs bg-white/10 border border-white/20 rounded-full px-3 py-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-brand-gold" aria-hidden="true" />
-                    {isUrdu ? 'FBR ٹیکس فری' : 'FBR Tax Exempt'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>

@@ -330,7 +330,7 @@ export function AdminDonations() {
         <div className="space-y-8 animate-in fade-in duration-300">
           {/* Key KPI Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200/60 p-6 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200/60 p-6 rounded-xl shadow-sm">
               <span className="text-xs font-black text-emerald-800 uppercase tracking-widest">Total Confirmed</span>
               <h3 className="text-2xl font-black text-slate-900 mt-2">
                 <strong>PKR {(summary?.total_confirmed || 0).toLocaleString('en-PK')}</strong>
@@ -338,7 +338,7 @@ export function AdminDonations() {
               <p className="text-xs text-emerald-700/80 mt-1 font-bold">{summary?.count_confirmed} contributions approved</p>
             </div>
 
-            <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200/60 p-6 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200/60 p-6 rounded-xl shadow-sm">
               <span className="text-xs font-black text-amber-800 uppercase tracking-widest">Awaiting Verification</span>
               <h3 className="text-2xl font-black text-slate-900 mt-2">
                 <strong>PKR {(summary?.total_pending || 0).toLocaleString('en-PK')}</strong>
@@ -346,7 +346,7 @@ export function AdminDonations() {
               <p className="text-xs text-amber-700/80 mt-1 font-bold">{summary?.count_pending} receipts to audit</p>
             </div>
 
-            <div className="bg-gradient-to-br from-rose-50 to-rose-100/50 border border-rose-200/60 p-6 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-rose-50 to-rose-100/50 border border-rose-200/60 p-6 rounded-xl shadow-sm">
               <span className="text-xs font-black text-rose-800 uppercase tracking-widest">Total Rejected</span>
               <h3 className="text-2xl font-black text-slate-900 mt-2">
                 <strong>PKR {(summary?.total_rejected || 0).toLocaleString('en-PK')}</strong>
@@ -354,7 +354,7 @@ export function AdminDonations() {
               <p className="text-xs text-rose-700/80 mt-1 font-bold">Unconfirmed or failed payments</p>
             </div>
 
-            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100/50 border border-indigo-200/60 p-6 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100/50 border border-indigo-200/60 p-6 rounded-xl shadow-sm">
               <span className="text-xs font-black text-indigo-800 uppercase tracking-widest">Unique Contributors</span>
               <h3 className="text-2xl font-black text-slate-900 mt-2">
                 <strong>{summary?.unique_donors_count || 0}</strong>
@@ -365,7 +365,7 @@ export function AdminDonations() {
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Project Distribution breakdown list */}
-            <div className="lg:col-span-3 bg-white border border-slate-100 p-6 rounded-3xl shadow-sm">
+            <div className="lg:col-span-3 bg-white border border-slate-100 p-6 rounded-xl shadow-sm">
               <div className="flex items-center justify-between mb-6 border-b border-slate-50 pb-4">
                 <h4 className="font-extrabold text-slate-800 text-lg flex items-center gap-2">
                   <FolderHeart className="w-5 h-5 text-brand-teal" />
@@ -402,7 +402,7 @@ export function AdminDonations() {
             </div>
 
             {/* Top Donors leaderboard */}
-            <div className="lg:col-span-2 bg-white border border-slate-100 p-6 rounded-3xl shadow-sm">
+            <div className="lg:col-span-2 bg-white border border-slate-100 p-6 rounded-xl shadow-sm">
               <div className="flex items-center justify-between mb-6 border-b border-slate-50 pb-4">
                 <h4 className="font-extrabold text-slate-800 text-lg flex items-center gap-2">
                   <Users className="w-5 h-5 text-indigo-600" />
@@ -470,7 +470,7 @@ export function AdminDonations() {
           </div>
 
           {/* Audit List Table */}
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left border-collapse min-w-[1000px]">
                 <thead>
@@ -629,7 +629,7 @@ export function AdminDonations() {
                 : (nameParts[0]?.[0] || 'D').toUpperCase();
 
               return (
-                <div key={idx} className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                <div key={idx} className="bg-white border border-slate-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                   <div className="flex gap-4">
                     <div className="w-12 h-12 bg-indigo-50 text-indigo-700 rounded-2xl flex items-center justify-center font-bold text-sm shrink-0">
                       {initials}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
-import { MapPin, Mail, Phone, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { MapPin, Mail, Phone, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { sendContactEmail } from '../lib/sendContactEmail';
 
 interface ContactProps {
@@ -16,16 +16,62 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
     subject: '',
     message: '',
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
+  const validateField = (name: string, value: string) => {
+    let error = '';
+    if (name === 'name' && !value.trim()) {
+      error = isUrdu ? 'نام درکار ہے' : 'Name is required';
+    } else if (name === 'email') {
+      if (!value.trim()) {
+        error = isUrdu ? 'ای میل درکار ہے' : 'Email is required';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        error = isUrdu ? 'درست ای میل درج کریں' : 'Please enter a valid email';
+      }
+    } else if (name === 'subject' && !value) {
+      error = isUrdu ? 'موضوع منتخب کریں' : 'Please select a subject';
+    } else if (name === 'message' && !value.trim()) {
+      error = isUrdu ? 'پیغام درکار ہے' : 'Message is required';
+    }
+    
+    setErrors(prev => ({ ...prev, [name]: error }));
+    return !error;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (touched[name]) {
+      validateField(name, value);
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+    validateField(name, value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate all fields on submit
+    const keys = Object.keys(formData) as Array<keyof typeof formData>;
+    let isValid = true;
+    keys.forEach(key => {
+      setTouched(prev => ({ ...prev, [key]: true }));
+      if (!validateField(key, formData[key as keyof typeof formData])) {
+        isValid = false;
+      }
+    });
+
+    if (!isValid) return;
+
     setIsSubmitting(true);
     setSubmitError('');
 
@@ -42,6 +88,8 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
       }
       setIsSubmitted(true);
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      setTouched({});
+      setErrors({});
     } catch {
       setSubmitError(isUrdu ? 'پیغام بھیجنے میں ناکامی۔ دوبارہ کوشش کریں۔' : 'Failed to send message. Please try again.');
     } finally {
@@ -82,12 +130,35 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
     },
   ];
 
+  const inputClasses = (name: string) => `w-full px-4 py-3 rounded-xl border bg-brand-gray focus:outline-none transition-all text-sm ${
+    errors[name] && touched[name]
+      ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+      : 'border-brand-navy/10 focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20'
+  }`;
+
+  const renderError = (name: string) => {
+    if (errors[name] && touched[name]) {
+      return (
+        <motion.p 
+          initial={{ opacity: 0, height: 0 }} 
+          animate={{ opacity: 1, height: 'auto' }} 
+          className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5"
+        >
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+          <span>{errors[name]}</span>
+        </motion.p>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
-      <Helmet>
-        <title>{isUrdu ? 'رابطہ کریں | IOCA' : 'Contact Us | IOCA'}</title>
-        <meta name="description" content="Get in touch with IOCA. Visit our office in Lahore, call us, or send us an email. We'd love to hear from you." />
-      </Helmet>
+      <SEO 
+        title={isUrdu ? 'رابطہ کریں | IOCA' : 'Contact Us | IOCA'}
+        description="Get in touch with IOCA. Visit our office in Lahore, call us, or send us an email. We'd love to hear from you."
+        isUrdu={isUrdu}
+      />
 
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-16">
@@ -141,7 +212,7 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
 
             {/* Contact Form */}
             <motion.div
-              className="lg:col-span-3 bg-brand-white rounded-[2rem] p-6 md:p-10 shadow-md"
+              className="lg:col-span-3 bg-brand-white rounded-xl p-6 md:p-10 shadow-md"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -165,7 +236,7 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="contact-name" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
@@ -178,9 +249,11 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                         required
                         value={formData.name}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         placeholder={isUrdu ? 'آپ کا نام' : 'Your name'}
-                        className="w-full px-4 py-3 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-sm"
+                        className={inputClasses('name')}
                       />
+                      {renderError('name')}
                     </div>
                     <div>
                       <label htmlFor="contact-email" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
@@ -193,9 +266,11 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                         required
                         value={formData.email}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         placeholder={isUrdu ? 'آپ کا ای میل' : 'Your email'}
-                        className="w-full px-4 py-3 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-sm"
+                        className={inputClasses('email')}
                       />
+                      {renderError('email')}
                     </div>
                   </div>
 
@@ -210,9 +285,11 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                         type="tel"
                         value={formData.phone}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         placeholder={isUrdu ? 'فون نمبر' : 'Phone number'}
-                        className="w-full px-4 py-3 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-sm"
+                        className={inputClasses('phone')}
                       />
+                      {renderError('phone')}
                     </div>
                     <div>
                       <label htmlFor="contact-subject" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
@@ -224,7 +301,8 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                         required
                         value={formData.subject}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-sm"
+                        onBlur={handleBlur}
+                        className={inputClasses('subject')}
                       >
                         <option value="">{isUrdu ? 'موضوع منتخب کریں' : 'Select a subject'}</option>
                         <option value="general">{isUrdu ? 'عمومی انکوائری' : 'General Inquiry'}</option>
@@ -233,6 +311,7 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                         <option value="volunteer">{isUrdu ? 'رضاکارانہ خدمات' : 'Volunteering'}</option>
                         <option value="media">{isUrdu ? 'میڈیا' : 'Media Inquiry'}</option>
                       </select>
+                      {renderError('subject')}
                     </div>
                   </div>
 
@@ -247,13 +326,18 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                       rows={5}
                       value={formData.message}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       placeholder={isUrdu ? 'آپ کا پیغام یہاں لکھیں...' : 'Write your message here...'}
-                      className="w-full px-4 py-3 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-sm resize-none"
+                      className={`${inputClasses('message')} resize-none`}
                     />
+                    {renderError('message')}
                   </div>
 
                   {submitError && (
-                    <p className="text-red-600 text-sm">{submitError}</p>
+                    <p className="text-red-600 text-sm flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      {submitError}
+                    </p>
                   )}
 
                   <button
@@ -273,7 +357,7 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
 
           {/* Map Placeholder */}
           <motion.div
-            className="mt-12 bg-brand-white rounded-[2rem] overflow-hidden shadow-md h-64 md:h-80 flex items-center justify-center border border-brand-navy/5"
+            className="mt-12 bg-brand-white rounded-xl overflow-hidden shadow-md h-64 md:h-80 flex items-center justify-center border border-brand-navy/5"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
