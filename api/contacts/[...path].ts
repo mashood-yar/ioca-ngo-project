@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
-import { supabase } from './_lib/supabase'
-import { ok, err } from './_lib/response'
-import { requireAdmin } from './_lib/auth'
-import { cors } from './_lib/cors'
-import { sendContactNotification } from './_lib/email'
+import { supabase } from '../_lib/supabase'
+import { ok, err } from '../_lib/response'
+import { requireAdmin } from '../_lib/auth'
+import { cors } from '../_lib/cors'
+import { sendContactNotification } from '../_lib/email'
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -20,13 +20,8 @@ const updateContactStatusSchema = z.object({
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
 
-  const pathVal = req.query.path
-  const segments = Array.isArray(pathVal)
-    ? pathVal
-    : typeof pathVal === 'string'
-      ? pathVal.split('/').filter(Boolean)
-      : []
-  const id = segments[0]
+  const segments = (req.query.path as string[]) ?? []
+  const id = segments[0] === 'index' ? undefined : segments[0]
 
   try {
     if (req.method === 'POST' && !id) {

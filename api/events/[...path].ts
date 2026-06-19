@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
-import { supabase } from './_lib/supabase'
-import { ok, err } from './_lib/response'
-import { requireAuth, requireAdmin } from './_lib/auth'
-import { cors } from './_lib/cors'
-import { processImageField } from './_lib/upload'
+import { supabase } from '../_lib/supabase'
+import { ok, err } from '../_lib/response'
+import { requireAuth, requireAdmin } from '../_lib/auth'
+import { cors } from '../_lib/cors'
+import { processImageField } from '../_lib/upload'
 
 const createEventSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -25,13 +25,8 @@ const updateEventSchema = z.object({
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
 
-  const pathVal = req.query.path
-  const segments = Array.isArray(pathVal)
-    ? pathVal
-    : typeof pathVal === 'string'
-      ? pathVal.split('/').filter(Boolean)
-      : []
-  const id = segments[0]
+  const segments = (req.query.path as string[]) ?? []
+  const id = segments[0] === 'index' ? undefined : segments[0]
   const action = segments[1]
 
   try {

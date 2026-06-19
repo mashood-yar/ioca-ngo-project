@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
-import { supabase } from './_lib/supabase'
-import { ok, err } from './_lib/response'
-import { getUser, requireAuth, requireAdmin } from './_lib/auth'
-import { cors } from './_lib/cors'
-import { sendDonationConfirmationEmail } from './_lib/email'
+import { supabase } from '../_lib/supabase'
+import { ok, err } from '../_lib/response'
+import { getUser, requireAuth, requireAdmin } from '../_lib/auth'
+import { cors } from '../_lib/cors'
+import { sendDonationConfirmationEmail } from '../_lib/email'
 
 const donationSchema = z.object({
   // Accept both camelCase and snake_case for maximum backwards compatibility
@@ -48,13 +48,8 @@ const uploadScreenshotSchema = z.object({
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
 
-  const pathVal = req.query.path
-  const segments = Array.isArray(pathVal)
-    ? pathVal
-    : typeof pathVal === 'string'
-      ? pathVal.split('/').filter(Boolean)
-      : []
-  const first = segments[0]
+  const segments = (req.query.path as string[]) ?? []
+  const first = segments[0] === 'index' ? undefined : segments[0]
 
   try {
     // 1. GET /api/donations/summary — Admin aggregated statistics
