@@ -48,7 +48,12 @@ const uploadScreenshotSchema = z.object({
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
 
-  const segments = (req.query.path as string[]) ?? []
+  const pathVal = req.query.path
+  const segments = Array.isArray(pathVal)
+    ? pathVal
+    : typeof pathVal === 'string'
+      ? pathVal.split('/').filter(Boolean)
+      : []
   const first = segments[0] === 'index' ? undefined : segments[0]
 
   try {
