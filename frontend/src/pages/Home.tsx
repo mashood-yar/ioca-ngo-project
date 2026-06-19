@@ -1,6 +1,7 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import ImpactBentoGrid from '../components/ImpactBentoGrid';
+import ImpactStoriesCarousel from '../components/ImpactStoriesCarousel';
 import TrustBar from '../components/TrustBar';
 import ProcessBlocks from '../components/ProcessBlocks';
 import CampaignCarousel from '../components/CampaignCarousel';
@@ -24,6 +25,7 @@ const Home: React.FC<HomeProps> = ({ isUrdu, onDonateClick }) => {
       <TrustBar isUrdu={isUrdu} />
       <CampaignCarousel isUrdu={isUrdu} onDonateClick={onDonateClick} />
       <ImpactBentoGrid isUrdu={isUrdu} />
+      <ImpactStoriesCarousel isUrdu={isUrdu} />
       <ProcessBlocks isUrdu={isUrdu} />
       <TestimonialGallery isUrdu={isUrdu} />
     </>
