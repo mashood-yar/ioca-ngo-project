@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Leaf } from 'lucide-react';
+
 import { hasSupabaseConfig } from '../lib/supabase';
 
 export function UserSignup() {
@@ -86,9 +86,7 @@ export function UserSignup() {
     <div className="min-h-screen bg-brand-gray flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-brand-teal/10 rounded-2xl flex items-center justify-center">
-            <Leaf className="w-8 h-8 text-brand-teal" />
-          </div>
+          <img src="/assets/logos/logo-icon-teal.webp" alt="IOCA Icon" className="w-16 h-16 object-contain drop-shadow-sm hover:scale-105 transition-transform" />
         </div>
         <h2 className="text-3xl font-bold text-brand-navy tracking-tight">
           Create an Account

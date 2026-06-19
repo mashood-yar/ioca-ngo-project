@@ -75,7 +75,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
 
                     {/* Program Stats */}
                     {prog.stats && (
-                      <div className="grid grid-cols-2 gap-2 mb-6 border-t border-brand-navy/10 pt-4">
+                      <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 sm:gap-2 mb-6 border-t border-brand-navy/10 pt-4">
                         <div>
                           <p className="text-xl md:text-2xl font-extrabold text-brand-teal">{prog.stats.beneficiaries.toLocaleString()}+</p>
                           <p className={`text-[10px] md:text-xs text-brand-navy/60 uppercase tracking-widest font-medium ${isUrdu ? 'font-urduBody' : ''}`}>

@@ -259,9 +259,10 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
             ) : (
               <Link 
                 to="/user/login" 
-                className="hidden md:flex items-center gap-2 font-bold text-brand-navy/80 hover:text-brand-teal transition-colors ml-1"
+                className="flex items-center justify-center min-h-[44px] min-w-[44px] md:min-w-0 md:min-h-0 md:gap-2 font-bold text-brand-navy/80 hover:text-brand-teal hover:bg-brand-navy/5 md:hover:bg-transparent rounded-full md:rounded-none transition-colors"
+                title={isUrdu ? 'لاگ ان' : 'Sign In'}
               >
-                <User className="w-5 h-5" />
+                <User className="w-5 h-5 md:w-5 md:h-5" />
                 <span className="sr-only lg:not-sr-only">{isUrdu ? 'لاگ ان' : 'Sign In'}</span>
               </Link>
             )}

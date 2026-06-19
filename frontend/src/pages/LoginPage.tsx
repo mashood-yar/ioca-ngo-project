@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { Leaf } from 'lucide-react';
+
 import { hasSupabaseConfig } from '../lib/supabase';
 
 export function LoginPage() {
@@ -27,9 +27,7 @@ export function LoginPage() {
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
-              <Leaf className="w-8 h-8 text-primary" />
-            </div>
+            <img src="/assets/logos/logo-icon-teal.webp" alt="IOCA Icon" className="w-16 h-16 object-contain drop-shadow-sm hover:scale-105 transition-transform" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
           <p className="text-gray-600 mb-6">
@@ -60,9 +58,7 @@ export function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
-            <Leaf className="w-8 h-8 text-primary" />
-          </div>
+          <img src="/assets/logos/logo-icon-teal.webp" alt="IOCA Icon" className="w-16 h-16 object-contain drop-shadow-sm hover:scale-105 transition-transform" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
           Admin Portal
