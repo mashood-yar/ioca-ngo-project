@@ -9,17 +9,17 @@ import { processImageField } from '../_lib/upload'
 const createEventSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
-  location: z.string().optional(),
-  eventDate: z.string().optional(),
-  imageUrl: z.string().optional(),
+  location: z.string().nullable().optional().or(z.literal('')),
+  eventDate: z.string().datetime().nullable().optional().or(z.literal('')),
+  imageUrl: z.string().url().nullable().optional().or(z.literal('')),
 })
 
 const updateEventSchema = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
-  location: z.string().optional(),
-  eventDate: z.string().optional(),
-  imageUrl: z.string().optional(),
+  title: z.string().optional().nullable().or(z.literal('')),
+  description: z.string().optional().nullable().or(z.literal('')),
+  location: z.string().optional().nullable().or(z.literal('')),
+  eventDate: z.string().datetime().optional().nullable().or(z.literal('')),
+  imageUrl: z.string().url().optional().nullable().or(z.literal('')),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -76,9 +76,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .insert({
           title,
           description,
-          location,
-          event_date: eventDate,
-          image_url: await processImageField(imageUrl),
+          location: location && location !== '' ? location : null,
+          event_date: eventDate && eventDate !== '' ? eventDate : null,
+          image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
         })
         .select()
         .single()
@@ -119,11 +119,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { title, description, location, eventDate, imageUrl } = updateEventSchema.parse(req.body)
 
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
-      if (title !== undefined) updates.title = title
-      if (description !== undefined) updates.description = description
-      if (location !== undefined) updates.location = location
-      if (eventDate !== undefined) updates.event_date = eventDate
-      if (imageUrl !== undefined) updates.image_url = await processImageField(imageUrl)
+      if (title !== undefined && title !== null) updates.title = title
+      if (description !== undefined && description !== null) updates.description = description
+      if (location !== undefined) updates.location = location && location !== '' ? location : null
+      if (eventDate !== undefined) updates.event_date = eventDate && eventDate !== '' ? eventDate : null
+      if (imageUrl !== undefined) updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null
 
       const { data: event, error } = await supabase
         .from('events')
@@ -166,10 +166,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return err(res, 'Method not allowed', 405)
   } catch (e) {
-    console.error('Events error:', e)
+    const errorMsg = e instanceof Error ? e.message : JSON.stringify(e)
+    console.error('Events error:', errorMsg)
     if (e instanceof z.ZodError) {
       return err(res, e.errors[0]?.message || 'Validation error', 400)
     }
-    return err(res, e instanceof Error ? e.message : 'Internal server error', 500)
+    return err(res, errorMsg, 500)
   }
 }

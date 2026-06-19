@@ -338,10 +338,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return err(res, 'Method not allowed', 405)
   } catch (e) {
-    console.error('Donations error:', e)
+    const errorMsg = e instanceof Error ? e.message : JSON.stringify(e)
+    console.error('Donations error:', errorMsg)
     if (e instanceof z.ZodError) {
       return err(res, e.errors[0]?.message || 'Validation error', 400)
     }
-    return err(res, e instanceof Error ? e.message : 'Internal server error', 500)
+    return err(res, errorMsg, 500)
   }
 }

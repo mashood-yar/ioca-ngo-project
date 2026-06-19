@@ -9,15 +9,15 @@ import { processImageField } from '../_lib/upload'
 const createProjectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
-  status: z.string().optional(),
-  imageUrl: z.string().optional(),
+  status: z.string().optional().nullable().or(z.literal('')),
+  imageUrl: z.string().url().nullable().optional().or(z.literal('')),
 })
 
 const updateProjectSchema = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
-  status: z.string().optional(),
-  imageUrl: z.string().optional(),
+  title: z.string().optional().nullable().or(z.literal('')),
+  description: z.string().optional().nullable().or(z.literal('')),
+  status: z.string().optional().nullable().or(z.literal('')),
+  imageUrl: z.string().url().optional().nullable().or(z.literal('')),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -73,8 +73,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .insert({
           title,
           description,
-          status,
-          image_url: await processImageField(imageUrl),
+          status: status && status !== '' ? status : 'ongoing',
+          image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
         })
         .select()
         .single()
@@ -91,10 +91,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { title, description, status, imageUrl } = updateProjectSchema.parse(req.body)
 
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
-      if (title !== undefined) updates.title = title
-      if (description !== undefined) updates.description = description
-      if (status !== undefined) updates.status = status
-      if (imageUrl !== undefined) updates.image_url = await processImageField(imageUrl)
+      if (title !== undefined && title !== null) updates.title = title
+      if (description !== undefined && description !== null) updates.description = description
+      if (status !== undefined) updates.status = status && status !== '' ? status : 'ongoing'
+      if (imageUrl !== undefined) updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null
 
       const { data: project, error } = await supabase
         .from('projects')
@@ -123,10 +123,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return err(res, 'Method not allowed', 405)
   } catch (e) {
-    console.error('Projects error:', e)
+    const errorMsg = e instanceof Error ? e.message : JSON.stringify(e)
+    console.error('Projects error:', errorMsg)
     if (e instanceof z.ZodError) {
       return err(res, e.errors[0]?.message || 'Validation error', 400)
     }
-    return err(res, e instanceof Error ? e.message : 'Internal server error', 500)
+    return err(res, errorMsg, 500)
   }
 }

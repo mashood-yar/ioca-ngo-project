@@ -9,13 +9,13 @@ import { processImageField } from '../_lib/upload'
 const createNewsSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.string().min(1, 'Content is required'),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().url().nullable().optional().or(z.literal('')),
 })
 
 const updateNewsSchema = z.object({
-  title: z.string().optional(),
-  content: z.string().optional(),
-  imageUrl: z.string().optional(),
+  title: z.string().optional().nullable().or(z.literal('')),
+  content: z.string().optional().nullable().or(z.literal('')),
+  imageUrl: z.string().url().optional().nullable().or(z.literal('')),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -71,7 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .insert({
           title,
           content,
-          image_url: await processImageField(imageUrl),
+          image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
           published_at: new Date().toISOString(),
         })
         .select()
@@ -91,9 +91,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const updates: Record<string, any> = {
         updated_at: new Date().toISOString()
       }
-      if (title !== undefined) updates.title = title
-      if (content !== undefined) updates.content = content
-      if (imageUrl !== undefined) updates.image_url = await processImageField(imageUrl)
+      if (title !== undefined && title !== null) updates.title = title
+      if (content !== undefined && content !== null) updates.content = content
+      if (imageUrl !== undefined) updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null
 
       const { data: news, error } = await supabase
         .from('news')
@@ -122,10 +122,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return err(res, 'Method not allowed', 405)
   } catch (e) {
-    console.error('News error:', e)
+    const errorMsg = e instanceof Error ? e.message : JSON.stringify(e)
+    console.error('News error:', errorMsg)
     if (e instanceof z.ZodError) {
       return err(res, e.errors[0]?.message || 'Validation error', 400)
     }
-    return err(res, e instanceof Error ? e.message : 'Internal server error', 500)
+    return err(res, errorMsg, 500)
   }
 }

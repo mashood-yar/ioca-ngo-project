@@ -24,9 +24,13 @@ const createApplicationSchema = z.object({
 })
 
 const uploadSchema = z.object({
-  image: z.string().startsWith('data:image/'),
-  folder: z.string().optional(),
-})
+  file: z.string().startsWith('data:image/').optional().nullable(),
+  image: z.string().startsWith('data:image/').optional().nullable(),
+  folder: z.string().optional().nullable(),
+}).refine(
+  (obj) => obj.file || obj.image,
+  'Either file or image must be provided'
+)
 
 const createZoneSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -72,7 +76,12 @@ function toDbRow(d: Partial<z.infer<typeof createMemberSchema>>) {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
 
-  const segments = (req.query.path as string[]) ?? []
+  const pathVal = req.query.path
+  const segments = Array.isArray(pathVal)
+    ? pathVal
+    : typeof pathVal === 'string'
+      ? pathVal.split('/').filter(Boolean)
+      : []
   const resource = segments[0]
   const subPath = segments[1]
 
@@ -184,9 +193,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const user = await requireAdmin(req, res)
         if (!user) return
 
-        const { image, folder } = uploadSchema.parse(req.body)
+        const { file, image, folder } = uploadSchema.parse(req.body)
+        const base64Str = file || image || ''
 
-        const { url, publicId } = await uploadBase64Image(image, folder)
+        const { url, publicId } = await uploadBase64Image(base64Str, folder || undefined)
         return ok(res, { url, publicId }, 201)
       }
     }
@@ -533,10 +543,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return err(res, 'Method not allowed', 405)
   } catch (e) {
-    console.error('Misc resource error:', e)
+    const errorMsg = e instanceof Error ? e.message : JSON.stringify(e)
+    console.error('Misc resource error:', errorMsg)
     if (e instanceof z.ZodError) {
       return err(res, e.errors[0]?.message || 'Validation error', 400)
     }
-    return err(res, e instanceof Error ? e.message : 'Internal server error', 500)
+    return err(res, errorMsg, 500)
   }
 }
