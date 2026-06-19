@@ -24,7 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
     setIsProgramsOpen(false);
   };
 
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, signOut, signInWithGoogle } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -345,9 +345,41 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
                 <Link to="/contact" onClick={closeMenu} className={`py-2 border-b border-brand-navy/5 ${isActive('/contact') ? 'text-brand-gold font-bold' : ''}`}>
                   {isUrdu ? 'رابطہ کریں' : 'Contact'}
                 </Link>
-                <Link to="/volunteer" onClick={closeMenu} className="py-2 font-bold text-brand-teal">
+                <Link to="/volunteer" onClick={closeMenu} className="py-2 border-b border-brand-navy/5 font-bold text-brand-teal">
                   {isUrdu ? 'رضاکار بنیں' : 'Volunteer'}
                 </Link>
+
+                {!user ? (
+                  <>
+                    <Link to="/user/login" onClick={closeMenu} className="py-2 border-b border-brand-navy/5 font-semibold text-brand-teal">
+                      {isUrdu ? 'لاگ ان کریں' : 'Sign In'}
+                    </Link>
+                    <Link to="/user/signup" onClick={closeMenu} className="py-2 border-b border-brand-navy/5 font-semibold text-brand-teal">
+                      {isUrdu ? 'سائن اپ کریں' : 'Sign Up'}
+                    </Link>
+                    <button
+                      onClick={() => { closeMenu(); signInWithGoogle(); }}
+                      className="py-2 mt-2 border-2 border-brand-teal text-brand-teal rounded-xl text-center font-bold min-h-[48px] flex items-center justify-center gap-2"
+                    >
+                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" className="w-5 h-5" />
+                      {isUrdu ? 'گوگل کے ساتھ جاری رکھیں' : 'Continue with Google'}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to={isAdmin ? '/admin/dashboard' : '/dashboard'} onClick={closeMenu} className="py-2 border-b border-brand-navy/5 font-semibold text-brand-teal flex items-center gap-2">
+                      <LayoutDashboard className="w-4 h-4" />
+                      {isUrdu ? 'ڈیش بورڈ' : 'Dashboard'}
+                    </Link>
+                    <button
+                      onClick={() => { closeMenu(); handleSignOut(); }}
+                      className="py-2 text-red-600 font-semibold text-left flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      {isUrdu ? 'لاگ آؤٹ' : 'Sign Out'}
+                    </button>
+                  </>
+                )}
 
                 {/* Mobile Donate - calls onDonateClick instead of navigating */}
                 <button

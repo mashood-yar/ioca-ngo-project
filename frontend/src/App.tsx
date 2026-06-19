@@ -6,6 +6,7 @@ import DonationModal from './components/DonationModal';
 import { PageLoadingSpinner } from './components/PageLoadingSpinner';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { ToastContainer } from './components/ui/ToastContainer';
 
 // Lazy-loaded pages for code splitting
 const Home = lazy(() => import('./pages/Home'));
@@ -97,6 +98,7 @@ function App() {
   if (isAdminRoute) {
     return (
       <>
+        <ToastContainer />
         <ScrollToTop />
         <Suspense fallback={<PageLoader />}>
           <Routes>
@@ -120,6 +122,7 @@ function App() {
 
   return (
     <div className={`min-h-screen bg-brand-gray text-brand-navy selection:bg-brand-gold selection:text-white pb-[72px] md:pb-0 ${isUrdu ? 'font-urduBody' : 'font-sans'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
+      <ToastContainer />
       <ScrollToTop />
       <Navbar isUrdu={isUrdu} setIsUrdu={setIsUrdu} onDonateClick={() => handleDonateClick(null)} />
 

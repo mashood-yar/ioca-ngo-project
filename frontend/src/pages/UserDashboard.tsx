@@ -644,21 +644,21 @@ END:VCALENDAR`;
   const activeZone = member?.zone;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-brand-gray flex flex-col md:flex-row">
       {/* --- Sidebar Navigation --- */}
-      <aside className="w-full md:w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col">
+      <aside className="w-full md:w-64 bg-white border-r border-brand-navy/10 flex-shrink-0 flex flex-col">
         {/* User Card */}
-        <div className="p-6 border-b border-slate-100 flex items-center gap-4">
+        <div className="p-6 border-b border-brand-navy/5 flex items-center gap-4">
           {avatarUrl ? (
-            <img src={optimizeImage(avatarUrl, { width: 100 })} alt={fullName} className="w-11 h-11 rounded-full object-cover shadow-sm border border-slate-100" width={44} height={44} loading="lazy" decoding="async" />
+            <img src={optimizeImage(avatarUrl, { width: 100 })} alt={fullName} className="w-11 h-11 rounded-full object-cover shadow-sm border border-brand-navy/5" width={44} height={44} loading="lazy" decoding="async" />
           ) : (
-            <div className="w-11 h-11 rounded-full bg-indigo-50 text-indigo-700 font-bold flex items-center justify-center shadow-inner">
+            <div className="w-11 h-11 rounded-full bg-brand-teal/10 text-brand-teal font-bold flex items-center justify-center shadow-inner">
               {initials}
             </div>
           )}
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold text-slate-800 truncate">{fullName}</h2>
-            <p className="text-xs text-slate-500 truncate capitalize font-medium">{profile?.role || 'Member'}</p>
+            <h2 className="text-sm font-semibold text-brand-navy/80 truncate">{fullName}</h2>
+            <p className="text-xs text-brand-navy/50 truncate capitalize font-medium">{profile?.role || 'Member'}</p>
           </div>
         </div>
 
@@ -680,11 +680,11 @@ END:VCALENDAR`;
                 onClick={() => setActiveTab(item.id as Tab)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? 'bg-indigo-50/80 text-indigo-700 shadow-sm border-l-4 border-indigo-600'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-brand-teal/10/80 text-brand-teal shadow-sm border-l-4 border-brand-teal'
+                    : 'text-brand-navy/60 hover:bg-brand-gray hover:text-brand-navy'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                <Icon className={`w-5 h-5 ${isActive ? 'text-brand-teal' : 'text-brand-navy/40'}`} />
                 {item.label}
               </button>
             );
@@ -692,11 +692,11 @@ END:VCALENDAR`;
         </nav>
 
         {/* Refresh footer */}
-        <div className="p-4 border-t border-slate-100 flex gap-2">
+        <div className="p-4 border-t border-brand-navy/5 flex gap-2">
           <button
             onClick={fetchDashboardData}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 border border-brand-navy/10 rounded-lg text-xs font-medium text-brand-navy/60 hover:bg-brand-gray hover:text-brand-navy transition-colors"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             Sync Dashboard
@@ -708,20 +708,20 @@ END:VCALENDAR`;
       <main className="flex-1 p-6 md:p-8 max-w-5xl mx-auto w-full overflow-hidden space-y-6">
         
         {/* Prominent Assignment Card */}
-        <div className="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white border border-brand-navy/10/80 rounded-3xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 bg-brand-teal/10 text-brand-teal rounded-2xl flex items-center justify-center flex-shrink-0">
               <Globe className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Current Assignment</span>
+              <span className="text-[10px] font-bold text-brand-navy/40 uppercase tracking-wider">Current Assignment</span>
               <div className="flex flex-wrap items-center gap-2 mt-0.5">
-                <h4 className="text-sm font-extrabold text-slate-800">
+                <h4 className="text-sm font-extrabold text-brand-navy/80">
                   {activeZone ? activeZone.name : 'Unassigned Project'}
                 </h4>
                 {activeZone && (
                   <>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full uppercase">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-brand-teal/10 text-brand-teal px-2.5 py-1 rounded-full uppercase">
                       <MapPin className="w-3 h-3" />
                       {activeZone.city} Zone
                     </span>
@@ -734,13 +734,13 @@ END:VCALENDAR`;
           <div className="flex items-center gap-2 self-stretch md:self-auto justify-end">
             <button
               onClick={() => setActiveTab('zones')}
-              className="flex-1 md:flex-initial text-center py-2.5 px-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5"
+              className="flex-1 md:flex-initial text-center py-2.5 px-4 bg-brand-gray hover:bg-brand-navy/5 border border-brand-navy/10 text-brand-navy/70 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5"
             >
               Switch Project
             </button>
             <button
               onClick={() => setActiveTab('donations')}
-              className="flex-1 md:flex-initial text-center py-2.5 px-5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-md shadow-emerald-100 flex items-center justify-center gap-1.5"
+              className="flex-1 md:flex-initial text-center py-2.5 px-5 bg-brand-teal hover:bg-brand-teal text-white font-bold rounded-xl text-xs transition shadow-md shadow-brand-teal/10 flex items-center justify-center gap-1.5"
             >
               Donate Now
             </button>
@@ -763,7 +763,7 @@ END:VCALENDAR`;
             {activeTab === 'overview' && (
               <>
                 {/* Greeting Banner */}
-                <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-indigo-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="bg-gradient-to-r from-brand-teal to-brand-navy rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-brand-teal/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div className="space-y-1">
                     <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Assalam-o-Alaikum, {fullName}!</h1>
                     <p className="text-indigo-100/90 text-sm md:text-base font-medium">Thank you for advancement of community programs with IOCA.</p>
@@ -785,10 +785,10 @@ END:VCALENDAR`;
                     { title: 'Registered Events', val: totalRegistrations, sub: 'Upcoming / Attended', color: 'amber' },
                     { title: 'Active Project', val: activeZone?.name || 'Unassigned', sub: activeZone ? `${activeZone.city}` : 'Choose Zone', color: 'teal' }
                   ].map((stat, i) => (
-                    <div key={i} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{stat.title}</p>
-                      <h3 className="text-xl font-bold text-slate-800 capitalize truncate">{stat.val}</h3>
-                      <p className="text-xs text-slate-400 mt-1 font-medium">{stat.sub}</p>
+                    <div key={i} className="bg-white border border-brand-navy/5 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                      <p className="text-xs font-semibold text-brand-navy/50 uppercase tracking-wider mb-2">{stat.title}</p>
+                      <h3 className="text-xl font-bold text-brand-navy/80 capitalize truncate">{stat.val}</h3>
+                      <p className="text-xs text-brand-navy/40 mt-1 font-medium">{stat.sub}</p>
                     </div>
                   ))}
                 </div>
@@ -796,22 +796,22 @@ END:VCALENDAR`;
                 {/* Quick Shortcuts */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Shortcut List */}
-                  <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-                    <h3 className="text-base font-bold text-slate-800 mb-4">Quick Shortcuts</h3>
+                  <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm">
+                    <h3 className="text-base font-bold text-brand-navy/80 mb-4">Quick Shortcuts</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { title: 'Make Donation', desc: 'Process payment', target: 'donations', color: 'bg-emerald-50 text-emerald-700' },
-                        { title: 'Browse Events', desc: 'Book registrations', target: 'events', color: 'bg-amber-50 text-amber-700' },
-                        { title: 'Membership Status', desc: 'Upgrade / Apply', target: 'membership', color: 'bg-indigo-50 text-indigo-700' },
+                        { title: 'Make Donation', desc: 'Process payment', target: 'donations', color: 'bg-brand-teal/10 text-brand-teal' },
+                        { title: 'Browse Events', desc: 'Book registrations', target: 'events', color: 'bg-brand-gold/10 text-brand-gold' },
+                        { title: 'Membership Status', desc: 'Upgrade / Apply', target: 'membership', color: 'bg-brand-teal/10 text-brand-teal' },
                         { title: 'Switch Project', desc: 'Switch local zone', target: 'zones', color: 'bg-teal-50 text-teal-700' }
                       ].map((item, idx) => (
                         <button
                           key={idx}
                           onClick={() => setActiveTab(item.target as Tab)}
-                          className="flex flex-col items-start p-4 rounded-2xl border border-slate-100 hover:border-indigo-100 hover:bg-slate-50/50 text-left transition-all duration-200"
+                          className="flex flex-col items-start p-4 rounded-2xl border border-brand-navy/5 hover:border-indigo-100 hover:bg-brand-gray/50 text-left transition-all duration-200"
                         >
                           <span className={`text-xs px-2 py-0.5 rounded-md font-bold ${item.color} mb-2`}>{item.title}</span>
-                          <span className="text-xs text-slate-400 font-medium">{item.desc}</span>
+                          <span className="text-xs text-brand-navy/40 font-medium">{item.desc}</span>
                         </button>
                       ))}
                     </div>
@@ -820,7 +820,7 @@ END:VCALENDAR`;
                   {/* Info block */}
                   <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 text-white shadow-sm flex flex-col justify-between">
                     <div className="space-y-3">
-                      <div className="w-10 h-10 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400">
+                      <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                         <Info className="w-5 h-5" />
                       </div>
                       <h4 className="font-bold text-lg">Did you know?</h4>
@@ -831,7 +831,7 @@ END:VCALENDAR`;
                     {membershipStatus === 'none' && (
                       <button 
                         onClick={() => setActiveTab('membership')}
-                        className="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-sm text-center"
+                        className="mt-6 w-full bg-brand-teal hover:bg-brand-teal text-white font-semibold py-2.5 rounded-xl transition text-sm text-center"
                       >
                         Become a Member Today
                       </button>
@@ -845,15 +845,15 @@ END:VCALENDAR`;
             {/* TABS 2: PROFILE INFORMATION */}
             {/* ============================================================== */}
             {activeTab === 'profile' && (
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm">
-                <div className="flex justify-between items-center pb-6 border-b border-slate-100 mb-6">
+              <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 md:p-8 shadow-sm">
+                <div className="flex justify-between items-center pb-6 border-b border-brand-navy/5 mb-6">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-800">Profile Information</h2>
-                    <p className="text-sm text-slate-500 mt-1">Manage your personal and contact details linked to your account.</p>
+                    <h2 className="text-lg font-bold text-brand-navy/80">Profile Information</h2>
+                    <p className="text-sm text-brand-navy/50 mt-1">Manage your personal and contact details linked to your account.</p>
                   </div>
                   <button
                     onClick={openEditModal}
-                    className="flex items-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-5 py-2.5 rounded-xl text-sm transition"
+                    className="flex items-center gap-2 bg-brand-teal/10 hover:bg-indigo-100 text-brand-teal font-semibold px-5 py-2.5 rounded-xl text-sm transition"
                   >
                     <Edit2 className="w-4 h-4" />
                     Modify Details
@@ -862,17 +862,17 @@ END:VCALENDAR`;
 
                 <div className="flex flex-col md:flex-row gap-8 items-start">
                   {/* Photo details */}
-                  <div className="w-full md:w-1/3 flex flex-col items-center p-6 bg-slate-50/50 rounded-2xl border border-slate-100 text-center">
+                  <div className="w-full md:w-1/3 flex flex-col items-center p-6 bg-brand-gray/50 rounded-2xl border border-brand-navy/5 text-center">
                     {avatarUrl ? (
                       <img src={optimizeImage(avatarUrl, { width: 200 })} alt={fullName} className="w-24 h-24 rounded-full object-cover shadow-md border-2 border-white mb-4" width={96} height={96} loading="lazy" decoding="async" />
                     ) : (
-                      <div className="w-24 h-24 rounded-full bg-indigo-100 text-indigo-700 font-bold text-3xl flex items-center justify-center shadow-inner mb-4">
+                      <div className="w-24 h-24 rounded-full bg-indigo-100 text-brand-teal font-bold text-3xl flex items-center justify-center shadow-inner mb-4">
                         {initials}
                       </div>
                     )}
-                    <h3 className="font-bold text-slate-800 text-base">{fullName}</h3>
-                    <p className="text-xs text-slate-400 mt-1">{email}</p>
-                    {joinedAt && <p className="text-xs text-slate-400 mt-2 font-medium bg-white px-3 py-1 rounded-full border border-slate-100">Member since {joinedAt}</p>}
+                    <h3 className="font-bold text-brand-navy/80 text-base">{fullName}</h3>
+                    <p className="text-xs text-brand-navy/40 mt-1">{email}</p>
+                    {joinedAt && <p className="text-xs text-brand-navy/40 mt-2 font-medium bg-white px-3 py-1 rounded-full border border-brand-navy/5">Member since {joinedAt}</p>}
                   </div>
 
                   {/* Fields list */}
@@ -887,10 +887,10 @@ END:VCALENDAR`;
                       { label: 'Local Project', val: activeZone ? `${activeZone.name} (${activeZone.city})` : 'Not assigned' }
                     ].map((f, i) => (
                       <div key={i} className={`space-y-1 ${f.span ? 'md:col-span-2' : ''}`}>
-                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{f.label}</span>
-                        <div className="bg-slate-50/50 border border-slate-100 px-4 py-3 rounded-xl font-medium text-slate-700 min-h-[44px] flex items-center justify-between">
+                        <span className="text-xs font-semibold text-brand-navy/40 uppercase tracking-wider">{f.label}</span>
+                        <div className="bg-brand-gray/50 border border-brand-navy/5 px-4 py-3 rounded-xl font-medium text-brand-navy/70 min-h-[44px] flex items-center justify-between">
                           <span>{f.val}</span>
-                          {f.note && <span className="text-[10px] bg-slate-200 text-slate-500 font-bold px-1.5 py-0.5 rounded uppercase">{f.note}</span>}
+                          {f.note && <span className="text-[10px] bg-brand-navy/10 text-brand-navy/50 font-bold px-1.5 py-0.5 rounded uppercase">{f.note}</span>}
                         </div>
                       </div>
                     ))}
@@ -906,10 +906,10 @@ END:VCALENDAR`;
               <>
                 {/* NOT a member -> Application Form */}
                 {membershipStatus === 'none' && (
-                  <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm">
-                    <div className="pb-6 border-b border-slate-100 mb-6">
-                      <h2 className="text-lg font-bold text-slate-800">Apply for Membership</h2>
-                      <p className="text-sm text-slate-500 mt-1">Fill in the fields below to submit your official membership request to our admin panel.</p>
+                  <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 md:p-8 shadow-sm">
+                    <div className="pb-6 border-b border-brand-navy/5 mb-6">
+                      <h2 className="text-lg font-bold text-brand-navy/80">Apply for Membership</h2>
+                      <p className="text-sm text-brand-navy/50 mt-1">Fill in the fields below to submit your official membership request to our admin panel.</p>
                     </div>
 
                     {memberSuccessMsg ? (
@@ -917,12 +917,12 @@ END:VCALENDAR`;
                         <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
                           <Check className="w-8 h-8" />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-800">Application Submitted!</h3>
-                        <p className="text-sm text-slate-500">Your membership request is currently pending admin review. You can track this using your Unique Application ID:</p>
-                        <div className="bg-slate-100 border border-slate-200 py-3 px-4 rounded-xl font-mono text-sm font-bold text-slate-700 select-all">
+                        <h3 className="text-xl font-bold text-brand-navy/80">Application Submitted!</h3>
+                        <p className="text-sm text-brand-navy/50">Your membership request is currently pending admin review. You can track this using your Unique Application ID:</p>
+                        <div className="bg-brand-navy/5 border border-brand-navy/10 py-3 px-4 rounded-xl font-mono text-sm font-bold text-brand-navy/70 select-all">
                           {memberSuccessMsg}
                         </div>
-                        <p className="text-xs text-slate-400">Review usually takes 2–3 business days. You will be notified via email.</p>
+                        <p className="text-xs text-brand-navy/40">Review usually takes 2–3 business days. You will be notified via email.</p>
                       </div>
                     ) : (
                       <form onSubmit={handleApplyMembership} className="space-y-6">
@@ -934,65 +934,65 @@ END:VCALENDAR`;
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-1.5">Full Name *</label>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Full Name *</label>
                             <input
                               type="text"
                               required
-                              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
                               value={memberForm.fullName}
                               onChange={e => setMemberForm(prev => ({ ...prev, fullName: e.target.value }))}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-1.5">Phone *</label>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Phone *</label>
                             <input
                               type="tel"
                               required
                               placeholder="+92 XXX XXXXXXX"
-                              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
                               value={memberForm.phone}
                               onChange={e => setMemberForm(prev => ({ ...prev, phone: e.target.value }))}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-1.5">CNIC Number *</label>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">CNIC Number *</label>
                             <input
                               type="text"
                               required
                               placeholder="XXXXX-XXXXXXX-X"
-                              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
                               value={memberForm.cnic}
                               onChange={e => setMemberForm(prev => ({ ...prev, cnic: e.target.value }))}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-1.5">Occupation</label>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Occupation</label>
                             <input
                               type="text"
-                              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
                               value={memberForm.occupation}
                               onChange={e => setMemberForm(prev => ({ ...prev, occupation: e.target.value }))}
                             />
                           </div>
 
                           <div className="md:col-span-2">
-                            <label className="block text-slate-700 font-semibold mb-1.5">Home Address</label>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Home Address</label>
                             <input
                               type="text"
-                              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
                               value={memberForm.address}
                               onChange={e => setMemberForm(prev => ({ ...prev, address: e.target.value }))}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-1.5">Choose Project / Zone *</label>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Choose Project / Zone *</label>
                             <select
                               required
-                              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition bg-white"
                               value={memberForm.zoneId}
                               onChange={e => setMemberForm(prev => ({ ...prev, zoneId: e.target.value }))}
                             >
@@ -1004,10 +1004,10 @@ END:VCALENDAR`;
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-1.5">Select Membership Tier *</label>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Select Membership Tier *</label>
                             <select
                               required
-                              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition bg-white"
                               value={memberForm.tierId}
                               onChange={e => setMemberForm(prev => ({ ...prev, tierId: e.target.value }))}
                             >
@@ -1019,10 +1019,10 @@ END:VCALENDAR`;
                           </div>
 
                           <div className="md:col-span-2">
-                            <label className="block text-slate-700 font-semibold mb-1.5">Motivation (Why do you want to join IOCA?)</label>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Motivation (Why do you want to join IOCA?)</label>
                             <textarea
                               rows={3}
-                              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
                               value={memberForm.motivation}
                               onChange={e => setMemberForm(prev => ({ ...prev, motivation: e.target.value }))}
                             />
@@ -1032,7 +1032,7 @@ END:VCALENDAR`;
                         <button
                           type="submit"
                           disabled={isSubmittingMember}
-                          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-100 hover:shadow-indigo-200 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                          className="w-full bg-brand-teal hover:bg-brand-teal text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-teal/10 hover:shadow-indigo-200 transition disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                           {isSubmittingMember ? (
                             <>
@@ -1052,12 +1052,12 @@ END:VCALENDAR`;
                 {membershipStatus !== 'none' && membership && (
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Management details */}
-                    <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2 flex flex-col justify-between">
+                    <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm lg:col-span-2 flex flex-col justify-between">
                       <div className="space-y-6">
-                        <div className="flex justify-between items-start pb-4 border-b border-slate-100">
+                        <div className="flex justify-between items-start pb-4 border-b border-brand-navy/5">
                           <div>
-                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Plan Details</span>
-                            <h2 className="text-xl font-bold text-slate-800 mt-1">{membership.tier?.name || 'Standard'} Membership</h2>
+                            <span className="text-xs font-semibold text-brand-navy/40 uppercase tracking-wider">Plan Details</span>
+                            <h2 className="text-xl font-bold text-brand-navy/80 mt-1">{membership.tier?.name || 'Standard'} Membership</h2>
                           </div>
                           <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${
                             membershipStatus === 'active' ? 'bg-green-50 text-green-700 border border-green-200' :
@@ -1076,8 +1076,8 @@ END:VCALENDAR`;
                             { label: 'Payment Method on File', val: 'Visa ending in 4242' }
                           ].map((item, idx) => (
                             <div key={idx} className="space-y-1">
-                              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{item.label}</span>
-                              <p className={`font-semibold text-slate-800 ${item.mono ? 'font-mono text-xs text-slate-600' : ''}`}>{item.val}</p>
+                              <span className="text-xs font-semibold text-brand-navy/40 uppercase tracking-wider">{item.label}</span>
+                              <p className={`font-semibold text-brand-navy/80 ${item.mono ? 'font-mono text-xs text-brand-navy/60' : ''}`}>{item.val}</p>
                             </div>
                           ))}
                         </div>
@@ -1086,13 +1086,13 @@ END:VCALENDAR`;
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8">
                         <button
                           onClick={() => setIsRenewConfirmOpen(true)}
-                          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition text-sm text-center shadow-sm"
+                          className="bg-brand-teal hover:bg-brand-teal text-white font-bold py-3 rounded-xl transition text-sm text-center shadow-sm"
                         >
                           Renew Now
                         </button>
                         <button
                           onClick={() => setIsUpgradeModalOpen(true)}
-                          className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-3 rounded-xl transition text-sm text-center"
+                          className="bg-brand-teal/10 hover:bg-indigo-100 text-brand-teal font-bold py-3 rounded-xl transition text-sm text-center"
                         >
                           Upgrade Tier
                         </button>
@@ -1106,9 +1106,9 @@ END:VCALENDAR`;
                     </div>
 
                     {/* Quick helper card */}
-                    <div className="bg-slate-800 text-white rounded-3xl p-6 flex flex-col justify-between">
+                    <div className="bg-brand-navy text-white rounded-3xl p-6 flex flex-col justify-between">
                       <div className="space-y-4">
-                        <div className="w-10 h-10 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400">
+                        <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                           <Award className="w-5 h-5" />
                         </div>
                         <h4 className="font-bold text-lg">Advancement Perks</h4>
@@ -1127,7 +1127,7 @@ END:VCALENDAR`;
                           </li>
                         </ul>
                       </div>
-                      <div className="text-xs text-slate-400 border-t border-slate-700/60 pt-4 mt-6">
+                      <div className="text-xs text-brand-navy/40 border-t border-slate-700/60 pt-4 mt-6">
                         Need assistance? Contact support at support@ioca.org
                       </div>
                     </div>
@@ -1144,14 +1144,14 @@ END:VCALENDAR`;
                 {/* Donations form & stats */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Donations Form */}
-                  <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2">
-                    <h2 className="text-lg font-bold text-slate-800 mb-2">Process Donation Contribution</h2>
-                    <p className="text-sm text-slate-500 mb-6">Process a custom or preset donation to directly support active community programs.</p>
+                  <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm lg:col-span-2">
+                    <h2 className="text-lg font-bold text-brand-navy/80 mb-2">Process Donation Contribution</h2>
+                    <p className="text-sm text-brand-navy/50 mb-6">Process a custom or preset donation to directly support active community programs.</p>
 
                     <form onSubmit={handleDonate} className="space-y-6">
                       {/* Presets */}
                       <div className="space-y-2">
-                        <label className="block text-slate-700 font-semibold text-sm">Choose Amount (PKR)</label>
+                        <label className="block text-brand-navy/70 font-semibold text-sm">Choose Amount (PKR)</label>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                           {['1000', '5000', '10000', '25000'].map(val => {
                             const isSelected = donationAmount === val && !isCustomAmount;
@@ -1162,8 +1162,8 @@ END:VCALENDAR`;
                                 onClick={() => { setDonationAmount(val); setIsCustomAmount(false); }}
                                 className={`py-3 px-4 rounded-xl font-bold border transition text-sm text-center ${
                                   isSelected
-                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100'
-                                    : 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50'
+                                    ? 'bg-brand-teal border-brand-teal text-white shadow-md shadow-brand-teal/10'
+                                    : 'border-brand-navy/10 text-brand-navy/70 bg-white hover:bg-brand-gray'
                                 }`}
                               >
                                 {Number(val).toLocaleString('en-PK')}
@@ -1175,8 +1175,8 @@ END:VCALENDAR`;
                             onClick={() => setIsCustomAmount(true)}
                             className={`py-3 px-4 rounded-xl font-bold border transition text-sm text-center ${
                               isCustomAmount
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100'
-                                : 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50'
+                                ? 'bg-brand-teal border-brand-teal text-white shadow-md shadow-brand-teal/10'
+                                : 'border-brand-navy/10 text-brand-navy/70 bg-white hover:bg-brand-gray'
                             }`}
                           >
                             Custom
@@ -1187,12 +1187,12 @@ END:VCALENDAR`;
                       {/* Custom Input */}
                       {isCustomAmount && (
                         <div className="space-y-1">
-                          <label className="block text-slate-700 font-semibold text-sm">Custom Amount (PKR)</label>
+                          <label className="block text-brand-navy/70 font-semibold text-sm">Custom Amount (PKR)</label>
                           <input
                             type="number"
                             required
                             placeholder="Enter amount"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition text-sm"
+                            className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition text-sm"
                             value={customAmountVal}
                             onChange={e => setCustomAmountVal(e.target.value)}
                           />
@@ -1201,9 +1201,9 @@ END:VCALENDAR`;
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                         <div>
-                          <label className="block text-slate-700 font-semibold mb-1.5">Payment Method</label>
+                          <label className="block text-brand-navy/70 font-semibold mb-1.5">Payment Method</label>
                           <select
-                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white"
+                            className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition bg-white"
                             value={donationPaymentMethod}
                             onChange={e => setDonationPaymentMethod(e.target.value)}
                           >
@@ -1215,11 +1215,11 @@ END:VCALENDAR`;
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-semibold mb-1.5">Dedication / Message (Optional)</label>
+                          <label className="block text-brand-navy/70 font-semibold mb-1.5">Dedication / Message (Optional)</label>
                           <input
                             type="text"
                             placeholder="In honor of / general support"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
                             value={donationDedication}
                             onChange={e => setDonationDedication(e.target.value)}
                           />
@@ -1229,7 +1229,7 @@ END:VCALENDAR`;
                       <button
                         type="submit"
                         disabled={isSubmittingDonation}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-100 hover:shadow-emerald-200 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="w-full bg-brand-teal hover:bg-brand-teal text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-teal/10 hover:shadow-emerald-200 transition disabled:opacity-50 flex items-center justify-center gap-2"
                       >
                         {isSubmittingDonation ? (
                           <>
@@ -1246,7 +1246,7 @@ END:VCALENDAR`;
                   {/* Summary Stats */}
                   <div className="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-3xl p-6 flex flex-col justify-between shadow-lg">
                     <div className="space-y-6">
-                      <div className="w-10 h-10 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400">
+                      <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                         <TrendingUp className="w-5 h-5" />
                       </div>
                       <div>
@@ -1264,30 +1264,30 @@ END:VCALENDAR`;
                         </div>
                       </div>
                     </div>
-                    <div className="text-[10px] text-slate-400 mt-8">
+                    <div className="text-[10px] text-brand-navy/40 mt-8">
                       All donations processed through this portal are eligible for tax exemption under local section policies.
                     </div>
                   </div>
                 </div>
 
                 {/* Donation history table list */}
-                <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <h3 className="font-bold text-slate-800">Donation Contribution Records</h3>
+                    <h3 className="font-bold text-brand-navy/80">Donation Contribution Records</h3>
                     <div className="flex gap-2 w-full sm:w-auto">
                       <div className="relative flex-1 sm:w-64">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-navy/40" />
                         <input
                           type="text"
                           placeholder="Search cause/txn"
-                          className="pl-10 pr-4 py-2 border border-slate-200 rounded-xl w-full text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          className="pl-10 pr-4 py-2 border border-brand-navy/10 rounded-xl w-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-teal"
                           value={donationSearch}
                           onChange={e => { setDonationSearch(e.target.value); setDonationPage(1); }}
                         />
                       </div>
                       <button
                         onClick={() => setDonationSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
-                        className="py-2 px-3 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 transition"
+                        className="py-2 px-3 border border-brand-navy/10 rounded-xl text-xs font-semibold text-brand-navy/60 bg-white hover:bg-brand-gray transition"
                       >
                         Sort: {donationSortOrder === 'desc' ? 'Newest' : 'Oldest'}
                       </button>
@@ -1299,7 +1299,7 @@ END:VCALENDAR`;
                       <div className="overflow-x-auto">
                         <table className="w-full text-xs text-left border-collapse">
                           <thead>
-                            <tr className="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
+                            <tr className="border-b border-brand-navy/5 text-brand-navy/40 font-semibold uppercase tracking-wider">
                               <th className="py-3 px-4">Receipt / Trans ID</th>
                               <th className="py-3 px-4">Date</th>
                               <th className="py-3 px-4">Amount (PKR)</th>
@@ -1309,29 +1309,29 @@ END:VCALENDAR`;
                               <th className="py-3 px-4 text-center">Receipt</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-50 text-slate-700 font-medium">
+                          <tbody className="divide-y divide-slate-50 text-brand-navy/70 font-medium">
                             {paginatedDonations.map(row => (
-                              <tr key={row.id} className="hover:bg-slate-50/50">
-                                <td className="py-3.5 px-4 font-mono text-xs text-slate-600">
+                              <tr key={row.id} className="hover:bg-brand-gray/50">
+                                <td className="py-3.5 px-4 font-mono text-xs text-brand-navy/60">
                                   {row.receipt_number ? (
                                     <span className="font-mono font-bold text-green-700 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded text-[11px]">
                                       {row.receipt_number}
                                     </span>
                                   ) : (
-                                    <span className="text-slate-400">
+                                    <span className="text-brand-navy/40">
                                       {row.transaction_id || row.id.substring(0, 8) + '...'}
                                     </span>
                                   )}
                                 </td>
                                 <td className="py-3.5 px-4 whitespace-nowrap">{formatDate(row.created_at)}</td>
-                                <td className="py-3.5 px-4 font-bold text-slate-900">PKR {Number(row.amount).toLocaleString('en-PK')}</td>
-                                <td className="py-3.5 px-4 capitalize text-slate-500">{row.payment_method}</td>
+                                <td className="py-3.5 px-4 font-bold text-brand-navy">PKR {Number(row.amount).toLocaleString('en-PK')}</td>
+                                <td className="py-3.5 px-4 capitalize text-brand-navy/50">{row.payment_method}</td>
                                 <td className="py-3.5 px-4">
-                                  <div className="font-semibold text-slate-800 truncate max-w-[160px]" title={row.projects?.title || 'General Fund'}>
+                                  <div className="font-semibold text-brand-navy/80 truncate max-w-[160px]" title={row.projects?.title || 'General Fund'}>
                                     {row.projects?.title || 'General Fund'}
                                   </div>
                                   {row.message && row.message !== (row.projects?.title || 'General Fund') && (
-                                    <div className="text-[10px] text-slate-400 truncate max-w-[160px]" title={row.message}>
+                                    <div className="text-[10px] text-brand-navy/40 truncate max-w-[160px]" title={row.message}>
                                       {row.message}
                                     </div>
                                   )}
@@ -1356,7 +1356,7 @@ END:VCALENDAR`;
                                       paymentMethod: row.payment_method,
                                       date: row.created_at
                                     })}
-                                    className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                                    className="p-1.5 text-brand-teal hover:bg-brand-teal/10 rounded-lg transition"
                                     title="Download Receipt"
                                   >
                                     <Download className="w-4 h-4" />
@@ -1370,20 +1370,20 @@ END:VCALENDAR`;
 
                       {/* Pagination */}
                       {donationPageCount > 1 && (
-                        <div className="flex justify-between items-center border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
+                        <div className="flex justify-between items-center border-t border-brand-navy/5 pt-4 text-xs font-semibold text-brand-navy/60">
                           <span>Page {donationPage} of {donationPageCount}</span>
                           <div className="flex gap-2">
                             <button
                               disabled={donationPage === 1}
                               onClick={() => setDonationPage(p => Math.max(1, p - 1))}
-                              className="py-1.5 px-3 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 transition"
+                              className="py-1.5 px-3 border border-brand-navy/10 rounded-lg hover:bg-brand-gray disabled:opacity-50 transition"
                             >
                               Previous
                             </button>
                             <button
                               disabled={donationPage === donationPageCount}
                               onClick={() => setDonationPage(p => Math.min(donationPageCount, p + 1))}
-                              className="py-1.5 px-3 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 transition"
+                              className="py-1.5 px-3 border border-brand-navy/10 rounded-lg hover:bg-brand-gray disabled:opacity-50 transition"
                             >
                               Next
                             </button>
@@ -1392,7 +1392,7 @@ END:VCALENDAR`;
                       )}
                     </div>
                   ) : (
-                    <div className="text-center py-8 text-slate-400 font-medium">No donation contributions match search criteria.</div>
+                    <div className="text-center py-8 text-brand-navy/40 font-medium">No donation contributions match search criteria.</div>
                   )}
                 </div>
               </>
@@ -1404,26 +1404,26 @@ END:VCALENDAR`;
             {activeTab === 'events' && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Available events list */}
-                <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2 space-y-6">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
+                <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm lg:col-span-2 space-y-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-brand-navy/5">
                     <div>
-                      <h2 className="text-lg font-bold text-slate-800">Browse & Register Events</h2>
-                      <p className="text-sm text-slate-500 mt-1">Register for upcoming healthcare, educational, or volunteer drives.</p>
+                      <h2 className="text-lg font-bold text-brand-navy/80">Browse & Register Events</h2>
+                      <p className="text-sm text-brand-navy/50 mt-1">Register for upcoming healthcare, educational, or volunteer drives.</p>
                     </div>
                     
                     <div className="flex gap-2 w-full sm:w-auto">
                       <div className="relative flex-1 sm:w-48">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-brand-navy/40" />
                         <input
                           type="text"
                           placeholder="Search title/loc"
-                          className="pl-8 pr-3 py-1.5 border border-slate-200 rounded-lg w-full text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          className="pl-8 pr-3 py-1.5 border border-brand-navy/10 rounded-lg w-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-teal"
                           value={eventSearch}
                           onChange={e => setEventSearch(e.target.value)}
                         />
                       </div>
                       <select
-                        className="py-1.5 px-2.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 bg-white"
+                        className="py-1.5 px-2.5 border border-brand-navy/10 rounded-lg text-xs font-semibold text-brand-navy/60 bg-white"
                         value={eventCategoryFilter}
                         onChange={e => setEventCategoryFilter(e.target.value)}
                       >
@@ -1446,23 +1446,23 @@ END:VCALENDAR`;
                         const isFull = regCount >= maxCap;
 
                         return (
-                          <div key={evt.id} className="p-4 border border-slate-100 rounded-2xl hover:border-indigo-100 transition-all flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                          <div key={evt.id} className="p-4 border border-brand-navy/5 rounded-2xl hover:border-indigo-100 transition-all flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                             <div className="flex gap-4 items-center">
                               {/* Date block */}
-                              <div className="w-14 h-14 bg-indigo-50 text-indigo-700 rounded-xl flex flex-col items-center justify-center flex-shrink-0 shadow-inner">
+                              <div className="w-14 h-14 bg-brand-teal/10 text-brand-teal rounded-xl flex flex-col items-center justify-center flex-shrink-0 shadow-inner">
                                 <span className="text-lg font-bold leading-none">{eventDate.getDate()}</span>
                                 <span className="text-[10px] font-bold uppercase mt-1">{eventDate.toLocaleDateString('en-US', { month: 'short' })}</span>
                               </div>
                               <div className="space-y-1">
-                                <h3 className="font-bold text-slate-800 text-sm">{evt.title}</h3>
-                                <div className="flex items-center gap-4 text-xs text-slate-400 font-medium">
+                                <h3 className="font-bold text-brand-navy/80 text-sm">{evt.title}</h3>
+                                <div className="flex items-center gap-4 text-xs text-brand-navy/40 font-medium">
                                   <span className="flex items-center gap-1">
                                     <MapPin className="w-3.5 h-3.5 text-slate-300" />
                                     {evt.location || 'Online / virtual'}
                                   </span>
                                   <span>{evt.category || 'Advancement'}</span>
                                 </div>
-                                <div className="text-[10px] text-slate-400 font-semibold">
+                                <div className="text-[10px] text-brand-navy/40 font-semibold">
                                   Capacity: {regCount}/{maxCap} slots registered
                                 </div>
                               </div>
@@ -1473,10 +1473,10 @@ END:VCALENDAR`;
                               onClick={() => handleRegisterEvent(evt)}
                               className={`py-2 px-5 rounded-xl text-xs font-bold transition w-full sm:w-auto text-center ${
                                 isRegistered
-                                  ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                                  ? 'bg-brand-navy/5 text-brand-navy/40 cursor-not-allowed border border-brand-navy/10'
                                   : isFull
                                   ? 'bg-red-50 text-red-400 border border-red-200 cursor-not-allowed'
-                                  : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-100'
+                                  : 'bg-brand-teal hover:bg-brand-teal text-white shadow-md shadow-brand-teal/10'
                               }`}
                             >
                               {isRegistered ? 'Registered' : isFull ? 'Event Full' : 'Register Now'}
@@ -1486,25 +1486,25 @@ END:VCALENDAR`;
                       })}
                     </div>
                   ) : (
-                    <div className="text-center py-8 text-slate-400 font-medium">No upcoming events match filters.</div>
+                    <div className="text-center py-8 text-brand-navy/40 font-medium">No upcoming events match filters.</div>
                   )}
                 </div>
 
                 {/* My registered events */}
-                <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
                   <div className="space-y-4">
-                    <h3 className="font-bold text-slate-800 pb-3 border-b border-slate-100">My Registrations</h3>
+                    <h3 className="font-bold text-brand-navy/80 pb-3 border-b border-brand-navy/5">My Registrations</h3>
                     {eventRegistrations.length > 0 ? (
                       <div className="space-y-3 max-h-[350px] overflow-y-auto pr-1">
                         {eventRegistrations.map(reg => {
                           const dateObj = new Date(reg.event.event_date);
                           
                           return (
-                            <div key={reg.id} className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-3">
+                            <div key={reg.id} className="p-3 bg-brand-gray border border-brand-navy/5 rounded-xl space-y-3">
                               <div className="flex justify-between items-start">
                                 <div>
-                                  <h4 className="text-xs font-bold text-slate-800 line-clamp-1">{reg.event.title}</h4>
-                                  <p className="text-[10px] text-slate-400 font-medium mt-0.5">{dateObj.toLocaleDateString()} — {reg.event.location}</p>
+                                  <h4 className="text-xs font-bold text-brand-navy/80 line-clamp-1">{reg.event.title}</h4>
+                                  <p className="text-[10px] text-brand-navy/40 font-medium mt-0.5">{dateObj.toLocaleDateString()} — {reg.event.location}</p>
                                 </div>
                                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
                                   reg.status === 'registered' ? 'bg-green-100 text-green-700' : 'bg-red-50 text-red-600'
@@ -1517,7 +1517,7 @@ END:VCALENDAR`;
                                 <div className="flex gap-2 text-[10px] font-bold">
                                   <button
                                     onClick={() => downloadCalendarFile(reg.event)}
-                                    className="flex-1 py-1 px-2.5 border border-slate-200 hover:bg-white text-slate-600 rounded-lg text-center transition"
+                                    className="flex-1 py-1 px-2.5 border border-brand-navy/10 hover:bg-white text-brand-navy/60 rounded-lg text-center transition"
                                   >
                                     Add Calendar
                                   </button>
@@ -1534,7 +1534,7 @@ END:VCALENDAR`;
                         })}
                       </div>
                     ) : (
-                      <div className="text-center py-8 text-slate-400 text-xs font-medium">You haven't registered for any events yet.</div>
+                      <div className="text-center py-8 text-brand-navy/40 text-xs font-medium">You haven't registered for any events yet.</div>
                     )}
                   </div>
                 </div>
@@ -1545,10 +1545,10 @@ END:VCALENDAR`;
             {/* TABS 6: ZONES */}
             {/* ============================================================== */}
             {activeTab === 'zones' && (
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
-                <div className="pb-6 border-b border-slate-100 mb-6">
-                  <h2 className="text-lg font-bold text-slate-800">Projects & Zones</h2>
-                  <p className="text-sm text-slate-500 mt-1">Switch or join regional projects and zones to participate in local services and meet fellow members.</p>
+              <div className="bg-white border border-brand-navy/10 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+                <div className="pb-6 border-b border-brand-navy/5 mb-6">
+                  <h2 className="text-lg font-bold text-brand-navy/80">Projects & Zones</h2>
+                  <p className="text-sm text-brand-navy/50 mt-1">Switch or join regional projects and zones to participate in local services and meet fellow members.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1560,32 +1560,32 @@ END:VCALENDAR`;
                         key={zn.id}
                         className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${
                           isCurrent
-                            ? 'bg-indigo-50/50 border-indigo-200 ring-2 ring-indigo-500/10'
-                            : 'border-slate-100 bg-white hover:border-slate-200 shadow-sm'
+                            ? 'bg-brand-teal/10/50 border-indigo-200 ring-2 ring-brand-teal/10'
+                            : 'border-brand-navy/5 bg-white hover:border-brand-navy/10 shadow-sm'
                         }`}
                       >
                         <div className="space-y-2">
                           <div className="flex justify-between items-start">
                             <div>
-                              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{zn.city}</span>
-                              <h3 className="font-bold text-slate-800 text-base mt-0.5">{zn.name}</h3>
+                              <span className="text-xs font-bold text-brand-navy/40 uppercase tracking-wider">{zn.city}</span>
+                              <h3 className="font-bold text-brand-navy/80 text-base mt-0.5">{zn.name}</h3>
                             </div>
                             {isCurrent && (
-                              <span className="text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                              <span className="text-[10px] font-bold bg-brand-teal text-white px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
                                 <Check className="w-3 h-3" />
                                 Active
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-slate-500 leading-relaxed">{zn.description || 'Regional community development and emergency services division.'}</p>
+                          <p className="text-xs text-brand-navy/50 leading-relaxed">{zn.description || 'Regional community development and emergency services division.'}</p>
                         </div>
 
-                        <div className="flex justify-between items-center border-t border-slate-100/60 pt-4 mt-4 text-xs font-semibold text-slate-500">
+                        <div className="flex justify-between items-center border-t border-brand-navy/5/60 pt-4 mt-4 text-xs font-semibold text-brand-navy/50">
                           <span>{count.toLocaleString()} members</span>
                           {!isCurrent && member && (
                             <button
                               onClick={() => setZoneToSwitch(zn)}
-                              className="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 transition"
+                              className="text-brand-teal hover:text-indigo-800 font-bold flex items-center gap-1 transition"
                             >
                               Switch Zone
                               <ChevronRight className="w-4 h-4" />
@@ -1615,7 +1615,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
               onClick={() => !isSaving && setIsEditModalOpen(false)}
             />
             <motion.div 
@@ -1627,13 +1627,13 @@ END:VCALENDAR`;
               <button
                 disabled={isSaving}
                 onClick={() => setIsEditModalOpen(false)}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition"
+                className="absolute top-4 right-4 p-2 text-brand-navy/40 hover:text-brand-navy/60 hover:bg-brand-gray rounded-full transition"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <h3 className="text-lg font-bold text-slate-800 mb-2">Edit Profile Details</h3>
-              <p className="text-xs text-slate-400 mb-6">Modify details to display in user dashboard lists and project directories.</p>
+              <h3 className="text-lg font-bold text-brand-navy/80 mb-2">Edit Profile Details</h3>
+              <p className="text-xs text-brand-navy/40 mb-6">Modify details to display in user dashboard lists and project directories.</p>
 
               {profileErrorMsg && (
                 <div className="mb-4 bg-red-50 text-red-700 text-xs p-3 rounded-lg border border-red-100">
@@ -1641,13 +1641,13 @@ END:VCALENDAR`;
                 </div>
               )}
 
-              <form onSubmit={handleEditSubmit} className="space-y-4 text-xs font-semibold text-slate-600">
+              <form onSubmit={handleEditSubmit} className="space-y-4 text-xs font-semibold text-brand-navy/60">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Full Name *</label>
+                  <label className="block text-brand-navy/70 font-bold mb-1">Full Name *</label>
                   <input
                     type="text"
                     required
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-800"
+                    className="w-full px-3.5 py-2.5 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal font-medium text-brand-navy/80"
                     value={editName}
                     onChange={e => setEditName(e.target.value)}
                   />
@@ -1655,20 +1655,20 @@ END:VCALENDAR`;
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Phone</label>
+                    <label className="block text-brand-navy/70 font-bold mb-1">Phone</label>
                     <input
                       type="tel"
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-800"
+                      className="w-full px-3.5 py-2.5 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal font-medium text-brand-navy/80"
                       value={editPhone}
                       onChange={e => setEditPhone(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">CNIC Number</label>
+                    <label className="block text-brand-navy/70 font-bold mb-1">CNIC Number</label>
                     <input
                       type="text"
                       placeholder="XXXXX-XXXXXXX-X"
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-800"
+                      className="w-full px-3.5 py-2.5 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal font-medium text-brand-navy/80"
                       value={editCnic}
                       onChange={e => setEditCnic(e.target.value)}
                     />
@@ -1676,31 +1676,31 @@ END:VCALENDAR`;
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Occupation</label>
+                  <label className="block text-brand-navy/70 font-bold mb-1">Occupation</label>
                   <input
                     type="text"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-800"
+                    className="w-full px-3.5 py-2.5 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal font-medium text-brand-navy/80"
                     value={editOccupation}
                     onChange={e => setEditOccupation(e.target.value)}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Address</label>
+                  <label className="block text-brand-navy/70 font-bold mb-1">Address</label>
                   <input
                     type="text"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-800"
+                    className="w-full px-3.5 py-2.5 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal font-medium text-brand-navy/80"
                     value={editAddress}
                     onChange={e => setEditAddress(e.target.value)}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Avatar Image URL</label>
+                  <label className="block text-brand-navy/70 font-bold mb-1">Avatar Image URL</label>
                   <input
                     type="url"
                     placeholder="https://..."
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-800"
+                    className="w-full px-3.5 py-2.5 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal font-medium text-brand-navy/80"
                     value={editAvatarUrl}
                     onChange={e => setEditAvatarUrl(e.target.value)}
                   />
@@ -1711,14 +1711,14 @@ END:VCALENDAR`;
                     type="button"
                     disabled={isSaving}
                     onClick={() => setIsEditModalOpen(false)}
-                    className="py-2.5 px-4 text-slate-600 hover:text-slate-800 rounded-xl hover:bg-slate-50 transition"
+                    className="py-2.5 px-4 text-brand-navy/60 hover:text-brand-navy/80 rounded-xl hover:bg-brand-gray transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 px-5 rounded-xl transition shadow-md shadow-indigo-100 flex items-center gap-1.5"
+                    className="bg-brand-teal hover:bg-brand-teal text-white py-2.5 px-5 rounded-xl transition shadow-md shadow-brand-teal/10 flex items-center gap-1.5"
                   >
                     {isSaving && <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>}
                     Save Changes
@@ -1738,7 +1738,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
               onClick={() => setDonationReceipt(null)}
             />
             <motion.div 
@@ -1747,33 +1747,33 @@ END:VCALENDAR`;
               exit={{ opacity: 0, scale: 0.95 }}
               className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 flex flex-col items-center text-center overflow-hidden"
             >
-              <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-brand-teal/10 text-brand-teal rounded-full flex items-center justify-center mb-4">
                 <Check className="w-6 h-6" />
               </div>
 
-              <h3 className="text-lg font-bold text-slate-800">Donation Successful!</h3>
-              <p className="text-xs text-slate-400 mt-1">Thank you for making a contribution. A receipt has been generated.</p>
+              <h3 className="text-lg font-bold text-brand-navy/80">Donation Successful!</h3>
+              <p className="text-xs text-brand-navy/40 mt-1">Thank you for making a contribution. A receipt has been generated.</p>
 
-              <div className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl my-5 text-left text-xs font-semibold text-slate-600 space-y-3">
+              <div className="w-full bg-brand-gray border border-brand-navy/5 p-4 rounded-2xl my-5 text-left text-xs font-semibold text-brand-navy/60 space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-slate-400 font-medium">Receipt ID</span>
-                  <span className="font-mono text-[10px] text-slate-600">{donationReceipt.transactionId}</span>
+                  <span className="text-brand-navy/40 font-medium">Receipt ID</span>
+                  <span className="font-mono text-[10px] text-brand-navy/60">{donationReceipt.transactionId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400 font-medium">Date</span>
+                  <span className="text-brand-navy/40 font-medium">Date</span>
                   <span>{new Date(donationReceipt.date).toLocaleDateString('en-PK')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400 font-medium">Amount</span>
-                  <span className="font-bold text-slate-900">PKR {donationReceipt.amount.toLocaleString('en-PK')}</span>
+                  <span className="text-brand-navy/40 font-medium">Amount</span>
+                  <span className="font-bold text-brand-navy">PKR {donationReceipt.amount.toLocaleString('en-PK')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400 font-medium">Method</span>
+                  <span className="text-brand-navy/40 font-medium">Method</span>
                   <span>{donationReceipt.paymentMethod}</span>
                 </div>
                 {donationReceipt.dedication && (
                   <div className="flex justify-between">
-                    <span className="text-slate-400 font-medium">Dedication</span>
+                    <span className="text-brand-navy/40 font-medium">Dedication</span>
                     <span className="truncate max-w-[120px]">{donationReceipt.dedication}</span>
                   </div>
                 )}
@@ -1782,13 +1782,13 @@ END:VCALENDAR`;
               <div className="grid grid-cols-2 gap-2 w-full text-xs font-bold pt-2">
                 <button
                   onClick={() => triggerReceiptPrint(donationReceipt)}
-                  className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-100 transition"
+                  className="py-2.5 px-4 bg-brand-teal hover:bg-brand-teal text-white rounded-xl shadow-md shadow-brand-teal/10 transition"
                 >
                   Print Receipt
                 </button>
                 <button
                   onClick={() => setDonationReceipt(null)}
-                  className="py-2.5 px-4 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition"
+                  className="py-2.5 px-4 border border-brand-navy/10 text-brand-navy/60 rounded-xl hover:bg-brand-gray transition"
                 >
                   Close View
                 </button>
@@ -1806,7 +1806,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
               onClick={() => setZoneToSwitch(null)}
             />
             <motion.div 
@@ -1815,21 +1815,21 @@ END:VCALENDAR`;
               exit={{ opacity: 0, scale: 0.95 }}
               className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 text-center overflow-hidden"
             >
-              <h3 className="text-base font-bold text-slate-800">Switch Regional Zone?</h3>
-              <p className="text-xs text-slate-500 mt-2">
+              <h3 className="text-base font-bold text-brand-navy/80">Switch Regional Zone?</h3>
+              <p className="text-xs text-brand-navy/50 mt-2">
                 Are you sure you want to switch your active project assignment to **{zoneToSwitch.name} ({zoneToSwitch.city})**?
               </p>
 
               <div className="flex gap-2 w-full text-xs font-bold pt-6">
                 <button
                   onClick={handleSwitchZone}
-                  className="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition"
+                  className="flex-1 py-2.5 px-4 bg-brand-teal hover:bg-brand-teal text-white rounded-xl shadow-md transition"
                 >
                   Confirm Switch
                 </button>
                 <button
                   onClick={() => setZoneToSwitch(null)}
-                  className="flex-1 py-2.5 px-4 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition"
+                  className="flex-1 py-2.5 px-4 border border-brand-navy/10 text-brand-navy/60 rounded-xl hover:bg-brand-gray transition"
                 >
                   Cancel
                 </button>
@@ -1847,7 +1847,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
               onClick={() => setIsUpgradeModalOpen(false)}
             />
             <motion.div 
@@ -1856,8 +1856,8 @@ END:VCALENDAR`;
               exit={{ opacity: 0, scale: 0.95 }}
               className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 overflow-hidden"
             >
-              <h3 className="text-base font-bold text-slate-800 mb-4">Upgrade Membership Tier</h3>
-              <p className="text-xs text-slate-400 mb-6">Select a higher membership tier. Upgrading will reset your renewal date for 1 full year.</p>
+              <h3 className="text-base font-bold text-brand-navy/80 mb-4">Upgrade Membership Tier</h3>
+              <p className="text-xs text-brand-navy/40 mb-6">Select a higher membership tier. Upgrading will reset your renewal date for 1 full year.</p>
 
               <div className="space-y-2">
                 {tiers
@@ -1866,10 +1866,10 @@ END:VCALENDAR`;
                     <button
                       key={t.id}
                       onClick={() => handleUpgradeMembership(t.id)}
-                      className="w-full flex justify-between items-center p-3 border border-slate-100 hover:border-indigo-100 hover:bg-indigo-50/20 rounded-xl text-xs font-bold text-slate-800 transition text-left"
+                      className="w-full flex justify-between items-center p-3 border border-brand-navy/5 hover:border-indigo-100 hover:bg-brand-teal/10/20 rounded-xl text-xs font-bold text-brand-navy/80 transition text-left"
                     >
                       <span>{t.name} Tier</span>
-                      <span className="text-indigo-600">PKR {t.price.toLocaleString('en-PK')}</span>
+                      <span className="text-brand-teal">PKR {t.price.toLocaleString('en-PK')}</span>
                     </button>
                   ))}
               </div>
@@ -1877,7 +1877,7 @@ END:VCALENDAR`;
               <div className="flex justify-end gap-2 text-xs font-bold pt-6 border-t border-slate-50 mt-6">
                 <button
                   onClick={() => setIsUpgradeModalOpen(false)}
-                  className="py-2 px-4 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition"
+                  className="py-2 px-4 border border-brand-navy/10 text-brand-navy/60 rounded-xl hover:bg-brand-gray transition"
                 >
                   Close
                 </button>
@@ -1895,7 +1895,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
               onClick={() => setIsCancelConfirmOpen(false)}
             />
             <motion.div 
@@ -1904,8 +1904,8 @@ END:VCALENDAR`;
               exit={{ opacity: 0, scale: 0.95 }}
               className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 text-center overflow-hidden"
             >
-              <h3 className="text-base font-bold text-slate-800">Cancel Membership?</h3>
-              <p className="text-xs text-slate-500 mt-2">
+              <h3 className="text-base font-bold text-brand-navy/80">Cancel Membership?</h3>
+              <p className="text-xs text-brand-navy/50 mt-2">
                 Are you sure you want to cancel your IOCA membership plan? You will lose access to local workshops and project events.
               </p>
 
@@ -1918,7 +1918,7 @@ END:VCALENDAR`;
                 </button>
                 <button
                   onClick={() => setIsCancelConfirmOpen(false)}
-                  className="flex-1 py-2.5 px-4 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition"
+                  className="flex-1 py-2.5 px-4 border border-brand-navy/10 text-brand-navy/60 rounded-xl hover:bg-brand-gray transition"
                 >
                   Keep Active
                 </button>
@@ -1936,7 +1936,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
               onClick={() => setIsRenewConfirmOpen(false)}
             />
             <motion.div 
@@ -1945,21 +1945,21 @@ END:VCALENDAR`;
               exit={{ opacity: 0, scale: 0.95 }}
               className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 text-center overflow-hidden"
             >
-              <h3 className="text-base font-bold text-slate-800">Renew Membership?</h3>
-              <p className="text-xs text-slate-500 mt-2">
+              <h3 className="text-base font-bold text-brand-navy/80">Renew Membership?</h3>
+              <p className="text-xs text-brand-navy/50 mt-2">
                 Are you sure you want to renew your **{membership?.tier?.name}** membership plan? This will extend your validation date for 1 full year.
               </p>
 
               <div className="flex gap-2 w-full text-xs font-bold pt-6">
                 <button
                   onClick={handleRenewMembership}
-                  className="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition"
+                  className="flex-1 py-2.5 px-4 bg-brand-teal hover:bg-brand-teal text-white rounded-xl shadow-md transition"
                 >
                   Confirm Renewal
                 </button>
                 <button
                   onClick={() => setIsRenewConfirmOpen(false)}
-                  className="flex-1 py-2.5 px-4 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition"
+                  className="flex-1 py-2.5 px-4 border border-brand-navy/10 text-brand-navy/60 rounded-xl hover:bg-brand-gray transition"
                 >
                   Cancel
                 </button>

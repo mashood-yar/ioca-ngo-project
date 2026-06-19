@@ -53,8 +53,8 @@ export function AdminLayout() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full text-white bg-[#1D2D49]">
       <div className="flex items-center gap-3 px-6 py-8 border-b border-white/10 bg-[#162238]">
-        <div className="w-10 h-10 bg-[#0D9488]/20 rounded-xl flex items-center justify-center">
-          <span className="font-bold text-[#0D9488]">IO</span>
+        <div className="w-10 h-10 bg-brand-teal/20 rounded-xl flex items-center justify-center">
+          <span className="font-bold text-brand-teal">IO</span>
         </div>
         <div>
           <h2 className="font-bold text-lg leading-tight">IOCA Admin</h2>
@@ -73,7 +73,7 @@ export function AdminLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   isActive 
-                    ? 'bg-[#0D9488] text-white border-l-[3px] border-[#0D9488] shadow-lg shadow-[#0D9488]/20' 
+                    ? 'bg-brand-teal text-white border-l-[3px] border-brand-teal shadow-lg shadow-[#0D9488]/20' 
                     : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`
               }
@@ -137,8 +137,8 @@ export function AdminLayout() {
         {/* Header */}
         <header className="bg-white border-b px-4 py-3 flex items-center justify-between z-30">
           <div className="flex items-center gap-3 lg:hidden">
-            <div className="w-8 h-8 bg-[#0D9488]/20 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-[#0D9488] text-xs">IO</span>
+            <div className="w-8 h-8 bg-brand-teal/20 rounded-lg flex items-center justify-center">
+              <span className="font-bold text-brand-teal text-xs">IO</span>
             </div>
             <span className="font-bold text-[#1D2D49]">IOCA Admin</span>
           </div>

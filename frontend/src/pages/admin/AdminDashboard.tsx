@@ -55,10 +55,10 @@ export function AdminDashboard() {
   }
 
   const statCards = [
-    { label: 'Total Members', value: stats.members, icon: Users, color: 'text-blue-600', bg: 'bg-blue-100' },
-    { label: 'Total Donations', value: `Rs ${stats.donations.toLocaleString()}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100' },
-    { label: 'Pending Queries', value: stats.queries, icon: MessageSquare, color: 'text-orange-600', bg: 'bg-orange-100' },
-    { label: 'Published Posts', value: stats.posts, icon: FileText, color: 'text-purple-600', bg: 'bg-purple-100' },
+    { label: 'Total Members', value: stats.members, icon: Users, color: 'text-brand-teal', bg: 'bg-brand-teal/10' },
+    { label: 'Total Donations', value: `Rs ${stats.donations.toLocaleString()}`, icon: DollarSign, color: 'text-brand-teal', bg: 'bg-brand-teal/10' },
+    { label: 'Pending Queries', value: stats.queries, icon: MessageSquare, color: 'text-brand-gold', bg: 'bg-brand-gold/10' },
+    { label: 'Published Posts', value: stats.posts, icon: FileText, color: 'text-brand-teal', bg: 'bg-brand-teal/10' },
   ];
 
   return (
@@ -90,7 +90,7 @@ export function AdminDashboard() {
         <div className="bg-white border border-[#E5E7EB] rounded-2xl shadow-sm overflow-hidden">
           <div className="p-6 border-b border-[#E5E7EB] flex items-center justify-between">
             <h2 className="text-lg font-bold text-[#111827]">Recent Donations</h2>
-            <Link to="/admin/donations" className="text-sm text-[#0D9488] hover:text-[#0F766E] font-medium flex items-center gap-1">
+            <Link to="/admin/donations" className="text-sm text-brand-teal hover:text-brand-teal font-medium flex items-center gap-1">
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -124,7 +124,7 @@ export function AdminDashboard() {
         <div className="bg-white border border-[#E5E7EB] rounded-2xl shadow-sm overflow-hidden">
           <div className="p-6 border-b border-[#E5E7EB] flex items-center justify-between">
             <h2 className="text-lg font-bold text-[#111827]">Unread Queries</h2>
-            <Link to="/admin/queries" className="text-sm text-[#0D9488] hover:text-[#0F766E] font-medium flex items-center gap-1">
+            <Link to="/admin/queries" className="text-sm text-brand-teal hover:text-brand-teal font-medium flex items-center gap-1">
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
