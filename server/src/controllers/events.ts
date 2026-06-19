@@ -36,17 +36,24 @@ export const createEvent = asyncHandler(
 );
 
 export const listEvents = asyncHandler(
-  async (_req: Request, res: Response): Promise<void> => {
-    const { data: events, error } = await supabase
+  async (req: Request, res: Response): Promise<void> => {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 100;
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    const { data: events, count, error } = await supabase
       .from('events')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
     if (error) throw new Error(error.message);
 
     res.status(200).json({
       success: true,
       data: events,
+      pagination: { page, limit, total: count }
     });
   }
 );

@@ -39,14 +39,20 @@ export const createDonation = asyncHandler(async (req: Request, res: Response): 
   res.status(201).json({ success: true, data });
 });
 
-export const listDonations = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
-  const { data, error } = await supabase
+export const listDonations = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 100;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  const { data, count, error } = await supabase
     .from('donations')
-    .select('*')
-    .order('created_at', { ascending: false });
+    .select('*', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(from, to);
     
   if (error) throw new Error(error.message);
-  res.json({ success: true, data });
+  res.json({ success: true, data, pagination: { page, limit, total: count } });
 });
 
 export const getDonation = asyncHandler(async (req: Request, res: Response): Promise<void> => {
