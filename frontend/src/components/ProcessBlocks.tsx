@@ -60,7 +60,7 @@ const ProcessBlocks: React.FC<ProcessBlocksProps> = ({ isUrdu }) => {
   const orderedSteps = isUrdu ? [...steps].reverse() : steps;
 
   return (
-    <section id="process" ref={ref} className="relative pt-4 pb-12 md:pt-10 md:pb-24 bg-brand-gray overflow-hidden">
+    <section id="process" ref={ref} className="relative py-12 md:py-24 bg-brand-gray overflow-hidden">
       {/* Decorative curved bottom edge */}
       <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-12 md:h-20 bg-brand-white" style={{ clipPath: 'ellipse(60% 100% at 50% 100%)' }} />
 

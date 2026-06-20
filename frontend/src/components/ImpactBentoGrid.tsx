@@ -79,7 +79,7 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
   ];
 
   return (
-    <section id="impact" className="pt-8 pb-10 md:py-24 bg-brand-gray relative" ref={ref}>
+    <section id="impact" className="py-12 md:py-24 bg-brand-gray relative" ref={ref}>
       {/* Top curve overlapping the Hero section */}
       <div 
         className="absolute left-0 right-0 h-10 md:h-16 bg-brand-gray pointer-events-none z-20" 
