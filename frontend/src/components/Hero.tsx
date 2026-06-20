@@ -8,9 +8,9 @@ interface HeroProps {
 }
 
 const fadeUp = (delay: number) => ({
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 15 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay },
+  transition: { duration: 0.4, delay, ease: "easeOut" },
 });
 
 const HERO_IMAGES_URDU = [
@@ -104,20 +104,20 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
           <div className={`w-full max-w-3xl ${isUrdu ? 'ml-auto text-right' : 'mr-auto text-left'}`}>
             
             {/* Logo Icon */}
-            <motion.div className={`w-full ${isUrdu ? 'flex justify-end' : 'flex justify-start'} mb-3 md:mb-4`} {...fadeUp(0.1)}>
+            <motion.div className={`w-full ${isUrdu ? 'flex justify-end' : 'flex justify-start'} mb-3 md:mb-4`} {...fadeUp(0.0)}>
               <img src="/assets/logos/logo-icon-white.webp" alt="" className="h-12 md:h-16 w-auto object-contain drop-shadow-lg" aria-hidden="true" fetchPriority="high" decoding="sync" />
             </motion.div>
             
             {/* Eyebrow — H1-01: Updated copy */}
             <motion.p
               className={`text-[11px] font-semibold tracking-[0.15em] uppercase text-brand-gold mb-3 drop-shadow-md ${isUrdu ? "font-urduBody" : ""}`}
-              {...fadeUp(0.2)}
+              {...fadeUp(0.1)}
             >
               ✓ {isUrdu ? 'پی سی پی مصدقہ این جی او' : 'PCP Certified NGO — Since 2004'}
             </motion.p>
 
             {/* Headline — H1-01: Strong, cause-specific copy */}
-            <motion.div className="mb-2 md:mb-4" {...fadeUp(0.3)}>
+            <motion.div className="mb-2 md:mb-4" {...fadeUp(0.15)}>
               <h1 className={`font-extrabold leading-[1.1] text-[28px] md:text-[36px] lg:text-[48px] text-brand-white tracking-tight drop-shadow-xl ${isUrdu ? 'font-urduHeading' : ''}`}>
                 {isUrdu ? 'پاکستان میں تبدیلی لا رہے ہیں' : 'Transforming Communities'}
               </h1>
@@ -127,7 +127,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             </motion.div>
 
             {/* Pills */}
-            <motion.div className={`flex flex-wrap gap-2 my-4 ${isUrdu ? 'justify-end' : 'justify-start'}`} {...fadeUp(0.4)}>
+            <motion.div className={`flex flex-wrap gap-2 my-4 ${isUrdu ? 'justify-end' : 'justify-start'}`} {...fadeUp(0.2)}>
               <span className={`text-[11px] text-brand-white border border-brand-white/30 bg-brand-white/10 backdrop-blur-md rounded-full px-3 py-1 ${isUrdu ? 'font-urduBody' : ''}`}>
                 ✓ {isUrdu ? 'شریعہ کمپلائنٹ' : 'Shariah Compliant'}
               </span>
@@ -137,7 +137,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             </motion.div>
 
             {/* CTAs */}
-            <motion.div className={`flex items-center gap-4 mt-5 md:mt-6 ${isUrdu ? 'flex-row-reverse' : ''}`} {...fadeUp(0.4)}>
+            <motion.div className={`flex items-center gap-4 mt-5 md:mt-6 ${isUrdu ? 'flex-row-reverse' : ''}`} {...fadeUp(0.2)}>
               <Link
                 to="/donate"
                 className="inline-flex items-center justify-center bg-brand-teal text-brand-white font-bold text-[15px] px-6 rounded-lg min-h-[48px] hover:bg-brand-white hover:text-brand-navy transition-all duration-300 whitespace-nowrap shadow-xl shadow-brand-teal/20"
