@@ -70,11 +70,11 @@ app.use('/api/projects', projectsRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/zones', zonesRouter);
 app.use('/api/members', membersRouter);
-app.use('/api', userRouter);
 app.use('/api/tiers', tiersRouter);
 app.use('/api/applications', applicationsRouter);
 app.use('/api/admin/applications', adminApplicationsRouter);
 app.use('/api/audit', auditRouter);
+app.use('/api', userRouter);
 
 
 // In production: serve the React build as static files
