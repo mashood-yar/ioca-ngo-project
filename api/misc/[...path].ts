@@ -46,10 +46,18 @@ const createMemberSchema = z.object({
   phone: z.string().optional(),
   cnic: z.string().optional(),
   roleInOrg: z.string().optional(),
-  profileImageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
+  profileImageUrl: z.string().optional().nullable().or(z.literal('')),
   profileImagePublicId: z.string().optional(),
-  joinedAt: z.string().datetime().optional(),
-  isActive: z.boolean().optional()
+  joinedAt: z.preprocess((val) => {
+    if (typeof val === 'string' && val) {
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) return d.toISOString();
+    }
+    return val;
+  }, z.string().datetime().optional().nullable().or(z.literal(''))),
+  isActive: z.boolean().optional(),
+  userId: z.string().uuid().optional().nullable(),
+  user_id: z.string().uuid().optional().nullable(),
 })
 const updateMemberSchema = createMemberSchema.partial()
 
@@ -59,6 +67,7 @@ const updateApplicationStatusSchema = z.object({
 })
 
 function toDbRow(d: Partial<z.infer<typeof createMemberSchema>>) {
+  const userId = d.user_id !== undefined ? d.user_id : d.userId;
   return {
     ...(d.zoneId             !== undefined && { zone_id: d.zoneId }),
     ...(d.fullName           !== undefined && { full_name: d.fullName }),
@@ -70,6 +79,7 @@ function toDbRow(d: Partial<z.infer<typeof createMemberSchema>>) {
     ...(d.profileImagePublicId !== undefined && { profile_image_public_id: d.profileImagePublicId }),
     ...(d.joinedAt           !== undefined && { joined_at: d.joinedAt }),
     ...(d.isActive           !== undefined && { is_active: d.isActive }),
+    ...(userId               !== undefined && { user_id: userId }),
   }
 }
 

@@ -23,8 +23,7 @@ const News = lazy(() => import('./pages/News'));
 const Events = lazy(() => import('./pages/Events'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
-const UserLogin = lazy(() => import('./pages/UserLogin').then(m => ({ default: m.UserLogin })));
-const UserSignup = lazy(() => import('./pages/UserSignup').then(m => ({ default: m.UserSignup })));
+const ResetPassword = lazy(() => import('./pages/ResetPassword').then(m => ({ default: m.ResetPassword })));
 const UserDashboard = lazy(() => import('./pages/UserDashboard').then(m => ({ default: m.UserDashboard })));
 const Logout = lazy(() => import('./pages/Logout'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
@@ -149,8 +148,9 @@ function App() {
               <Route path="/events" element={<Events isUrdu={isUrdu} />} />
               <Route path="/contact" element={<Contact isUrdu={isUrdu} />} />
               <Route path="/login" element={<Navigate to="/user/login" replace />} />
-              <Route path="/user/login" element={<UserLogin />} />
-              <Route path="/signup" element={<UserSignup />} />
+              <Route path="/user/login" element={<LoginPage />} />
+              <Route path="/signup" element={<LoginPage />} />
+              <Route path="/auth/reset-password" element={<ResetPassword />} />
               <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
               <Route path="/membership/apply" element={<ProtectedRoute><MembershipApply /></ProtectedRoute>} />
               <Route path="/membership/waiting" element={<ProtectedRoute><MembershipWaiting /></ProtectedRoute>} />

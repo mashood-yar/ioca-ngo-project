@@ -12,21 +12,25 @@ const TrustBar: React.FC<TrustBarProps> = ({ isUrdu }) => {
       icon: ShieldCheck,
       textEn: 'PCP Certified',
       textUr: 'PCP تصدیق شدہ',
+      isBold: false,
     },
     {
       icon: CheckCircle2,
       textEn: 'FBR Tax Exempt',
       textUr: 'FBR ٹیکس فری',
+      isBold: false,
     },
     {
       icon: HeartHandshake,
       textEn: 'Zakat Eligible',
       textUr: 'زکوٰۃ کے لیے موزوں',
+      isBold: false,
     },
     {
       icon: Scale,
       textEn: 'Shariah Compliant',
       textUr: 'شریعت کے مطابق',
+      isBold: false,
     },
   ];
 

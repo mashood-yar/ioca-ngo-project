@@ -4,7 +4,7 @@ import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { getUser, requireAuth, requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
-import { sendDonationConfirmationEmail } from '../_lib/email'
+import { sendDonationThankYouEmail, sendAdminDonationNotification } from '../_lib/email'
 
 const donationSchema = z.object({
   // Accept both camelCase and snake_case for maximum backwards compatibility
@@ -17,32 +17,32 @@ const donationSchema = z.object({
   amount: z.number().positive('Amount must be positive'),
   currency: z.string().default('PKR'),
   message: z.string().optional(),
-  screenshotUrl: z.string().url().optional().or(z.literal('')),
-  screenshot_url: z.string().url().optional().or(z.literal('')),
-  screenshotPublicId: z.string().optional(),
-  screenshot_public_id: z.string().optional(),
-  projectId: z.string().uuid().optional().or(z.literal('')),
-  project_id: z.string().uuid().optional().or(z.literal('')),
-  transactionId: z.string().optional(),
-  transaction_id: z.string().optional(),
-  notes: z.string().optional(),
-  userId: z.string().uuid().optional(),
-  user_id: z.string().uuid().optional(),
-  status: z.enum(['pending', 'confirmed', 'rejected']).optional(),
+  screenshotUrl: z.string().optional().nullable().or(z.literal('')),
+  screenshot_url: z.string().optional().nullable().or(z.literal('')),
+  screenshotPublicId: z.string().optional().nullable(),
+  screenshot_public_id: z.string().optional().nullable(),
+  projectId: z.string().uuid().optional().nullable().or(z.literal('')),
+  project_id: z.string().uuid().optional().nullable().or(z.literal('')),
+  transactionId: z.string().optional().nullable(),
+  transaction_id: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  userId: z.string().uuid().optional().nullable(),
+  user_id: z.string().uuid().optional().nullable(),
+  status: z.enum(['pending', 'confirmed', 'rejected']).optional().nullable(),
 })
 
 const updateDonationStatusSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'rejected']),
-  notes: z.string().optional(),
+  notes: z.string().optional().nullable(),
 })
 
 const uploadScreenshotSchema = z.object({
-  screenshotUrl: z.string().url().optional().or(z.literal('')),
-  screenshot_url: z.string().url().optional().or(z.literal('')),
-  screenshotPublicId: z.string().optional(),
-  screenshot_public_id: z.string().optional(),
-  transactionId: z.string().optional(),
-  transaction_id: z.string().optional(),
+  screenshotUrl: z.string().optional().nullable().or(z.literal('')),
+  screenshot_url: z.string().optional().nullable().or(z.literal('')),
+  screenshotPublicId: z.string().optional().nullable(),
+  screenshot_public_id: z.string().optional().nullable(),
+  transactionId: z.string().optional().nullable(),
+  transaction_id: z.string().optional().nullable(),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -280,14 +280,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (error) throw new Error(error.message)
 
       // Send confirmation email if status is confirmed
-      if (status === 'confirmed' && data) {
-        sendDonationConfirmationEmail(
-          data.donor_name,
+      if (status === 'confirmed' && data && data.email) {
+        sendDonationThankYouEmail(
           data.email,
+          data.donor_name,
           data.amount,
-          data.payment_method,
-          updateData.confirmed_at as string,
+          data.currency || 'PKR',
           data.receipt_number || 'N/A',
+          data.projects?.title || null,
+          data.payment_method,
+          data.message
+        ).catch(console.error)
+
+        sendAdminDonationNotification(
+          process.env.RESEND_FROM_EMAIL || 'admin@iocaworld.org',
+          data.donor_name,
+          data.amount,
           data.projects?.title || 'General Fund'
         ).catch(console.error)
       }

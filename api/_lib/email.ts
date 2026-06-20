@@ -153,3 +153,206 @@ export async function sendContactNotification(
     console.error('Failed to send contact notification email:', error);
   }
 }
+
+export async function sendDonationThankYouEmail(
+  donorEmail: string,
+  donorName: string,
+  amount: number,
+  currency: string,
+  receiptNumber: string,
+  projectTitle: string | null,
+  paymentMethod: string | null,
+  message: string | null
+) {
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #333; line-height: 1.6; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #1D2D49 0%, #0D9488 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; }
+    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+    .receipt { background: white; border-left: 4px solid #0D9488; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    .receipt-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+    .receipt-row:last-child { border-bottom: none; }
+    .label { font-weight: 600; color: #1D2D49; }
+    .value { color: #0D9488; font-weight: 600; }
+    .amount { font-size: 24px; color: #0D9488; font-weight: bold; }
+    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 14px; color: #666; text-align: center; }
+    .impact { background: #E8F5F0; padding: 15px; border-radius: 4px; margin: 20px 0; }
+    .cta-text { color: #0D9488; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1 style="margin: 0; font-size: 28px;">Thank You for Your Donation! 🙏</h1>
+      <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.95;">Your generosity makes a real difference</p>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Greeting -->
+      <p>Dear <strong>${donorName}</strong>,</p>
+
+      <p>
+        We are deeply grateful for your generous donation to IOCA (International Organization For Community Advancement). 
+        Your contribution will directly support our mission to empower communities across Pakistan through education, 
+        healthcare, youth development, and emergency relief.
+      </p>
+
+      <!-- Impact Section -->
+      ${
+        projectTitle
+          ? `
+        <div class="impact">
+          <p style="margin-top: 0;"><strong>Your donation supports:</strong></p>
+          <p style="margin-bottom: 0; color: #0D9488;"><strong>${projectTitle}</strong></p>
+          <p style="font-size: 14px; margin: 8px 0 0 0; color: #666;">
+            This project creates meaningful change in the lives of those most in need. Thank you for being part of this important work.
+          </p>
+        </div>
+      `
+          : ''
+      }
+
+      <!-- Receipt -->
+      <div class="receipt">
+        <div style="text-align: center; margin-bottom: 15px;">
+          <p style="font-size: 14px; color: #666; margin: 0;">DONATION RECEIPT</p>
+        </div>
+
+        <div class="receipt-row">
+          <span class="label">Receipt Number:</span>
+          <span class="value" style="font-family: monospace; letter-spacing: 1px;">${receiptNumber}</span>
+        </div>
+
+        <div class="receipt-row">
+          <span class="label">Amount Donated:</span>
+          <span class="value">${currency} ${Number(amount).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}</span>
+        </div>
+
+        ${
+          paymentMethod
+            ? `
+        <div class="receipt-row">
+          <span class="label">Payment Method:</span>
+          <span>${paymentMethod}</span>
+        </div>
+        `
+            : ''
+        }
+
+        <div class="receipt-row">
+          <span class="label">Date:</span>
+          <span>${new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}</span>
+        </div>
+      </div>
+
+      <!-- Donor Message -->
+      ${
+        message
+          ? `
+        <div style="background: #f0f8ff; padding: 15px; border-radius: 4px; margin: 20px 0; border-left: 4px solid #0D9488;">
+          <p style="margin-top: 0; font-size: 14px; color: #666;"><strong>Your Message:</strong></p>
+          <p style="margin: 8px 0; color: #333; font-style: italic;">"${message}"</p>
+        </div>
+      `
+          : ''
+      }
+
+      <!-- Tax Info -->
+      <div style="background: #fff3cd; padding: 15px; border-radius: 4px; margin: 20px 0; border-left: 4px solid #ffc107;">
+        <p style="margin-top: 0; font-size: 14px; color: #856404;"><strong>Tax Deductibility:</strong></p>
+        <p style="margin: 8px 0; font-size: 14px; color: #856404;">
+          IOCA is registered as a non-profit organization. Your donation may be tax-deductible under applicable laws. 
+          Please consult with a tax professional for details.
+        </p>
+      </div>
+
+      <!-- Call to Action -->
+      <div style="text-align: center; margin: 30px 0;">
+        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+          <strong>Stay connected with us</strong>
+        </p>
+        <p style="margin: 0; font-size: 14px;">
+          Visit our website at <a href="https://iocaworld.org" class="cta-text">iocaworld.org</a> to see the impact your donation is making.
+        </p>
+      </div>
+
+      <!-- Closing -->
+      <p style="margin-top: 30px;">
+        With heartfelt gratitude,<br>
+        <strong>The IOCA Team</strong>
+      </p>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p style="margin: 0;">
+          International Organization For Community Advancement (IOCA)<br>
+          Empowering communities across Pakistan
+        </p>
+        <p style="margin: 10px 0 0 0; font-size: 12px;">
+          This is an automated email. Please do not reply directly. For inquiries, contact us at <a href="mailto:info@iocaworld.org" style="color: #0D9488; text-decoration: none;">info@iocaworld.org</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  try {
+    const response = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || 'noreply@iocaworld.org',
+      to: donorEmail,
+      subject: `Thank You for Your Donation - Receipt ${receiptNumber}`,
+      html: htmlContent,
+    });
+
+    console.log('Donation thank you email sent:', { donorEmail, receiptNumber, response });
+    return response;
+  } catch (error) {
+    // Log error but don't throw — donation confirmation should not fail if email fails
+    console.error('Failed to send donation thank you email:', {
+      donorEmail,
+      receiptNumber,
+      error: error instanceof Error ? error.message : error,
+    });
+    return null;
+  }
+}
+
+export async function sendAdminDonationNotification(
+  adminEmail: string,
+  donorName: string,
+  amount: number,
+  projectTitle: string
+) {
+  const html = `
+    <p>New donation confirmed from <strong>${donorName}</strong></p>
+    <p>Amount: <strong>PKR ${Number(amount).toLocaleString('en-US')}</strong></p>
+    <p>Project: <strong>${projectTitle}</strong></p>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || 'noreply@iocaworld.org',
+      to: adminEmail,
+      subject: `[IOCA] New Donation Confirmed - PKR ${Number(amount).toLocaleString('en-US')}`,
+      html,
+    });
+  } catch (error) {
+    console.error('Admin notification email failed:', error);
+  }
+}

@@ -1,3 +1,5 @@
+
+
 {
   "buildCommand": "npm run build --prefix frontend",
   "outputDirectory": "frontend/dist",
@@ -21,6 +23,6 @@
     { "source": "/api/zones(.*)", "destination": "/api/misc/zones$1" },
     { "source": "/api/tiers(.*)", "destination": "/api/misc/tiers$1" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

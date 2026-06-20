@@ -89,24 +89,40 @@ export function AdminEvents() {
         imageUrl,
       };
 
-      if (selectedEvent) {
-        await fetchApi(`/events/${selectedEvent.id}`, {
-          method: 'PUT',
-          body: JSON.stringify(payload),
-        });
-        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Event updated', variant: 'success' }}));
-      } else {
-        await fetchApi('/events', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
-        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Event created', variant: 'success' }}));
+      console.log('=== EVENT FORM SUBMISSION ===');
+      console.log('Form data:', {
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
+        event_date: formData.event_date,
+        imageUrl,
+      });
+      console.log('Payload to send:', JSON.stringify(payload, null, 2));
+      console.log('About to call api/events endpoint');
+
+      const url = selectedEvent ? `/events/${selectedEvent.id}` : '/events';
+      const method = selectedEvent ? 'PUT' : 'POST';
+
+      const result = await fetchApi<any>(url, {
+        method,
+        body: JSON.stringify(payload),
+      });
+
+      console.log('=== API RESPONSE ===');
+      console.log('Result:', JSON.stringify(result, null, 2));
+
+      if (result.error) {
+        console.error('API returned error:', result.error);
+        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to save: ${result.error}`, variant: 'error' }}));
+        return;
       }
 
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: selectedEvent ? 'Event updated' : 'Event created', variant: 'success' }}));
       setIsFormOpen(false);
       loadEvents();
-    } catch (err) {
-      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to save event', variant: 'error' }}));
+    } catch (err: any) {
+      console.error('Unexpected error:', err);
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Unexpected error: ${err.message || err}`, variant: 'error' }}));
     } finally {
       setSaving(false);
     }
