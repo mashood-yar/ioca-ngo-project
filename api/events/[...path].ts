@@ -35,6 +35,12 @@ const updateEventSchema = z.object({
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log('=== api/events handler invoked ===')
+  console.log('Method:', req.method)
+  console.log('URL:', req.url)
+  console.log('Path:', req.query.path)
+  console.log('Body:', JSON.stringify(req.body))
+
   if (cors(req, res)) return
 
   const pathVal = req.query.path
