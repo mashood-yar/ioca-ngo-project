@@ -4,7 +4,7 @@ import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { getUser, requireAuth, requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
-import { sendDonationConfirmationEmail } from '../_lib/email'
+import { sendDonationThankYouEmail, sendAdminDonationNotification } from '../_lib/email'
 
 const donationSchema = z.object({
   // Accept both camelCase and snake_case for maximum backwards compatibility
@@ -280,14 +280,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (error) throw new Error(error.message)
 
       // Send confirmation email if status is confirmed
-      if (status === 'confirmed' && data) {
-        sendDonationConfirmationEmail(
-          data.donor_name,
+      if (status === 'confirmed' && data && data.email) {
+        sendDonationThankYouEmail(
           data.email,
+          data.donor_name,
           data.amount,
-          data.payment_method,
-          updateData.confirmed_at as string,
+          data.currency || 'PKR',
           data.receipt_number || 'N/A',
+          data.projects?.title || null,
+          data.payment_method,
+          data.message
+        ).catch(console.error)
+
+        sendAdminDonationNotification(
+          process.env.RESEND_FROM_EMAIL || 'admin@iocaworld.org',
+          data.donor_name,
+          data.amount,
           data.projects?.title || 'General Fund'
         ).catch(console.error)
       }
