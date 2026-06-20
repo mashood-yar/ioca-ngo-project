@@ -196,8 +196,17 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-navy to-brand-teal flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border border-white/10 transition-all duration-300">
+    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+      {/* Cinematic Background Image */}
+      <img 
+        src="/assets/auth-bg.png" 
+        alt="IOCA Community" 
+        className="absolute inset-0 w-full h-full object-cover z-0" 
+      />
+      {/* Brand Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-navy/90 to-brand-teal/80 z-0"></div>
+      
+      <div className="relative z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md p-8 border border-white/30 transition-all duration-300">
         
         {/* Logo */}
         <div className="text-center mb-6">
