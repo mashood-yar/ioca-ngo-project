@@ -252,12 +252,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, data, 201)
     }
 
-    // 7. PATCH /api/donations/:id/status OR PATCH /api/donations/:id — Admin: update donation status
-    if (req.method === 'PATCH' && first) {
+    // 7. PATCH /api/donations/:id/verify-payment — Admin: verify payment
+    if (req.method === 'PATCH' && first && segments[1] === 'verify-payment') {
+      const user = await requireAdmin(req, res)
+      if (!user) return
+
+      const donationId = first
+      const { verificationNotes } = req.body
+
+      try {
+        const { data: donation, error } = await supabase
+          .from('donations')
+          .update({
+            status: 'payment_verified',
+            payment_verified_at: new Date().toISOString(),
+            payment_verified_by: user.id,
+            verification_notes: verificationNotes || null,
+          })
+          .eq('id', donationId)
+          .select('*, projects(title)')
+          .single()
+
+        if (error) {
+          return err(res, error.message, 400)
+        }
+
+        console.log('Payment verified for donation:', donationId)
+        return ok(res, donation, 200)
+      } catch (e) {
+        const errorMsg = e instanceof Error ? e.message : String(e)
+        return err(res, errorMsg, 500)
+      }
+    }
+
+    // 8. PATCH /api/donations/:id — Admin: update status (confirm/reject)
+    if (req.method === 'PATCH' && first && segments[1] !== 'verify-payment') {
       const user = await requireAdmin(req, res)
       if (!user) return
 
       const { status, notes } = updateDonationStatusSchema.parse(req.body)
+
+      // Only allow confirming if payment is already verified
+      if (status === 'confirmed') {
+        const { data: donation, error: fetchError } = await supabase
+          .from('donations')
+          .select('status')
+          .eq('id', first)
+          .single()
+
+        if (fetchError || !donation) {
+          return err(res, 'Donation not found', 404)
+        }
+
+        if (donation.status !== 'payment_verified') {
+          return err(res, 'Payment must be verified before confirming', 400)
+        }
+      }
 
       const updateData: Record<string, unknown> = {
         status,
