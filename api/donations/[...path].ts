@@ -17,32 +17,32 @@ const donationSchema = z.object({
   amount: z.number().positive('Amount must be positive'),
   currency: z.string().default('PKR'),
   message: z.string().optional(),
-  screenshotUrl: z.string().url().optional().or(z.literal('')),
-  screenshot_url: z.string().url().optional().or(z.literal('')),
-  screenshotPublicId: z.string().optional(),
-  screenshot_public_id: z.string().optional(),
-  projectId: z.string().uuid().optional().or(z.literal('')),
-  project_id: z.string().uuid().optional().or(z.literal('')),
-  transactionId: z.string().optional(),
-  transaction_id: z.string().optional(),
-  notes: z.string().optional(),
-  userId: z.string().uuid().optional(),
-  user_id: z.string().uuid().optional(),
-  status: z.enum(['pending', 'confirmed', 'rejected']).optional(),
+  screenshotUrl: z.string().optional().nullable().or(z.literal('')),
+  screenshot_url: z.string().optional().nullable().or(z.literal('')),
+  screenshotPublicId: z.string().optional().nullable(),
+  screenshot_public_id: z.string().optional().nullable(),
+  projectId: z.string().uuid().optional().nullable().or(z.literal('')),
+  project_id: z.string().uuid().optional().nullable().or(z.literal('')),
+  transactionId: z.string().optional().nullable(),
+  transaction_id: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  userId: z.string().uuid().optional().nullable(),
+  user_id: z.string().uuid().optional().nullable(),
+  status: z.enum(['pending', 'confirmed', 'rejected']).optional().nullable(),
 })
 
 const updateDonationStatusSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'rejected']),
-  notes: z.string().optional(),
+  notes: z.string().optional().nullable(),
 })
 
 const uploadScreenshotSchema = z.object({
-  screenshotUrl: z.string().url().optional().or(z.literal('')),
-  screenshot_url: z.string().url().optional().or(z.literal('')),
-  screenshotPublicId: z.string().optional(),
-  screenshot_public_id: z.string().optional(),
-  transactionId: z.string().optional(),
-  transaction_id: z.string().optional(),
+  screenshotUrl: z.string().optional().nullable().or(z.literal('')),
+  screenshot_url: z.string().optional().nullable().or(z.literal('')),
+  screenshotPublicId: z.string().optional().nullable(),
+  screenshot_public_id: z.string().optional().nullable(),
+  transactionId: z.string().optional().nullable(),
+  transaction_id: z.string().optional().nullable(),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
