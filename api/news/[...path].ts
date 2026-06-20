@@ -9,13 +9,13 @@ import { processImageField } from '../_lib/upload'
 const createNewsSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.string().min(1, 'Content is required'),
-  imageUrl: z.string().url().nullable().optional().or(z.literal('')),
+  imageUrl: z.string().nullable().optional().or(z.literal('')),
 })
 
 const updateNewsSchema = z.object({
   title: z.string().optional().nullable().or(z.literal('')),
   content: z.string().optional().nullable().or(z.literal('')),
-  imageUrl: z.string().url().optional().nullable().or(z.literal('')),
+  imageUrl: z.string().optional().nullable().or(z.literal('')),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

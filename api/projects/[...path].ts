@@ -10,14 +10,14 @@ const createProjectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
   status: z.string().optional().nullable().or(z.literal('')),
-  imageUrl: z.string().url().nullable().optional().or(z.literal('')),
+  imageUrl: z.string().nullable().optional().or(z.literal('')),
 })
 
 const updateProjectSchema = z.object({
   title: z.string().optional().nullable().or(z.literal('')),
   description: z.string().optional().nullable().or(z.literal('')),
   status: z.string().optional().nullable().or(z.literal('')),
-  imageUrl: z.string().url().optional().nullable().or(z.literal('')),
+  imageUrl: z.string().optional().nullable().or(z.literal('')),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

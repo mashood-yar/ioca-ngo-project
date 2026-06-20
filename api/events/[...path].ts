@@ -10,16 +10,28 @@ const createEventSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
   location: z.string().nullable().optional().or(z.literal('')),
-  eventDate: z.string().datetime().nullable().optional().or(z.literal('')),
-  imageUrl: z.string().url().nullable().optional().or(z.literal('')),
+  eventDate: z.preprocess((val) => {
+    if (typeof val === 'string' && val) {
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) return d.toISOString();
+    }
+    return val;
+  }, z.string().datetime().nullable().optional().or(z.literal(''))),
+  imageUrl: z.string().nullable().optional().or(z.literal('')),
 })
 
 const updateEventSchema = z.object({
   title: z.string().optional().nullable().or(z.literal('')),
   description: z.string().optional().nullable().or(z.literal('')),
   location: z.string().optional().nullable().or(z.literal('')),
-  eventDate: z.string().datetime().optional().nullable().or(z.literal('')),
-  imageUrl: z.string().url().optional().nullable().or(z.literal('')),
+  eventDate: z.preprocess((val) => {
+    if (typeof val === 'string' && val) {
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) return d.toISOString();
+    }
+    return val;
+  }, z.string().datetime().optional().nullable().or(z.literal(''))),
+  imageUrl: z.string().optional().nullable().or(z.literal('')),
 })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
