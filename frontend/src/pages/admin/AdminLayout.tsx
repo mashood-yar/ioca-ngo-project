@@ -11,7 +11,10 @@ import {
   MessageSquare, 
   LogOut,
   Menu,
-  ClipboardList
+  ClipboardList,
+  BookOpen,
+  FolderOpen,
+  Image
 } from 'lucide-react';
 
 export function AdminLayout() {
@@ -44,6 +47,9 @@ export function AdminLayout() {
     { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/admin/posts', label: 'News Posts', icon: FileText },
     { to: '/admin/events', label: 'Events', icon: Calendar },
+    { to: '/admin/programs', label: 'Programs', icon: BookOpen },
+    { to: '/admin/projects', label: 'Projects', icon: FolderOpen },
+    { to: '/admin/gallery', label: 'Gallery', icon: Image },
     { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
     { to: '/admin/applications', label: 'Applications', icon: ClipboardList },
     { to: '/admin/donations', label: 'Donations', icon: DollarSign },

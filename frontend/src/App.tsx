@@ -35,6 +35,9 @@ const AdminMembers = lazy(() => import('./pages/admin/AdminMembers').then(m => (
 const AdminDonations = lazy(() => import('./pages/admin/AdminDonations').then(m => ({ default: m.AdminDonations })));
 const AdminQueries = lazy(() => import('./pages/admin/AdminQueries').then(m => ({ default: m.AdminQueries })));
 const AdminApplications = lazy(() => import('./pages/admin/AdminApplications').then(m => ({ default: m.AdminApplications })));
+const AdminPrograms = lazy(() => import('./pages/admin/AdminPrograms').then(m => ({ default: m.AdminPrograms })));
+const AdminProjects = lazy(() => import('./pages/admin/AdminProjects').then(m => ({ default: m.AdminProjects })));
+const AdminGallery = lazy(() => import('./pages/admin/AdminGallery').then(m => ({ default: m.AdminGallery })));
 const MembershipApply = lazy(() => import('./pages/membership/MembershipApply').then(m => ({ default: m.MembershipApply })));
 const MembershipWaiting = lazy(() => import('./pages/membership/MembershipWaiting').then(m => ({ default: m.MembershipWaiting })));
 
@@ -117,6 +120,9 @@ function App() {
               <Route path="applications" element={<AdminApplications />} />
               <Route path="donations" element={<AdminDonations />} />
               <Route path="queries" element={<AdminQueries />} />
+              <Route path="programs" element={<AdminPrograms />} />
+              <Route path="projects" element={<AdminProjects />} />
+              <Route path="gallery" element={<AdminGallery />} />
             </Route>
           </Routes>
         </Suspense>

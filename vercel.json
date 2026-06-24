@@ -14,6 +14,7 @@
     { "source": "/api/donations", "destination": "/api/donations/index" },
     { "source": "/api/events", "destination": "/api/events/index" },
     { "source": "/api/news", "destination": "/api/news/index" },
+    { "source": "/api/gallery", "destination": "/api/gallery/index" },
     { "source": "/api/projects", "destination": "/api/projects/index" },
     { "source": "/api/admin(.*)", "destination": "/api/misc/admin$1" },
     { "source": "/api/profile(.*)", "destination": "/api/misc/profile$1" },
