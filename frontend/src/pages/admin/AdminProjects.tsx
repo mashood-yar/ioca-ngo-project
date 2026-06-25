@@ -13,6 +13,8 @@ interface Project {
   description: string;
   status: string;
   category: string | null;
+  location: string | null;
+  progress: number;
   image_url: string | null;
   is_featured: boolean;
   start_date: string | null;
@@ -40,6 +42,8 @@ export function AdminProjects() {
     description: '',
     status: 'ongoing',
     category: '',
+    location: '',
+    progress: 0,
     is_featured: false,
     start_date: '',
     end_date: '',
@@ -72,13 +76,15 @@ export function AdminProjects() {
         description: project.description,
         status: project.status || 'ongoing',
         category: project.category || '',
+        location: project.location || '',
+        progress: project.progress ?? 0,
         is_featured: project.is_featured || false,
         start_date: project.start_date ? new Date(project.start_date).toISOString().slice(0, 10) : '',
         end_date: project.end_date ? new Date(project.end_date).toISOString().slice(0, 10) : '',
       });
     } else {
       setSelectedProject(null);
-      setFormData({ title: '', description: '', status: 'ongoing', category: '', is_featured: false, start_date: '', end_date: '' });
+      setFormData({ title: '', description: '', status: 'ongoing', category: '', location: '', progress: 0, is_featured: false, start_date: '', end_date: '' });
     }
     setSelectedFile(null);
     setIsFormOpen(true);
@@ -100,6 +106,8 @@ export function AdminProjects() {
         description: formData.description,
         status: formData.status,
         category: formData.category || null,
+        location: formData.location || null,
+        progress: formData.progress,
         isFeatured: formData.is_featured,
         startDate: formData.start_date ? new Date(formData.start_date).toISOString() : null,
         endDate: formData.end_date ? new Date(formData.end_date).toISOString() : null,
@@ -314,6 +322,29 @@ export function AdminProjects() {
                 onChange={e => setFormData({ ...formData, category: e.target.value })}
                 className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] transition-colors duration-150"
                 placeholder="e.g. Infrastructure"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Location</label>
+              <input
+                type="text"
+                value={formData.location}
+                onChange={e => setFormData({ ...formData, location: e.target.value })}
+                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] transition-colors duration-150"
+                placeholder="e.g. Lahore, Punjab"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Progress ({formData.progress}%)</label>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={formData.progress}
+                onChange={e => setFormData({ ...formData, progress: parseInt(e.target.value) })}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0D9488]"
               />
             </div>
           </div>

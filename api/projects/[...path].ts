@@ -29,6 +29,8 @@ const createProjectSchema = z.object({
   image_url: z.string().nullable().optional().or(z.literal('')),
   slug: z.string().nullable().optional().or(z.literal('')),
   category: z.string().nullable().optional().or(z.literal('')),
+  location: z.string().nullable().optional().or(z.literal('')),
+  progress: z.number().int().min(0).max(100).optional().nullable(),
   isFeatured: z.boolean().optional().nullable(),
   is_featured: z.boolean().optional().nullable(),
   startDate: z.preprocess(toIsoString, z.string().datetime().nullable().optional().or(z.literal(''))),
@@ -104,6 +106,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
           slug: slug || null,
           category: body.category || null,
+          location: body.location && body.location !== '' ? body.location : null,
+          progress: body.progress ?? 0,
           is_featured: isFeatured ?? false,
           start_date: startDate && startDate !== '' ? startDate : null,
           end_date: endDate && endDate !== '' ? endDate : null,
@@ -138,6 +142,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       if (body.category !== undefined) updates.category = body.category || null
+
+      if (body.location !== undefined) updates.location = body.location && body.location !== '' ? body.location : null
+      if (body.progress !== undefined) updates.progress = body.progress ?? 0
       
       const isFeatured = body.is_featured !== undefined ? body.is_featured : body.isFeatured
       if (isFeatured !== undefined) updates.is_featured = isFeatured ?? false

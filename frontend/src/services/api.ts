@@ -32,20 +32,25 @@ export async function getProjects(): Promise<Project[]> {
 
   return data.map((row: any) => {
     const status = row.status === 'completed' ? 'completed' : 'ongoing';
+    const progress = typeof row.progress === 'number' ? row.progress : (status === 'completed' ? 100 : 50);
+    const location = row.location || '';
+    const dateStr = row.start_date
+      ? new Date(row.start_date).toLocaleDateString()
+      : new Date(row.created_at).toLocaleDateString();
     return {
       id: row.id,
       titleEn: row.title,
       titleUr: row.title,
       descEn: row.description,
       descUr: row.description,
-      locationEn: '',
-      locationUr: '',
+      locationEn: location,
+      locationUr: location,
       status,
       statusEn: status === 'completed' ? 'Completed' : 'Ongoing',
       statusUr: status === 'completed' ? 'مکمل' : 'جاری',
-      date: new Date(row.created_at).toLocaleDateString(),
+      date: dateStr,
       image: row.image_url ?? '/assets/proj-education.webp',
-      progress: status === 'completed' ? 100 : 50,
+      progress,
     };
   });
 }
