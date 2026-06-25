@@ -24,7 +24,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
   const displayNum = (n: number) => isUrdu ? toUrduNumerals(n.toLocaleString()) : n.toLocaleString();
 
   return (
-    <section id="causes" ref={sectionRef} className="py-10 md:py-24 overflow-hidden relative">
+    <section id="causes" ref={sectionRef} className="py-12 md:py-24 overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 md:px-16">
         {/* Header */}
         <motion.div

@@ -196,8 +196,17 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1D2D49] to-[#0D9488] flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border border-white/10 transition-all duration-300">
+    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+      {/* Cinematic Background Image */}
+      <img 
+        src="/assets/auth-bg.png" 
+        alt="IOCA Community" 
+        className="absolute inset-0 w-full h-full object-cover z-0" 
+      />
+      {/* Brand Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-navy/90 to-brand-teal/80 z-0"></div>
+      
+      <div className="relative z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md p-8 border border-white/30 transition-all duration-300">
         
         {/* Logo */}
         <div className="text-center mb-6">
@@ -208,7 +217,7 @@ export function LoginPage() {
               className="w-16 h-16 object-contain drop-shadow-sm hover:scale-110 transition-transform duration-300"
             />
           </div>
-          <h1 className="text-3xl font-extrabold text-[#1D2D49] tracking-tight">IOCA</h1>
+          <h1 className="text-3xl font-extrabold text-brand-navy tracking-tight">IOCA</h1>
           <p className="text-sm text-gray-500 mt-1 max-w-xs mx-auto leading-normal">
             {isAdminMode 
               ? 'International Organization For Community Advancement — Admin Portal' 
@@ -239,7 +248,7 @@ export function LoginPage() {
         {/* Forgot Password View */}
         {isForgotPassword ? (
           <div>
-            <h2 className="text-xl font-bold text-[#1D2D49] mb-2">Reset Password</h2>
+            <h2 className="text-xl font-bold text-brand-navy mb-2">Reset Password</h2>
             <p className="text-sm text-gray-500 mb-4 leading-normal">
               Enter your email address and we'll send you a recovery link to choose a new password.
             </p>
@@ -252,14 +261,14 @@ export function LoginPage() {
                   name="email"
                   placeholder="you@example.com"
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0D9488] focus:border-transparent outline-none transition-all duration-200 text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all duration-200 text-sm"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#0D9488] text-white py-2.5 rounded-xl font-semibold hover:bg-[#0F766E] shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 text-sm"
+                className="w-full bg-brand-teal text-white py-2.5 rounded-xl font-semibold hover:bg-brand-teal/90 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 text-sm"
               >
                 {loading ? 'Sending Link...' : 'Send Reset Link'}
               </button>
@@ -272,7 +281,7 @@ export function LoginPage() {
                   setError(null);
                   setSuccess(null);
                 }}
-                className="text-sm font-medium text-[#0D9488] hover:text-[#0F766E] transition-colors"
+                className="text-sm font-medium text-brand-teal hover:text-brand-teal/80 transition-colors"
               >
                 Back to Sign In
               </button>
@@ -291,7 +300,7 @@ export function LoginPage() {
                 }}
                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   !isSignUp
-                    ? 'bg-white text-[#1D2D49] shadow-sm'
+                    ? 'bg-white text-brand-navy shadow-sm'
                     : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
@@ -305,7 +314,7 @@ export function LoginPage() {
                 }}
                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   isSignUp
-                    ? 'bg-white text-[#1D2D49] shadow-sm'
+                    ? 'bg-white text-brand-navy shadow-sm'
                     : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
@@ -324,7 +333,7 @@ export function LoginPage() {
                     name="email"
                     placeholder="you@example.com"
                     required
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0D9488] focus:border-transparent outline-none transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all duration-200 text-sm"
                   />
                 </div>
 
@@ -338,7 +347,7 @@ export function LoginPage() {
                         setError(null);
                         setSuccess(null);
                       }}
-                      className="text-xs font-semibold text-[#0D9488] hover:text-[#0F766E] transition-colors"
+                      className="text-xs font-semibold text-brand-teal hover:text-brand-teal/80 transition-colors"
                     >
                       Forgot Password?
                     </button>
@@ -348,7 +357,7 @@ export function LoginPage() {
                     name="password"
                     placeholder="••••••••"
                     required
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0D9488] focus:border-transparent outline-none transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all duration-200 text-sm"
                   />
                 </div>
 
@@ -358,7 +367,7 @@ export function LoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 text-[#0D9488] focus:ring-[#0D9488] border-gray-300 rounded cursor-pointer"
+                    className="h-4 w-4 text-brand-teal focus:ring-brand-teal border-gray-300 rounded cursor-pointer"
                   />
                   <label htmlFor="remember_me" className="ml-2 block text-sm text-gray-600 cursor-pointer">
                     Remember me
@@ -368,7 +377,7 @@ export function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#0D9488] text-white py-2.5 rounded-xl font-semibold hover:bg-[#0F766E] shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 text-sm"
+                  className="w-full bg-brand-teal text-white py-2.5 rounded-xl font-semibold hover:bg-brand-teal/90 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 text-sm"
                 >
                   {loading ? 'Signing In...' : 'Sign In'}
                 </button>
@@ -383,7 +392,7 @@ export function LoginPage() {
                     name="fullName"
                     placeholder="Your Name"
                     required
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0D9488] focus:border-transparent outline-none transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all duration-200 text-sm"
                   />
                 </div>
 
@@ -394,7 +403,7 @@ export function LoginPage() {
                     name="email"
                     placeholder="you@example.com"
                     required
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0D9488] focus:border-transparent outline-none transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all duration-200 text-sm"
                   />
                 </div>
 
@@ -406,7 +415,7 @@ export function LoginPage() {
                     placeholder="••••••••"
                     minLength={8}
                     required
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0D9488] focus:border-transparent outline-none transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all duration-200 text-sm"
                   />
                   <p className="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
                 </div>
@@ -418,7 +427,7 @@ export function LoginPage() {
                     name="confirmPassword"
                     placeholder="••••••••"
                     required
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0D9488] focus:border-transparent outline-none transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all duration-200 text-sm"
                   />
                 </div>
 
@@ -430,17 +439,17 @@ export function LoginPage() {
                       checked={agreeTerms}
                       onChange={(e) => setAgreeTerms(e.target.checked)}
                       required
-                      className="h-4 w-4 text-[#0D9488] focus:ring-[#0D9488] border-gray-300 rounded cursor-pointer"
+                      className="h-4 w-4 text-brand-teal focus:ring-brand-teal border-gray-300 rounded cursor-pointer"
                     />
                   </div>
                   <div className="ml-2 text-sm">
                     <label htmlFor="agree_terms" className="text-gray-600 cursor-pointer">
                       I agree to the{' '}
-                      <Link to="/about" className="font-semibold text-[#0D9488] hover:text-[#0F766E] transition-colors">
+                      <Link to="/about" className="font-semibold text-brand-teal hover:text-brand-teal/80 transition-colors">
                         Terms of Service
                       </Link>{' '}
                       &{' '}
-                      <Link to="/about" className="font-semibold text-[#0D9488] hover:text-[#0F766E] transition-colors">
+                      <Link to="/about" className="font-semibold text-brand-teal hover:text-brand-teal/80 transition-colors">
                         Privacy Policy
                       </Link>
                     </label>
@@ -450,7 +459,7 @@ export function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#0D9488] text-white py-2.5 rounded-xl font-semibold hover:bg-[#0F766E] shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 text-sm"
+                  className="w-full bg-brand-teal text-white py-2.5 rounded-xl font-semibold hover:bg-brand-teal/90 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 text-sm"
                 >
                   {loading ? 'Creating Account...' : 'Create Account'}
                 </button>

@@ -21,7 +21,7 @@ const ImpactStoriesCarousel: React.FC<ImpactStoriesCarouselProps> = ({ isUrdu })
   };
 
   return (
-    <section ref={sectionRef} className="py-10 md:py-24 overflow-hidden relative bg-brand-gray/50">
+    <section ref={sectionRef} className="py-12 md:py-24 overflow-hidden relative bg-brand-white">
       <div className="max-w-7xl mx-auto px-4 md:px-16">
         {/* Header */}
         <motion.div
@@ -72,13 +72,13 @@ const ImpactStoriesCarousel: React.FC<ImpactStoriesCarouselProps> = ({ isUrdu })
           {impactStories.slice(0, 5).map((story, idx) => (
             <motion.div
               key={story.id}
-              className="group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border border-brand-navy/5 will-change-transform"
+              className="group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 border-brand-teal/20 hover:border-brand-teal will-change-transform"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: idx * 0.15 }}
             >
               {/* Image */}
-              <div className="relative h-48 md:h-56 overflow-hidden">
+              <div className="relative h-40 md:h-48 overflow-hidden">
                 <img
                   src={optimizeImage(story.image, { width: 400 })}
                   alt={isUrdu ? story.titleUr : story.titleEn}
@@ -86,13 +86,13 @@ const ImpactStoriesCarousel: React.FC<ImpactStoriesCarouselProps> = ({ isUrdu })
                   loading="lazy"
                   decoding="async"
                   width={400}
-                  height={224}
+                  height={192}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               </div>
 
               {/* Content */}
-              <div className="p-5 md:p-6 flex flex-col flex-grow">
+              <div className="p-5 flex flex-col flex-grow">
                 <div className="flex flex-wrap items-center gap-2 mb-3">
                   <span className="flex items-center gap-1 text-[10px] bg-brand-teal/10 text-brand-teal px-2 py-1 rounded-md font-bold uppercase tracking-wider">
                     <Tag className="w-3 h-3" />
@@ -106,11 +106,11 @@ const ImpactStoriesCarousel: React.FC<ImpactStoriesCarouselProps> = ({ isUrdu })
                   )}
                 </div>
 
-                <h3 className={`text-xl md:text-2xl font-bold text-brand-navy mb-2 line-clamp-2 ${isUrdu ? 'font-urduHeading' : ''}`}>
+                <h3 className={`text-lg md:text-xl font-bold text-brand-navy mb-2 line-clamp-2 ${isUrdu ? 'font-urduHeading' : ''}`}>
                   {isUrdu ? story.titleUr : story.titleEn}
                 </h3>
                 
-                <p className={`text-sm text-brand-navy/60 leading-relaxed mb-6 flex-grow line-clamp-3 ${isUrdu ? 'font-urduBody' : ''}`}>
+                <p className={`text-sm text-brand-navy/60 leading-relaxed mb-4 flex-grow line-clamp-3 ${isUrdu ? 'font-urduBody' : ''}`}>
                   {isUrdu ? story.excerptUr : story.excerptEn}
                 </p>
 
