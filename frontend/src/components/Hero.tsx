@@ -10,7 +10,7 @@ interface HeroProps {
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 15 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, delay, ease: "easeOut" },
+  transition: { duration: 0.4, delay, ease: "easeOut" as const },
 });
 
 const HERO_IMAGES_URDU = [
