@@ -37,6 +37,8 @@ const AdminQueries = lazy(() => import('./pages/admin/AdminQueries').then(m => (
 const AdminApplications = lazy(() => import('./pages/admin/AdminApplications').then(m => ({ default: m.AdminApplications })));
 const MembershipApply = lazy(() => import('./pages/membership/MembershipApply').then(m => ({ default: m.MembershipApply })));
 const MembershipWaiting = lazy(() => import('./pages/membership/MembershipWaiting').then(m => ({ default: m.MembershipWaiting })));
+const VerifyID = lazy(() => import('./pages/VerifyID').then(m => ({ default: m.VerifyID })));
+const AdminPersonnel = lazy(() => import('./pages/admin/AdminPersonnel').then(m => ({ default: m.AdminPersonnel })));
 
 /** Scrolls to top on route change */
 function ScrollToTop() {
@@ -117,6 +119,7 @@ function App() {
               <Route path="applications" element={<AdminApplications />} />
               <Route path="donations" element={<AdminDonations />} />
               <Route path="queries" element={<AdminQueries />} />
+              <Route path="personnel" element={<AdminPersonnel />} />
             </Route>
           </Routes>
         </Suspense>
@@ -154,6 +157,7 @@ function App() {
               <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
               <Route path="/membership/apply" element={<ProtectedRoute><MembershipApply /></ProtectedRoute>} />
               <Route path="/membership/waiting" element={<ProtectedRoute><MembershipWaiting /></ProtectedRoute>} />
+              <Route path="/verify/:uid" element={<VerifyID />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="*" element={<NotFound isUrdu={isUrdu} />} />
             </Routes>

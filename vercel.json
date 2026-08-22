@@ -9,6 +9,12 @@
       "runtime": "@vercel/node@5.5.15"
     }
   },
+  "crons": [
+    {
+      "path": "/api/keep-alive",
+      "schedule": "0 0 * * *"
+    }
+  ],
   "rewrites": [
     { "source": "/api/contacts", "destination": "/api/contacts/index" },
     { "source": "/api/donations", "destination": "/api/donations/index" },

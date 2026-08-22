@@ -219,6 +219,28 @@ CREATE POLICY "Users can view own application" ON public.applications FOR SELECT
 CREATE POLICY "Users can insert own application" ON public.applications FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can delete own rejected application" ON public.applications FOR DELETE USING (auth.uid() = user_id AND status = 'rejected');
 
+-- 13. personnel table (staff, volunteers, board, partners)
+CREATE TABLE IF NOT EXISTS public.personnel (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  category TEXT NOT NULL CHECK (category IN ('board', 'partner', 'employee', 'volunteer')),
+  uid TEXT UNIQUE NOT NULL,
+  full_name TEXT NOT NULL,
+  email TEXT,
+  phone TEXT,
+  profile_image_url TEXT,
+  qr_code_url TEXT,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'suspended', 'former')),
+  title TEXT NOT NULL,
+  bio TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.personnel ENABLE ROW LEVEL SECURITY;
+
+-- personnel policies
+CREATE POLICY "Public read personnel" ON public.personnel FOR SELECT USING (true);
+
 -- ============================================================
 -- Enable replication/trigger for profiles on auth signup
 -- ============================================================

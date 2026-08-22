@@ -3,7 +3,6 @@ import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Target, Eye, Users, ShieldCheck, Heart, Lightbulb, UsersRound, ArrowRight, Mail } from 'lucide-react';
-import { teamMembers } from '../data/mockData';
 import { optimizeImage } from '../lib/optimizeImage';
 
 interface AboutProps {
@@ -11,6 +10,14 @@ interface AboutProps {
 }
 
 const About: React.FC<AboutProps> = ({ isUrdu }) => {
+  const [team, setTeam] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    fetch('/api/team')
+      .then(r => r.json())
+      .then(res => setTeam(res.data || []))
+      .catch(console.error);
+  }, []);
 
   const values = [
     {
@@ -166,7 +173,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
           </div>
         </section>
 
-        {/* Our Team - wired to mockData */}
+        {/* Our Team - Dynamic Personnel Fetch */}
         <section className="max-w-7xl mx-auto px-4 md:px-16 py-12">
           <div className="text-center mb-16">
             <Users className="w-12 h-12 text-brand-teal mx-auto mb-4" />
@@ -180,39 +187,43 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            {teamMembers.map((member, i) => (
-              <motion.div
-                key={member.id}
-                className="bg-white rounded-xl overflow-hidden shadow-lg border border-brand-navy/5 flex flex-col group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-              >
-                <div className="overflow-hidden">
-                  <img
-                    src={optimizeImage(member.image, { width: 300 })}
-                    alt={isUrdu ? member.nameUr : member.nameEn}
-                    className="w-full h-36 md:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    decoding="async"
-                    width={300}
-                    height={256}
-                  />
-                </div>
-                <div className="p-4 md:p-6 text-center flex-grow flex flex-col justify-center">
-                  <h3 className={`text-sm md:text-xl font-bold text-brand-navy mb-1 ${isUrdu ? 'font-urduHeading' : ''}`}>
-                    {isUrdu ? member.nameUr : member.nameEn}
-                  </h3>
-                  <p className={`text-xs md:text-sm text-brand-teal font-medium mb-2 ${isUrdu ? 'font-urduBody' : ''}`}>
-                    {isUrdu ? member.positionUr : member.positionEn}
-                  </p>
-                  <p className={`text-xs text-brand-navy/60 hidden md:block ${isUrdu ? 'font-urduBody' : ''}`}>
-                    {isUrdu ? member.bioUr : member.bioEn}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+            {team.length === 0 ? (
+              <p className="text-center col-span-2 lg:col-span-3 text-brand-navy/50">Loading team...</p>
+            ) : (
+              team.map((member, i) => (
+                <motion.div
+                  key={member.id}
+                  className="bg-white rounded-xl overflow-hidden shadow-lg border border-brand-navy/5 flex flex-col group"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                >
+                  <div className="overflow-hidden">
+                    <img
+                      src={member.profile_image_url ? optimizeImage(member.profile_image_url, { width: 300 }) : '/assets/team-1.webp'}
+                      alt={member.full_name}
+                      className="w-full h-36 md:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
+                      width={300}
+                      height={256}
+                    />
+                  </div>
+                  <div className="p-4 md:p-6 text-center flex-grow flex flex-col justify-center">
+                    <h3 className="text-sm md:text-xl font-bold text-brand-navy mb-1">
+                      {member.full_name}
+                    </h3>
+                    <p className="text-xs md:text-sm text-brand-teal font-medium mb-2">
+                      {member.title}
+                    </p>
+                    <p className="text-xs text-brand-navy/60 hidden md:block">
+                      {member.bio}
+                    </p>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </div>
         </section>
 

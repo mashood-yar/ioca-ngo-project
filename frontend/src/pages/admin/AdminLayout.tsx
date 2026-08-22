@@ -11,7 +11,8 @@ import {
   MessageSquare, 
   LogOut,
   Menu,
-  ClipboardList
+  ClipboardList,
+  Users
 } from 'lucide-react';
 
 export function AdminLayout() {
@@ -48,6 +49,7 @@ export function AdminLayout() {
     { to: '/admin/applications', label: 'Applications', icon: ClipboardList },
     { to: '/admin/donations', label: 'Donations', icon: DollarSign },
     { to: '/admin/queries', label: 'Client Queries', icon: MessageSquare },
+    { to: '/admin/personnel', label: 'Personnel', icon: Users },
   ];
 
   const SidebarContent = () => (
