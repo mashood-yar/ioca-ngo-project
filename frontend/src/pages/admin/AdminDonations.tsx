@@ -27,7 +27,7 @@ interface Donation {
   phone?: string;
   amount: number;
   payment_method: string;
-  status: 'pending' | 'confirmed' | 'rejected';
+  status: 'pending' | 'payment_verified' | 'confirmed' | 'rejected';
   screenshot_url?: string;
   screenshot_public_id?: string;
   created_at: string;
@@ -36,6 +36,9 @@ interface Donation {
   notes?: string;
   projects?: { title: string };
   project_id?: string;
+  payment_verified_at?: string;
+  payment_verified_by?: string;
+  verification_notes?: string;
 }
 
 interface ProjectTotals {
@@ -73,11 +76,11 @@ export function AdminDonations() {
 
   // Search & Filter state
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'rejected'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'payment_verified' | 'confirmed' | 'rejected'>('all');
   
   // Selection states for Modals / Drawers
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
-  const [actionType, setActionType] = useState<'confirm' | 'reject' | null>(null);
+  const [actionType, setActionType] = useState<'confirm' | 'reject' | 'verify_payment' | null>(null);
   const [notes, setNotes] = useState('');
   const [isActionProcessing, setIsActionProcessing] = useState(false);
 
@@ -119,16 +122,26 @@ export function AdminDonations() {
     if (!selectedDonation || !actionType) return;
     setIsActionProcessing(true);
     try {
-      const newStatus = actionType === 'confirm' ? 'confirmed' : 'rejected';
-      const response = await fetchApi<Donation>(`/donations/${selectedDonation.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status: newStatus, notes: notes || undefined }),
-      });
+      let response;
+      let newStatus: string;
+      if (actionType === 'verify_payment') {
+        newStatus = 'payment_verified';
+        response = await fetchApi<Donation>(`/donations/${selectedDonation.id}/verify-payment`, {
+          method: 'PATCH',
+          body: JSON.stringify({ verificationNotes: notes || undefined }),
+        });
+      } else {
+        newStatus = actionType === 'confirm' ? 'confirmed' : 'rejected';
+        response = await fetchApi<Donation>(`/donations/${selectedDonation.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: newStatus, notes: notes || undefined }),
+        });
+      }
 
       if (response.error) throw new Error(response.error);
 
       window.dispatchEvent(new CustomEvent('app-toast', { 
-        detail: { message: `Donation marked as ${newStatus} successfully!`, variant: 'success' }
+        detail: { message: `Donation status updated successfully!`, variant: 'success' }
       }));
       
       // Reset action states
@@ -453,7 +466,7 @@ export function AdminDonations() {
             </div>
 
             <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50 self-start">
-              {(['all', 'pending', 'confirmed', 'rejected'] as const).map(status => (
+              {(['all', 'pending', 'payment_verified', 'confirmed', 'rejected'] as const).map(status => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
@@ -463,7 +476,7 @@ export function AdminDonations() {
                       : 'text-[#6B7280] hover:text-[#1D2D49] hover:bg-[#F3F4F6]'
                   }`}
                 >
-                  {status}
+                  {status === 'payment_verified' ? 'verified' : status}
                 </button>
               ))}
             </div>
@@ -562,22 +575,42 @@ export function AdminDonations() {
                       <td className="p-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize ${
                           d.status === 'confirmed' ? 'bg-[#D1FAE5] text-[#065F46] border-[#D1FAE5]' :
+                          d.status === 'payment_verified' ? 'bg-[#DBEAFE] text-[#1E40AF] border-[#DBEAFE]' :
                           d.status === 'rejected' ? 'bg-[#FEE2E2] text-[#991B1B] border-[#FEE2E2]' :
                           'bg-[#FEF3C7] text-[#92400E] border-[#FEF3C7]'
                         }`}>
-                          {d.status}
+                          {d.status === 'payment_verified' ? 'verified' : d.status}
                         </span>
                       </td>
                       <td className="p-4 pr-6 text-center">
                         {d.status === 'pending' ? (
                           <div className="flex items-center justify-center gap-1.5">
                             <AdminButton
+                              variant="warning"
+                              size="sm"
+                              onClick={() => { setSelectedDonation(d); setActionType('verify_payment'); }}
+                              title="Verify Payment"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </AdminButton>
+                            <AdminButton
+                              variant="danger"
+                              size="sm"
+                              onClick={() => { setSelectedDonation(d); setActionType('reject'); }}
+                              title="Reject Donation"
+                            >
+                              <XCircle className="w-4 h-4" />
+                            </AdminButton>
+                          </div>
+                        ) : d.status === 'payment_verified' ? (
+                          <div className="flex items-center justify-center gap-1.5">
+                            <AdminButton
                               variant="success"
                               size="sm"
                               onClick={() => { setSelectedDonation(d); setActionType('confirm'); }}
-                              title="Approve Donation"
+                              title="Confirm & Send Receipt Email"
                             >
-                              <CheckCircle className="w-4 h-4" />
+                              <UserCheck className="w-4 h-4" />
                             </AdminButton>
                             <AdminButton
                               variant="danger"
@@ -684,10 +717,11 @@ export function AdminDonations() {
             >
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-extrabold text-slate-900">
-                  {actionType === 'confirm' ? 'Verify Donation' : 'Reject Transaction'}
+                  {actionType === 'verify_payment' ? 'Verify Payment' :
+                   actionType === 'confirm' ? 'Confirm Donation' : 'Reject Transaction'}
                 </h3>
                 <button
-                  onClick={() => setSelectedDonation(null)}
+                  onClick={() => { setSelectedDonation(null); setActionType(null); setNotes(''); }}
                   className="p-1.5 rounded-full hover:bg-slate-50 transition-colors"
                 >
                   <X className="w-5 h-5 text-slate-400" />
@@ -696,10 +730,15 @@ export function AdminDonations() {
 
               <div className="space-y-4">
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  {actionType === 'confirm' ? (
+                  {actionType === 'verify_payment' ? (
+                    <>
+                      Are you sure you want to verify the payment of <strong>PKR {Number(selectedDonation.amount).toLocaleString('en-PK')}</strong> from <strong>{selectedDonation.donor_name}</strong>?
+                      This will change the status to "payment_verified" and allow confirming it to generate a receipt.
+                    </>
+                  ) : actionType === 'confirm' ? (
                     <>
                       Are you sure you want to approve this donation of <strong>PKR {Number(selectedDonation.amount).toLocaleString('en-PK')}</strong> from <strong>{selectedDonation.donor_name}</strong>?
-                      This will generate an official receipt number and automatically trigger a confirmation email.
+                      This will generate an official receipt number and automatically trigger a thank you email.
                     </>
                   ) : (
                     <>
@@ -708,17 +747,26 @@ export function AdminDonations() {
                   )}
                 </p>
 
+                {actionType === 'confirm' && selectedDonation.verification_notes && (
+                  <div className="bg-yellow-50 text-yellow-800 p-3 rounded-lg border border-yellow-100 text-[11px] leading-relaxed">
+                    <p className="font-bold mb-1">Payment Verification Notes:</p>
+                    <p className="italic">{selectedDonation.verification_notes}</p>
+                  </div>
+                )}
+
                 <div>
                   <label htmlFor="action-notes" className="block text-xs font-semibold text-[#111827] mb-2">
-                    Internal Review Notes (Optional)
+                    {actionType === 'verify_payment' ? 'Verification Notes (Optional but Recommended)' : 'Internal Review Notes (Optional)'}
                   </label>
                   <textarea
                     id="action-notes"
                     rows={3}
-                    placeholder="Input verification details or reasons for rejection..."
+                    placeholder={actionType === 'verify_payment' 
+                      ? "e.g., Verified bank transfer reference TRX-12345" 
+                      : "Input details or reasons for rejection..."}
                     value={notes}
                     onChange={e => setNotes(e.target.value)}
-                    className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
+                    className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150 text-sm"
                   />
                 </div>
 
@@ -727,19 +775,20 @@ export function AdminDonations() {
                     type="button"
                     variant="ghost"
                     className="flex-1"
-                    onClick={() => setSelectedDonation(null)}
+                    onClick={() => { setSelectedDonation(null); setActionType(null); setNotes(''); }}
                     disabled={isActionProcessing}
                   >
                     Cancel
                   </AdminButton>
                   <AdminButton
                     type="button"
-                    variant={actionType === 'confirm' ? 'success' : 'danger'}
+                    variant={actionType === 'verify_payment' ? 'warning' : actionType === 'confirm' ? 'success' : 'danger'}
                     className="flex-1"
                     onClick={handleAction}
                     isLoading={isActionProcessing}
                   >
-                    {actionType === 'confirm' ? 'Confirm & Send' : 'Reject'}
+                    {actionType === 'verify_payment' ? 'Verify Payment' :
+                     actionType === 'confirm' ? 'Confirm & Send' : 'Reject'}
                   </AdminButton>
                 </div>
               </div>
