@@ -89,7 +89,7 @@ export async function sendNewApplicationNotification(adminEmail: string, applica
   try {
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL!,
-      to: adminEmail,
+      to: 'iocaworld.org@gmail.com',
       subject: `New membership application — ${applicantName}`,
       text: `A new membership application has been submitted.\n\nApplicant: ${applicantName}\nZone: ${zoneName}\nTier: ${tierName}\nSubmitted: ${new Date().toLocaleDateString()}\n\nReview it at:\n${process.env.CLIENT_URL}/admin/applications`,
     });
@@ -135,7 +135,7 @@ export async function sendContactNotification(
   try {
     await resend.emails.send({
       from: fromEmail,
-      to: fromEmail,
+      to: 'iocaworld.org@gmail.com',
       subject: `New Contact Submission: ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
@@ -348,7 +348,7 @@ export async function sendAdminDonationNotification(
   try {
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'noreply@iocaworld.org',
-      to: adminEmail,
+      to: 'iocaworld.org@gmail.com',
       subject: `[IOCA] New Donation Confirmed - PKR ${Number(amount).toLocaleString('en-US')}`,
       html,
     });

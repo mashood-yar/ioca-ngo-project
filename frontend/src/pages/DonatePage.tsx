@@ -1,58 +1,55 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
-import { Heart, CreditCard, Building2, CheckCircle2, Shield, BookOpen } from 'lucide-react';
+import { ShieldAlert, Users, Mail, Bell, HeartHandshake } from 'lucide-react';
 
 interface DonatePageProps {
   isUrdu: boolean;
-  /** H1-08: accepts the selected amount so the modal can pre-populate it */
   onDonateClick: (amount: number | null, isMonthly?: boolean) => void;
 }
 
-const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(5000);
-  const [customAmount, setCustomAmount] = useState('');
-  const [isMonthly, setIsMonthly] = useState<boolean>(false);
+const DonatePage: React.FC<DonatePageProps> = ({ isUrdu }) => {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
 
-  const presetAmounts = [1000, 2500, 5000, 10000, 25000, 50000];
-
-  const handleDonate = () => {
-    const amount = selectedAmount || parseInt(customAmount) || 0;
-    if (amount > 0) {
-      // H1-08: pass the actual amount so modal pre-selects it
-      onDonateClick(amount, isMonthly);
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      // In a real app, this would hit an API endpoint to save the email
+      setSubscribed(true);
+      setEmail('');
     }
   };
 
-  const benefits = [
+  const alternatives = [
     {
-      icon: Shield,
-      titleEn: '100% Transparent',
-      titleUr: '100% شفاف',
-      descEn: 'Every rupee is tracked and reported. Full financial transparency guaranteed.',
-      descUr: 'ہر روپے کی نگرانی اور رپورٹنگ ہوتی ہے۔ مکمل مالی شفافیت کی ضمانت۔',
+      icon: Users,
+      titleEn: 'Become a Volunteer',
+      titleUr: 'رضاکار بنیں',
+      descEn: 'Join our on-ground team and help us execute community projects directly.',
+      descUr: 'ہماری ٹیم میں شامل ہوں اور کمیونٹی پروجیکٹس میں براہ راست مدد کریں۔',
+      link: '/volunteer',
+      linkTextEn: 'Apply Now',
+      linkTextUr: 'درخواست دیں'
     },
     {
-      icon: CheckCircle2,
-      titleEn: 'Tax Deductible',
-      titleUr: 'ٹیکس میں چھوٹ',
-      descEn: 'IOCA is registered under FBR Section 2(36)(c). Your donation is tax-exempt.',
-      descUr: 'IOCA FBR سیکشن 2(36)(c) کے تحت رجسٹرڈ ہے۔ آپ کا عطیہ ٹیکس سے مستثنیٰ ہے۔',
-    },
-    {
-      icon: BookOpen,
-      titleEn: 'Zakat Eligible',
-      titleUr: 'زکوٰۃ کے لیے موزوں',
-      descEn: 'Our programs are Shariah-compliant. Zakat and Sadaqah donations accepted.',
-      descUr: 'ہمارے پروگرام شریعت کے مطابق ہیں۔ زکوٰۃ اور صدقہ کے عطیات قبول ہیں۔',
-    },
+      icon: Mail,
+      titleEn: 'Contact Us',
+      titleUr: 'ہم سے رابطہ کریں',
+      descEn: 'Have resources or partnerships to offer? Reach out to our core team.',
+      descUr: 'کیا آپ وسائل یا شراکت داری کی پیشکش کرنا چاہتے ہیں؟ ہماری ٹیم سے رابطہ کریں۔',
+      link: '/contact',
+      linkTextEn: 'Get in Touch',
+      linkTextUr: 'رابطہ کریں'
+    }
   ];
 
   return (
     <>
       <SEO 
         title={isUrdu ? 'عطیہ کریں | IOCA' : 'Donate | IOCA'}
-        description="Support IOCA's mission to transform communities in Pakistan. Your donation funds education, healthcare, and emergency relief programs."
+        description="Support IOCA's mission. We are currently finalizing our regulatory approvals to accept public donations officially."
         isUrdu={isUrdu}
       />
 
@@ -70,118 +67,107 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
             </h1>
             <p className={`text-brand-navy/60 text-base md:text-lg max-w-2xl mx-auto ${isUrdu ? 'font-urduBody' : ''}`}>
               {isUrdu
-                ? 'آپ کا ہر عطیہ ایک زندگی بدل سکتا ہے۔ تعلیم، صحت اور ہنگامی امداد - آپ کا تعاون سب سے زیادہ ضرورت مند لوگوں تک پہنچتا ہے۔'
-                : 'Every donation has the power to change a life. From education to healthcare to emergency relief - your support reaches those who need it most.'}
+                ? 'آپ کا تعاون ہمارے مشن کے لیے انمول ہے۔ ہم فی الحال سرکاری منظوری کے عمل سے گزر رہے ہیں۔'
+                : 'Your support is invaluable to our mission. We are currently undergoing official government registration.'}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-            {/* Donation Card */}
+            {/* "Coming Soon" Card */}
             <motion.div
-              className="lg:col-span-3 bg-brand-white rounded-xl p-8 md:p-10 shadow-xl"
+              className="lg:col-span-3 bg-brand-white rounded-xl p-8 md:p-12 shadow-xl border-t-4 border-brand-teal relative overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-
-
-              {/* Frequency Toggle */}
-              <div className="bg-brand-gray p-1.5 rounded-lg flex mb-8">
-                <button
-                  onClick={() => setIsMonthly(false)}
-                  className={`flex-1 py-3 text-sm md:text-base font-bold rounded-md transition-all ${!isMonthly ? 'bg-white shadow-sm text-brand-navy' : 'text-brand-navy/60 hover:text-brand-navy'}`}
-                >
-                  {isUrdu ? 'ایک بار کا عطیہ' : 'One-time Donation'}
-                </button>
-                <button
-                  onClick={() => setIsMonthly(true)}
-                  className={`flex-1 py-3 text-sm md:text-base font-bold rounded-md transition-all ${isMonthly ? 'bg-white shadow-sm text-brand-navy' : 'text-brand-navy/60 hover:text-brand-navy'}`}
-                >
-                  {isUrdu ? 'ماہانہ عطیہ' : 'Monthly Donation'}
-                </button>
+              {/* Background accent */}
+              <div className="absolute top-0 right-0 p-16 opacity-5 pointer-events-none">
+                <HeartHandshake className="w-64 h-64 text-brand-navy" />
               </div>
 
-              {/* Amount Presets */}
-              <h3 className={`font-bold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? 'رقم منتخب کریں' : 'Select Amount'}
-              </h3>
-              <div className="grid grid-cols-3 gap-3 mb-6">
-                {presetAmounts.map(amount => (
-                  <button
-                    key={amount}
-                    onClick={() => { setSelectedAmount(amount); setCustomAmount(''); }}
-                    className={`p-4 rounded-lg font-bold text-lg transition-all ${
-                      selectedAmount === amount
-                        ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20 scale-105'
-                        : 'bg-brand-gray text-brand-navy border border-brand-navy/10 hover:border-brand-teal/50'
-                    }`}
-                  >
-                    Rs {amount.toLocaleString()}
-                  </button>
-                ))}
-              </div>
-
-              {/* Custom Amount */}
-              <div className="mb-8">
-                <label htmlFor="custom-amount" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
-                  {isUrdu ? 'دوسری رقم درج کریں' : 'Or enter a custom amount'}
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-navy/50 font-medium">Rs</span>
-                  <input
-                    id="custom-amount"
-                    type="number"
-                    min="100"
-                    value={customAmount}
-                    onChange={e => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
-                    placeholder="0"
-                    className="w-full pl-12 pr-4 py-4 rounded-lg border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-lg font-bold"
-                  />
+              <div className="relative z-10">
+                <div className="w-16 h-16 rounded-2xl bg-brand-teal/10 flex items-center justify-center mb-6">
+                  <ShieldAlert className="w-8 h-8 text-brand-teal" />
                 </div>
-              </div>
+                
+                <h2 className={`text-2xl md:text-3xl font-bold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
+                  {isUrdu ? 'عطیات عارضی طور پر موقوف ہیں' : 'Donations Temporarily Paused'}
+                </h2>
+                
+                <p className={`text-brand-navy/70 text-lg leading-relaxed mb-8 ${isUrdu ? 'font-urduBody' : ''}`}>
+                  {isUrdu 
+                    ? 'IOCA کی حمایت کرنے کے آپ کے فراخدلانہ ارادے کا شکریہ۔ ہم اس وقت سرکاری طور پر عوامی عطیات قبول کرنے کے لیے حکومتی رجسٹریشن اور ریگولیٹری منظوریوں کو حتمی شکل دے رہے ہیں۔ یہ عمل 100% قانونی تعمیل اور شفافیت کو یقینی بناتا ہے۔ عطیات جلد ہی کھول دیے جائیں گے۔'
+                    : 'Thank you for your generous intent to support IOCA. We are currently finalizing our registration and regulatory approvals with the government to accept public donations officially. This process ensures 100% legal compliance and financial transparency. Donations will open soon.'}
+                </p>
 
-              {/* Donate Button */}
-              <button
-                onClick={handleDonate}
-                className="w-full bg-brand-teal text-brand-white font-bold py-4 rounded-lg text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-3 shadow-lg shadow-brand-teal/20"
-              >
-                <Heart className="w-5 h-5" />
-                {isUrdu ? 'ابھی عطیہ کریں' : 'Donate Now'}
-              </button>
-
-              {/* Payment Methods */}
-              <div className="mt-6 flex items-center justify-center gap-4 text-brand-navy/30">
-                <CreditCard className="w-6 h-6" />
-                <Building2 className="w-6 h-6" />
-                <span className="text-xs">{isUrdu ? 'محفوظ ادائیگی' : 'Secure Payment'}</span>
+                <div className="bg-brand-gray rounded-xl p-6 border border-brand-navy/5">
+                  <h3 className={`font-bold text-brand-navy flex items-center gap-2 mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
+                    <Bell className="w-5 h-5 text-brand-teal" />
+                    {isUrdu ? 'جب عطیات شروع ہوں تو مجھے مطلع کریں' : 'Notify me when donations open'}
+                  </h3>
+                  
+                  {subscribed ? (
+                    <div className="bg-green-50 text-green-700 p-4 rounded-lg font-medium text-sm flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      {isUrdu ? 'شکریہ! ہم آپ کو آگاہ رکھیں گے۔' : 'Thank you! We will keep you updated.'}
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder={isUrdu ? "اپنا ای میل درج کریں..." : "Enter your email..."}
+                        className="flex-1 px-4 py-3 rounded-lg border border-brand-navy/10 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20"
+                      />
+                      <button
+                        type="submit"
+                        className="bg-brand-navy text-white px-6 py-3 rounded-lg font-bold hover:bg-brand-navy/90 transition-colors whitespace-nowrap"
+                      >
+                        {isUrdu ? 'سبسکرائب کریں' : 'Subscribe'}
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
             </motion.div>
 
-            {/* Benefits Cards */}
+            {/* Alternative Actions */}
             <div className="lg:col-span-2 space-y-4">
-              {benefits.map((benefit, idx) => {
-                const Icon = benefit.icon;
+              <h3 className={`font-bold text-brand-navy text-xl mb-6 ${isUrdu ? 'font-urduHeading' : ''}`}>
+                {isUrdu ? 'مدد کرنے کے دیگر طریقے' : 'Other Ways to Help Now'}
+              </h3>
+              
+              {alternatives.map((alt, idx) => {
+                const Icon = alt.icon;
                 return (
                   <motion.div
                     key={idx}
-                    className="bg-brand-white rounded-xl p-6 border border-brand-navy/5 hover:shadow-lg transition-shadow"
+                    className="bg-brand-white rounded-xl p-6 border border-brand-navy/5 hover:shadow-lg transition-shadow group"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 + idx * 0.1 }}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-brand-teal/10 flex items-center justify-center shrink-0">
-                        <Icon className="w-5 h-5 text-brand-teal" />
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-brand-gray flex items-center justify-center shrink-0 group-hover:bg-brand-teal/10 transition-colors">
+                        <Icon className="w-6 h-6 text-brand-navy group-hover:text-brand-teal transition-colors" />
                       </div>
                       <div>
-                        <h3 className={`font-bold text-brand-navy mb-1 ${isUrdu ? 'font-urduHeading' : ''}`}>
-                          {isUrdu ? benefit.titleUr : benefit.titleEn}
-                        </h3>
+                        <h4 className={`font-bold text-brand-navy mb-1 ${isUrdu ? 'font-urduHeading' : ''}`}>
+                          {isUrdu ? alt.titleUr : alt.titleEn}
+                        </h4>
                         <p className={`text-sm text-brand-navy/60 ${isUrdu ? 'font-urduBody' : ''}`}>
-                          {isUrdu ? benefit.descUr : benefit.descEn}
+                          {isUrdu ? alt.descUr : alt.descEn}
                         </p>
                       </div>
                     </div>
+                    <Link
+                      to={alt.link}
+                      className={`block text-center w-full py-2.5 rounded-lg border-2 border-brand-navy/10 font-bold text-brand-navy hover:border-brand-teal hover:text-brand-teal transition-colors ${isUrdu ? 'font-urduBody' : ''}`}
+                    >
+                      {isUrdu ? alt.linkTextUr : alt.linkTextEn}
+                    </Link>
                   </motion.div>
                 );
               })}
