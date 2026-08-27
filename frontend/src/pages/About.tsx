@@ -4,19 +4,22 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Target, Eye, Users, ShieldCheck, Heart, Lightbulb, UsersRound, ArrowRight, Mail } from 'lucide-react';
 import { optimizeImage } from '../lib/optimizeImage';
+import { fetchApi } from '../lib/apiClient';
+import type { Personnel } from '../types';
 
 interface AboutProps {
   isUrdu: boolean;
 }
 
 const About: React.FC<AboutProps> = ({ isUrdu }) => {
-  const [team, setTeam] = React.useState<any[]>([]);
+  const [team, setTeam] = React.useState<Personnel[]>([]);
+  const [teamLoading, setTeamLoading] = React.useState(true);
 
   React.useEffect(() => {
-    fetch('/api/team')
-      .then(r => r.json())
-      .then(res => setTeam(res.data || []))
-      .catch(console.error);
+    fetchApi<Personnel[]>('/team')
+      .then(({ data }) => setTeam(data || []))
+      .catch(console.error)
+      .finally(() => setTeamLoading(false));
   }, []);
 
   const values = [
@@ -187,8 +190,10 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            {team.length === 0 ? (
+            {teamLoading ? (
               <p className="text-center col-span-2 lg:col-span-3 text-brand-navy/50">Loading team...</p>
+            ) : team.length === 0 ? (
+              <p className="text-center col-span-2 lg:col-span-3 text-brand-navy/50">No team members found.</p>
             ) : (
               team.map((member, i) => (
                 <motion.div

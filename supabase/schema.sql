@@ -241,6 +241,10 @@ ALTER TABLE public.personnel ENABLE ROW LEVEL SECURITY;
 -- personnel policies
 CREATE POLICY "Public read personnel" ON public.personnel FOR SELECT USING (true);
 
+-- M-04: Indexes for common query patterns (filtered by category + status)
+CREATE INDEX IF NOT EXISTS idx_personnel_category ON public.personnel (category);
+CREATE INDEX IF NOT EXISTS idx_personnel_status ON public.personnel (status);
+
 -- ============================================================
 -- Enable replication/trigger for profiles on auth signup
 -- ============================================================

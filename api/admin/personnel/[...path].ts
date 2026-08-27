@@ -2,14 +2,14 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabaseAdmin } from '../../_lib/supabase';
 import { allowCors } from '../../_lib/cors';
 import { sendError, sendSuccess } from '../../_lib/response';
-import { verifyAdmin } from '../../_lib/auth';
+import { requireAdmin } from '../../_lib/auth';
 import { processImageField, uploadBase64Image } from '../../_lib/upload';
 import QRCode from 'qrcode';
 import crypto from 'crypto';
 
 function generateUid(category: string): string {
   const prefix = category.toUpperCase().substring(0, 3);
-  const randomStr = crypto.randomBytes(3).toString('hex').toUpperCase();
+  const randomStr = crypto.randomBytes(4).toString('hex').toUpperCase();
   return `${prefix}-${randomStr}`;
 }
 
@@ -18,8 +18,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
   const route = path ? path[0] : '';
 
   try {
-    const adminUser = await verifyAdmin(req);
-    if (!adminUser) return sendError(res, 401, 'Unauthorized');
+    const adminUser = await requireAdmin(req, res);
+    if (!adminUser) return; // requireAdmin already sent 401/403
 
     if (req.method === 'GET' && route === '') {
       // List all personnel
@@ -36,8 +36,18 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       // Create personnel
       const { category, full_name, email, phone, profile_image, title, bio, status } = req.body;
 
-      if (!['board', 'partner', 'employee', 'volunteer'].includes(category)) {
-        return sendError(res, 400, 'Invalid category');
+      // H-01: Validate required fields
+      if (!full_name || typeof full_name !== 'string' || full_name.trim().length === 0) {
+        return sendError(res, 400, 'Full name is required');
+      }
+      if (!title || typeof title !== 'string' || title.trim().length === 0) {
+        return sendError(res, 400, 'Title is required');
+      }
+      if (!category || !['board', 'partner', 'employee', 'volunteer'].includes(category)) {
+        return sendError(res, 400, 'Invalid category. Must be one of: board, partner, employee, volunteer');
+      }
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return sendError(res, 400, 'Invalid email format');
       }
 
       // Upload profile image if it is base64
@@ -46,11 +56,24 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         profile_image_url = await processImageField(profile_image, 'ioca/personnel');
       }
 
-      // Generate UID
-      const uid = generateUid(category);
+      // Generate UID with collision retry
+      let uid = generateUid(category);
+      let retries = 0;
+      while (retries < 5) {
+        const { data: existing } = await supabaseAdmin
+          .from('personnel')
+          .select('id')
+          .eq('uid', uid)
+          .maybeSingle();
+        if (!existing) break;
+        uid = generateUid(category);
+        retries++;
+      }
 
-      // Generate QR Code base64 Data URI
-      const verifyUrl = `https://ioca.org/verify/${uid}`; // We can assume production domain
+      // H-03: Use environment variable for base URL instead of hardcoded domain
+      const baseUrl = process.env.SITE_URL
+        || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://ioca.org');
+      const verifyUrl = `${baseUrl}/verify/${uid}`;
       const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
         color: { dark: '#0a2540', light: '#ffffff' }
       });
@@ -63,14 +86,14 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         .insert([{
           category,
           uid,
-          full_name,
-          email,
-          phone,
+          full_name: full_name.trim(),
+          email: email?.trim() || null,
+          phone: phone?.trim() || null,
           profile_image_url,
           qr_code_url,
           status: status || 'active',
-          title,
-          bio
+          title: title.trim(),
+          bio: bio?.trim() || null
         }])
         .select()
         .single();

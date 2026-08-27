@@ -114,3 +114,19 @@ export interface NavLink {
   labelUr: string;
   children?: NavLink[];
 }
+
+export interface Personnel {
+  id: string;
+  category: 'board' | 'partner' | 'employee' | 'volunteer';
+  uid: string;
+  full_name: string;
+  email: string | null;
+  phone: string | null;
+  profile_image_url: string | null;
+  qr_code_url: string | null;
+  status: 'active' | 'suspended' | 'former';
+  title: string;
+  bio: string | null;
+  created_at: string;
+  updated_at: string;
+}

@@ -4,11 +4,11 @@ import { allowCors } from './_lib/cors';
 import { sendError, sendSuccess } from './_lib/response';
 
 async function handler(req: VercelRequest, res: VercelResponse) {
-  // If you want to secure this endpoint specifically for Vercel Cron, you can check:
-  // if (req.headers['authorization'] !== `Bearer ${process.env.CRON_SECRET}`) {
-  //   return sendError(res, 401, 'Unauthorized');
-  // }
-  // Left open for easy manual testing
+  // M-07: Verify Vercel Cron secret when configured to prevent abuse
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && req.headers['authorization'] !== `Bearer ${cronSecret}`) {
+    return sendError(res, 401, 'Unauthorized');
+  }
 
   if (req.method !== 'GET' && req.method !== 'POST') {
     return sendError(res, 405, 'Method not allowed');

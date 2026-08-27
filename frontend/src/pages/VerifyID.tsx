@@ -4,21 +4,30 @@ import { ShieldCheck, ShieldAlert, User, Briefcase } from 'lucide-react';
 import SEO from '../components/SEO';
 import { PageLoadingSpinner } from '../components/PageLoadingSpinner';
 import { optimizeImage } from '../lib/optimizeImage';
+import { fetchApi } from '../lib/apiClient';
+import type { Personnel } from '../types';
+
+type VerifyPerson = Pick<Personnel, 'id' | 'full_name' | 'category' | 'title' | 'profile_image_url' | 'status'>;
 
 export const VerifyID: React.FC = () => {
   const { uid } = useParams();
-  const [person, setPerson] = useState<any>(null);
+  const [person, setPerson] = useState<VerifyPerson | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/verify/${uid}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === 'success') {
-          setPerson(data.data);
+    if (!uid) {
+      setError('No ID provided');
+      setLoading(false);
+      return;
+    }
+
+    fetchApi<VerifyPerson>(`/verify/${uid}`)
+      .then(({ data, error: apiError }) => {
+        if (apiError || !data) {
+          setError(apiError || 'Personnel not found');
         } else {
-          setError(data.message || 'Invalid ID');
+          setPerson(data);
         }
       })
       .catch(() => setError('Connection error'))
@@ -36,7 +45,8 @@ export const VerifyID: React.FC = () => {
     <>
       <SEO title="ID Verification | IOCA" description="Verify IOCA Personnel ID" />
       <div className="min-h-screen bg-brand-gray flex items-center justify-center p-4">
-        <div className={`max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden border ${borderColor}`}>
+        {/* M-06: rounded-2xl → rounded-xl to match brand shape language */}
+        <div className={`max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden border ${borderColor}`}>
           
           <div className={`${bgColor} p-6 text-center border-b ${borderColor}`}>
             {isActive ? (
@@ -47,7 +57,7 @@ export const VerifyID: React.FC = () => {
             <h1 className={`text-2xl font-bold ${themeColor}`}>
               {isActive ? 'Verified ID' : 'Invalid / Suspended ID'}
             </h1>
-            <p className="text-gray-600 mt-1">International Organization for Community Advancement</p>
+            <p className="text-brand-navy/60 mt-1">International Organization for Community Advancement</p>
           </div>
 
           {person && (
@@ -66,17 +76,17 @@ export const VerifyID: React.FC = () => {
               </div>
 
               <div className="space-y-4 border-t pt-4">
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-brand-navy/60">
                   <User className="w-5 h-5 mr-3 text-brand-teal" />
                   <div>
-                    <p className="text-xs text-gray-400">Unique ID</p>
+                    <p className="text-xs text-brand-navy/40">Unique ID</p>
                     <p className="font-mono">{uid}</p>
                   </div>
                 </div>
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-brand-navy/60">
                   <Briefcase className="w-5 h-5 mr-3 text-brand-teal" />
                   <div>
-                    <p className="text-xs text-gray-400">Current Status</p>
+                    <p className="text-xs text-brand-navy/40">Current Status</p>
                     <p className={`font-semibold uppercase ${themeColor}`}>{person.status}</p>
                   </div>
                 </div>
@@ -85,7 +95,8 @@ export const VerifyID: React.FC = () => {
           )}
 
           {error && (
-            <div className="p-8 text-center text-gray-600">
+            <div className="p-8 text-center text-brand-navy/60">
+              <ShieldAlert className="w-12 h-12 mx-auto mb-3 text-red-400" />
               <p>{error}</p>
             </div>
           )}
