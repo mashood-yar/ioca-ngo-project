@@ -41,6 +41,8 @@ const VerifyID = lazy(() => import('./pages/VerifyID').then(m => ({ default: m.V
 const AdminPersonnel = lazy(() => import('./pages/admin/AdminPersonnel').then(m => ({ default: m.AdminPersonnel })));
 const AdminGallery = lazy(() => import('./pages/admin/AdminGallery').then(m => ({ default: m.AdminGallery })));
 const AdminSiteSettings = lazy(() => import('./pages/admin/AdminSiteSettings').then(m => ({ default: m.AdminSiteSettings })));
+const AdminProjects = lazy(() => import('./pages/admin/AdminProjects').then(m => ({ default: m.AdminProjects })));
+const AdminPrograms = lazy(() => import('./pages/admin/AdminPrograms').then(m => ({ default: m.AdminPrograms })));
 
 /** Scrolls to top on route change */
 function ScrollToTop() {
@@ -124,6 +126,8 @@ function App() {
               <Route path="personnel" element={<AdminPersonnel />} />
               <Route path="gallery" element={<AdminGallery />} />
               <Route path="site-settings" element={<AdminSiteSettings />} />
+              <Route path="projects" element={<AdminProjects />} />
+              <Route path="programs" element={<AdminPrograms />} />
             </Route>
           </Routes>
         </Suspense>

@@ -14,7 +14,11 @@ import {
   ClipboardList,
   Users,
   Image,
-  Settings
+  Settings,
+  Target,
+  Heart,
+  Megaphone,
+  Briefcase
 } from 'lucide-react';
 
 export function AdminLayout() {
@@ -45,15 +49,17 @@ export function AdminLayout() {
 
   const navItems = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { to: '/admin/posts', label: 'News Posts', icon: FileText },
-    { to: '/admin/events', label: 'Events', icon: Calendar },
-    { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
-    { to: '/admin/applications', label: 'Applications', icon: ClipboardList },
-    { to: '/admin/donations', label: 'Donations', icon: DollarSign },
-    { to: '/admin/queries', label: 'Client Queries', icon: MessageSquare },
-    { to: '/admin/personnel', label: 'Personnel', icon: Users },
+    { to: '/admin/site-settings', label: 'Hero Section & Settings', icon: Settings },
+    { to: '/admin/projects', label: 'Active Appeals & Projects', icon: Heart },
+    { to: '/admin/programs', label: 'Programs', icon: Target },
+    { to: '/admin/personnel', label: 'Team & Personnel', icon: Users },
     { to: '/admin/gallery', label: 'Gallery', icon: Image },
-    { to: '/admin/site-settings', label: 'Site Settings', icon: Settings },
+    { to: '/admin/posts', label: 'News & Updates', icon: Megaphone },
+    { to: '/admin/events', label: 'Events', icon: Calendar },
+    { to: '/admin/donations', label: 'Donations & Financials', icon: DollarSign },
+    { to: '/admin/queries', label: 'Client Queries', icon: MessageSquare },
+    { to: '/admin/applications', label: 'Applications', icon: ClipboardList },
+    { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
   ];
 
   const SidebarContent = () => (
