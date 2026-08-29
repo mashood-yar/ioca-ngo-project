@@ -1,11 +1,11 @@
-﻿import { VercelRequest, VercelResponse } from '@vercel/node';
+import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabase } from '../../_lib/supabase';
 import { allowCors } from '../../_lib/cors';
 import { err, ok } from '../../_lib/response';
 import { requireAdmin } from '../../_lib/auth';
 import { processImageField, uploadBase64Image } from '../../_lib/upload';
 import QRCode from 'qrcode';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 function generateUid(category: string): string {
   const prefix = category.toUpperCase().substring(0, 3);
