@@ -12,7 +12,9 @@ import {
   LogOut,
   Menu,
   ClipboardList,
-  Users
+  Users,
+  Image,
+  Settings
 } from 'lucide-react';
 
 export function AdminLayout() {
@@ -50,6 +52,8 @@ export function AdminLayout() {
     { to: '/admin/donations', label: 'Donations', icon: DollarSign },
     { to: '/admin/queries', label: 'Client Queries', icon: MessageSquare },
     { to: '/admin/personnel', label: 'Personnel', icon: Users },
+    { to: '/admin/gallery', label: 'Gallery', icon: Image },
+    { to: '/admin/site-settings', label: 'Site Settings', icon: Settings },
   ];
 
   const SidebarContent = () => (

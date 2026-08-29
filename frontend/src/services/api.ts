@@ -14,7 +14,6 @@ import {
   campaigns as mockCampaigns,
   teamMembers as mockTeam,
   testimonials as mockTestimonials,
-  galleryItems as mockGallery,
   impactStories as mockStories
 } from '../data/mockData';
 
@@ -89,8 +88,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 }
 
 export async function getGalleryItems(): Promise<GalleryItem[]> {
-  // Simulating a backend ORDER BY created_at DESC
-  return [...mockGallery].reverse();
+  return [];
 }
 
 export async function getImpactStories(): Promise<ImpactStory[]> {

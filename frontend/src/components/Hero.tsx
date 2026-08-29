@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { optimizeImage } from '../lib/optimizeImage';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 
 interface HeroProps {
   isUrdu: boolean;
@@ -13,36 +14,22 @@ const fadeUp = (delay: number) => ({
   transition: { duration: 0.4, delay, ease: "easeOut" as any },
 });
 
-const HERO_IMAGES_URDU = [
-  '/assets/hero-slider/service-to-humanity.webp',
-  '/assets/hero-slider/a-ray-of-hope.webp',
-  '/assets/hero-slider/a-healthy-society.webp',
-];
-
-const HERO_IMAGES_ENGLISH = [
-  '/assets/hero-slider/service-to-humanity.webp',
-  '/assets/hero-slider/a-ray-of-hope.webp',
-  '/assets/hero-slider/a-healthy-society.webp',
-];
-
-const SLIDE_ALT_EN = [
-  'Volunteers serving the community across Pakistan',
-  'A ray of hope — IOCA changing lives in underserved areas',
-  "Building a healthy society through IOCA's health programs",
-];
-
-const SLIDE_ALT_UR = [
-  'رضاکار پاکستان بھر میں کمیونٹی کی خدمت کر رہے ہیں',
-  'امید کی کرن — IOCA محروم علاقوں میں زندگیاں بدل رہا ہے',
-  'IOCA کے صحت پروگراموں کے ذریعے ایک صحت مند معاشرے کی تعمیر',
-];
-
 const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
+  const { settings } = useSiteSettings();
   const [showSticky, setShowSticky] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const currentImages = isUrdu ? HERO_IMAGES_URDU : HERO_IMAGES_ENGLISH;
-  const currentAlts = isUrdu ? SLIDE_ALT_UR : SLIDE_ALT_EN;
+  // Parse slides from settings
+  const slides = React.useMemo(() => {
+    try {
+      if (settings.hero_slides) {
+        return JSON.parse(settings.hero_slides);
+      }
+    } catch (e) {
+      console.error('Failed to parse hero slides', e);
+    }
+    return [];
+  }, [settings.hero_slides]);
 
   // H1-03 FIX: Reset slide index when language changes
   useEffect(() => {
@@ -66,34 +53,51 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // H1-03 FIX: Add currentImages.length to deps to avoid stale closure
+  const isSlideshow = settings.hero_mode === 'slideshow' && slides.length > 0;
+
+  // H1-03 FIX: Add slides.length to deps to avoid stale closure
   useEffect(() => {
+    if (!isSlideshow) return;
+    
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % currentImages.length);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, [currentImages.length]);
+  }, [isSlideshow, slides.length]);
 
   return (
     <>
       <section className="relative w-full min-h-[75vh] md:min-h-[calc(100vh-120px)] max-h-[850px] flex flex-col justify-end md:justify-center overflow-hidden bg-brand-navy">
         
-        {/* Background Slider */}
-        {currentImages.map((src, index) => (
+        {/* Background Images */}
+        {isSlideshow ? (
+          slides.map((slide: any, index: number) => (
+            <img
+              key={slide.url}
+              src={optimizeImage(slide.url, { width: 1920 })}
+              alt={isUrdu ? slide.alt_ur : slide.alt_en}
+              className={`absolute inset-0 w-full h-full object-cover object-center z-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
+              fetchPriority={index === 0 ? "high" : "auto"}
+              decoding={index === 0 ? "sync" : "async"}
+              loading={index === 0 ? "eager" : "lazy"}
+              width={1920}
+              height={1080}
+            />
+          ))
+        ) : (
           <img
-            key={src}
-            src={optimizeImage(src, { width: 1920 })}
-            alt={currentAlts[index]}
-            className={`absolute inset-0 w-full h-full object-cover object-center z-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-            fetchPriority={index === 0 ? "high" : "auto"}
-            decoding={index === 0 ? "sync" : "async"}
-            loading={index === 0 ? "eager" : "lazy"}
+            src={optimizeImage(settings.hero_static_image_url, { width: 1920 })}
+            alt="Hero Background"
+            className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-100"
+            fetchPriority="high"
+            decoding="sync"
+            loading="eager"
             width={1920}
             height={1080}
           />
-        ))}
+        )}
 
         {/* Cinematic Gradient Overlays */}
         <div className="absolute inset-0 bg-brand-navy/30 z-10 pointer-events-none" aria-hidden="true" />
@@ -101,33 +105,33 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
         
         {/* Content Container */}
         <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:px-16 pt-32 pb-16 md:pt-12 md:pb-20 flex flex-col">
-          <div className={`w-full max-w-3xl ${isUrdu ? 'ml-auto text-right' : 'mr-auto text-left'}`}>
+          <div className={`w-full max-w-3xl ${isUrdu ? 'ml-auto text-right' : 'mr-auto text-left'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
             
             {/* Logo Icon */}
-            <motion.div className={`w-full ${isUrdu ? 'flex justify-end' : 'flex justify-start'} mb-3 md:mb-4`} {...fadeUp(0.0)}>
+            <motion.div className={`w-full ${isUrdu ? 'flex justify-start' : 'flex justify-start'} mb-3 md:mb-4`} {...fadeUp(0.0)}>
               <img src="/assets/logos/logo-icon-white.webp" alt="" className="h-12 md:h-16 w-auto object-contain drop-shadow-lg" aria-hidden="true" fetchPriority="high" decoding="sync" />
             </motion.div>
             
-            {/* Eyebrow — H1-01: Updated copy */}
+            {/* Eyebrow */}
             <motion.p
               className={`text-[11px] font-semibold tracking-[0.15em] uppercase text-brand-gold mb-3 drop-shadow-md ${isUrdu ? "font-urduBody" : ""}`}
               {...fadeUp(0.1)}
             >
-              ✓ {isUrdu ? 'پی سی پی مصدقہ این جی او' : 'PCP Certified NGO — Since 2004'}
+              ✓ {isUrdu ? settings.hero_eyebrow_ur : settings.hero_eyebrow_en}
             </motion.p>
 
-            {/* Headline — H1-01: Strong, cause-specific copy */}
+            {/* Headline */}
             <motion.div className="mb-2 md:mb-4" {...fadeUp(0.15)}>
               <h1 className={`font-extrabold leading-[1.1] text-[28px] md:text-[36px] lg:text-[48px] text-brand-white tracking-tight drop-shadow-xl ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? 'پاکستان میں تبدیلی لا رہے ہیں' : 'Transforming Communities'}
+                {isUrdu ? settings.hero_headline_ur : settings.hero_headline_en}
               </h1>
               <span className={`block font-normal leading-snug text-[16px] md:text-[20px] lg:text-[26px] text-brand-white/90 mt-1.5 drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? 'ایک زندگی، ایک کمیونٹی' : 'Across Pakistan — One Life at a Time'}
+                {isUrdu ? settings.hero_subheadline_ur : settings.hero_subheadline_en}
               </span>
             </motion.div>
 
             {/* Pills */}
-            <motion.div className={`flex flex-wrap gap-2 my-4 ${isUrdu ? 'justify-end' : 'justify-start'}`} {...fadeUp(0.2)}>
+            <motion.div className={`flex flex-wrap gap-2 my-4 ${isUrdu ? 'justify-start' : 'justify-start'}`} {...fadeUp(0.2)}>
               <span className={`text-[11px] text-brand-white border border-brand-white/30 bg-brand-white/10 backdrop-blur-md rounded-full px-3 py-1 ${isUrdu ? 'font-urduBody' : ''}`}>
                 ✓ {isUrdu ? 'شریعہ کمپلائنٹ' : 'Shariah Compliant'}
               </span>
@@ -137,45 +141,47 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             </motion.div>
 
             {/* CTAs */}
-            <motion.div className={`flex items-center gap-4 mt-5 md:mt-6 ${isUrdu ? 'flex-row-reverse' : ''}`} {...fadeUp(0.2)}>
+            <motion.div className={`flex items-center gap-4 mt-5 md:mt-6`} {...fadeUp(0.2)}>
               <Link
-                to="/donate"
+                to={settings.hero_cta_primary_url || '/donate'}
                 className="inline-flex items-center justify-center bg-brand-teal text-brand-white font-bold text-[15px] px-6 rounded-lg min-h-[48px] hover:bg-brand-white hover:text-brand-navy transition-all duration-300 whitespace-nowrap shadow-xl shadow-brand-teal/20"
               >
-                {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
+                {isUrdu ? settings.hero_cta_primary_text_ur : settings.hero_cta_primary_text_en}
               </Link>
               
               <Link
-                to="/programs"
+                to={settings.hero_cta_secondary_url || '/programs'}
                 className="text-brand-white font-medium text-[15px] hover:text-brand-gold transition-colors whitespace-nowrap drop-shadow-md"
               >
-                {isUrdu ? 'پروگرامز دیکھیں ←' : 'Explore Programs →'}
+                {isUrdu ? settings.hero_cta_secondary_text_ur : settings.hero_cta_secondary_text_en}
               </Link>
             </motion.div>
           </div>
         </div>
 
-        {/* H1-02: Slide Indicator Dots */}
-        <div
-          className={`absolute bottom-5 z-30 flex items-center gap-2.5 ${isUrdu ? 'right-4 md:right-16' : 'left-4 md:left-16'}`}
-          role="tablist"
-          aria-label={isUrdu ? 'سلائیڈ انڈیکیٹر' : 'Slide indicators'}
-        >
-          {currentImages.map((_, idx) => (
-            <button
-              key={idx}
-              role="tab"
-              aria-selected={idx === currentSlide}
-              aria-label={isUrdu ? `سلائیڈ ${idx + 1}` : `Slide ${idx + 1}`}
-              onClick={() => setCurrentSlide(idx)}
-              className={`transition-all duration-300 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold ${
-                idx === currentSlide
-                  ? 'w-6 h-2 bg-brand-gold'
-                  : 'w-2 h-2 bg-brand-white/50 hover:bg-brand-white/80'
-              }`}
-            />
-          ))}
-        </div>
+        {/* Slide Indicator Dots */}
+        {isSlideshow && (
+          <div
+            className={`absolute bottom-5 z-30 flex items-center gap-2.5 ${isUrdu ? 'right-4 md:right-16' : 'left-4 md:left-16'}`}
+            role="tablist"
+            aria-label={isUrdu ? 'سلائیڈ انڈیکیٹر' : 'Slide indicators'}
+          >
+            {slides.map((_: any, idx: number) => (
+              <button
+                key={idx}
+                role="tab"
+                aria-selected={idx === currentSlide}
+                aria-label={isUrdu ? `سلائیڈ ${idx + 1}` : `Slide ${idx + 1}`}
+                onClick={() => setCurrentSlide(idx)}
+                className={`transition-all duration-300 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold ${
+                  idx === currentSlide
+                    ? 'w-6 h-2 bg-brand-gold'
+                    : 'w-2 h-2 bg-brand-white/50 hover:bg-brand-white/80'
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
       </section>
 
@@ -185,9 +191,10 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
           showSticky ? 'translate-y-0' : 'translate-y-full'
         }`}
         aria-hidden={!showSticky}
+        dir={isUrdu ? 'rtl' : 'ltr'}
       >
-        <div className={`flex items-center justify-between px-5 py-3 ${isUrdu ? 'flex-row-reverse' : ''}`}>
-          <div className={isUrdu ? 'text-right' : 'text-left'}>
+        <div className={`flex items-center justify-between px-5 py-3`}>
+          <div className="text-start">
             <p className={`text-brand-white text-[12px] font-semibold leading-tight mb-0.5 ${isUrdu ? 'font-urduBody' : ''}`}>
               {isUrdu ? '100% عطیات مستحقین تک پہنچتے ہیں' : '100% reaches those in need'}
             </p>

@@ -7,13 +7,19 @@ import { cors } from '../_lib/cors'
 import { processImageField } from '../_lib/upload'
 
 const createGallerySchema = z.object({
-  title: z.string().min(1, 'Title is required'),
+  title: z.string().nullable().optional().or(z.literal('')),
+  title_en: z.string().nullable().optional().or(z.literal('')),
+  title_ur: z.string().nullable().optional().or(z.literal('')),
+  desc_en: z.string().nullable().optional().or(z.literal('')),
+  desc_ur: z.string().nullable().optional().or(z.literal('')),
   imageUrl: z.string().nullable().optional().or(z.literal('')),
   image_url: z.string().nullable().optional().or(z.literal('')),
   imagePublicId: z.string().nullable().optional().or(z.literal('')),
   image_public_id: z.string().nullable().optional().or(z.literal('')),
   caption: z.string().nullable().optional().or(z.literal('')),
   category: z.string().nullable().optional().or(z.literal('')),
+  sort_order: z.number().nullable().optional(),
+  is_featured: z.boolean().nullable().optional(),
 })
 
 const updateGallerySchema = createGallerySchema.partial()
@@ -30,19 +36,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const id = segments[0] === 'index' ? undefined : segments[0]
 
   try {
+    // 0. GET /api/gallery/categories — Public: list unique categories
+    if (req.method === 'GET' && id === 'categories') {
+      const { data, error } = await supabase
+        .from('gallery')
+        .select('category')
+        .not('category', 'is', null)
+
+      if (error) throw new Error(error.message)
+      const uniqueCategories = [...new Set(data.map((item: any) => item.category))]
+      return ok(res, uniqueCategories.filter(Boolean))
+    }
+
     // 1. GET /api/gallery — Public: list all gallery images
     if (req.method === 'GET' && !id) {
-      const { data: images, error } = await supabase
+      const category = req.query.category as string | undefined;
+      
+      let query = supabase
         .from('gallery')
         .select('*')
+        .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false })
+
+      if (category && category !== 'all') {
+        query = query.eq('category', category)
+      }
+
+      const { data: images, error } = await query
 
       if (error) throw new Error(error.message)
       return ok(res, images)
     }
 
     // 2. GET /api/gallery/:id — Public: get single gallery image
-    if (req.method === 'GET' && id) {
+    if (req.method === 'GET' && id && id !== 'categories') {
       const { data: image, error } = await supabase
         .from('gallery')
         .select('*')
@@ -76,6 +103,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('gallery')
         .insert({
           title: body.title,
+          title_en: body.title_en,
+          title_ur: body.title_ur,
+          desc_en: body.desc_en,
+          desc_ur: body.desc_ur,
+          sort_order: body.sort_order ?? 0,
+          is_featured: body.is_featured ?? false,
           image_url: await processImageField(imageUrl),
           image_public_id: imagePublicId && imagePublicId !== '' ? imagePublicId : null,
           caption: body.caption && body.caption !== '' ? body.caption : null,
@@ -97,7 +130,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const body = updateGallerySchema.parse(req.body)
 
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
-      if (body.title !== undefined && body.title !== null) updates.title = body.title
+      if (body.title !== undefined) updates.title = body.title
+      if (body.title_en !== undefined) updates.title_en = body.title_en
+      if (body.title_ur !== undefined) updates.title_ur = body.title_ur
+      if (body.desc_en !== undefined) updates.desc_en = body.desc_en
+      if (body.desc_ur !== undefined) updates.desc_ur = body.desc_ur
+      if (body.sort_order !== undefined) updates.sort_order = body.sort_order
+      if (body.is_featured !== undefined) updates.is_featured = body.is_featured
       if (body.caption !== undefined) updates.caption = body.caption && body.caption !== '' ? body.caption : null
       if (body.category !== undefined) updates.category = body.category && body.category !== '' ? body.category : null
 
