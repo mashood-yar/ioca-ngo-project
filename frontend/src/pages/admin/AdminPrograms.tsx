@@ -9,8 +9,12 @@ import { AdminButton } from './AdminButton';
 
 interface Program {
   id: string;
-  title: string;
-  description: string;
+  titleEn: string;
+  titleUr: string;
+  descEn: string;
+  descUr: string;
+  contentEn: string;
+  contentUr: string;
   category: 'education' | 'health' | 'youth' | 'community_bonding';
   image_url: string | null;
   status: 'active' | 'inactive';
@@ -41,8 +45,12 @@ export function AdminPrograms() {
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
+    titleEn: '',
+    titleUr: '',
+    descEn: '',
+    descUr: '',
+    contentEn: '',
+    contentUr: '',
     category: 'education' as Program['category'],
     status: 'active' as Program['status'],
   });
@@ -70,14 +78,18 @@ export function AdminPrograms() {
     if (program) {
       setSelectedProgram(program);
       setFormData({
-        title: program.title,
-        description: program.description,
-        category: program.category,
-        status: program.status,
+        titleEn: program.titleEn || '',
+        titleUr: program.titleUr || '',
+        descEn: program.descEn || '',
+        descUr: program.descUr || '',
+        contentEn: program.contentEn || '',
+        contentUr: program.contentUr || '',
+        category: program.category || 'education',
+        status: program.status || 'active',
       });
     } else {
       setSelectedProgram(null);
-      setFormData({ title: '', description: '', category: 'education', status: 'active' });
+      setFormData({ titleEn: '', titleUr: '', descEn: '', descUr: '', contentEn: '', contentUr: '', category: 'education', status: 'active' });
     }
     setSelectedFile(null);
     setIsFormOpen(true);
@@ -95,8 +107,12 @@ export function AdminPrograms() {
       }
 
       const payload = {
-        title: formData.title,
-        description: formData.description,
+        titleEn: formData.titleEn,
+        titleUr: formData.titleUr,
+        descEn: formData.descEn,
+        descUr: formData.descUr,
+        contentEn: formData.contentEn,
+        contentUr: formData.contentUr,
         category: formData.category,
         status: formData.status,
         imageUrl,
@@ -199,14 +215,17 @@ export function AdminPrograms() {
                 <tr key={program.id} className="hover:bg-[#F9FAFB] transition-colors duration-100 text-[#111827] text-sm">
                   <td className="p-4 pl-6 w-24">
                     {program.image_url ? (
-                      <img src={optimizeImage(program.image_url, { width: 80 })} alt={program.title} className="w-16 h-12 object-cover rounded-lg border border-[#E5E7EB]" width={64} height={48} loading="lazy" decoding="async" />
+                      <img src={optimizeImage(program.image_url, { width: 80 })} alt={program.titleEn} className="w-16 h-12 object-cover rounded-lg border border-[#E5E7EB]" width={64} height={48} loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-[#E5E7EB]">
                         <ImageIcon className="w-5 h-5 text-gray-400" />
                       </div>
                     )}
                   </td>
-                  <td className="p-4 font-medium">{program.title}</td>
+                  <td className="p-4">
+                    <div className="font-medium text-[#111827]">{program.titleEn}</div>
+                    <div className="text-sm text-[#6B7280] truncate max-w-md">{program.descEn}</div>
+                  </td>
                   <td className="p-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${categoryColors[program.category] || 'bg-gray-100 text-gray-700'}`}>
                       {categoryLabels[program.category] || program.category}

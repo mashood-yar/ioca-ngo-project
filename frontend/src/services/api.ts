@@ -91,6 +91,11 @@ export async function getPrograms(): Promise<Program[]> {
     icon: row.icon_url || 'Target', // Default icon
     image: row.image_url || '/assets/edu.webp', // Default image
     heroImage: row.hero_image_url || '/assets/edu-hero.webp',
+    stats: {
+      beneficiaries: 0,
+      projects: 0,
+      volunteers: 0
+    }
   }));
 }
 

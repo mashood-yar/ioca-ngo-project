@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { optimizeImage } from '../../lib/optimizeImage';
 import { 
   LayoutDashboard, 
-  FileText, 
+   
   Calendar, 
   MapPin, 
   DollarSign, 
@@ -18,7 +18,7 @@ import {
   Target,
   Heart,
   Megaphone,
-  Briefcase
+  
 } from 'lucide-react';
 
 export function AdminLayout() {

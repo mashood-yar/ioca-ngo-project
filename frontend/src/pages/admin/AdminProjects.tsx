@@ -9,11 +9,14 @@ import { AdminButton } from './AdminButton';
 
 interface Project {
   id: string;
-  title: string;
-  description: string;
+  titleEn: string;
+  titleUr: string;
+  descEn: string;
+  descUr: string;
   status: string;
   category: string | null;
-  location: string | null;
+  locationEn: string | null;
+  locationUr: string | null;
   progress: number;
   image_url: string | null;
   is_featured: boolean;
@@ -75,13 +78,13 @@ export function AdminProjects() {
     if (project) {
       setSelectedProject(project);
       setFormData({
-        titleEn: (project as any).titleEn || project.title,
+        titleEn: project.titleEn || '',
         titleUr: (project as any).titleUr || '',
-        descEn: (project as any).descEn || project.description,
+        descEn: project.descEn || '',
         descUr: (project as any).descUr || '',
         status: project.status || 'ongoing',
         category: project.category || '',
-        locationEn: (project as any).locationEn || project.location,
+        locationEn: project.locationEn || '',
         locationUr: (project as any).locationUr || '',
         progress: project.progress ?? 0,
         is_featured: project.is_featured || false,
@@ -220,7 +223,7 @@ export function AdminProjects() {
                 <tr key={project.id} className="hover:bg-[#F9FAFB] transition-colors duration-100 text-[#111827] text-sm">
                   <td className="p-4 pl-6 w-24">
                     {project.image_url ? (
-                      <img src={optimizeImage(project.image_url, { width: 80 })} alt={project.title} className="w-16 h-12 object-cover rounded-lg border border-[#E5E7EB]" width={64} height={48} loading="lazy" decoding="async" />
+                      <img src={optimizeImage(project.image_url, { width: 80 })} alt={project.titleEn} className="w-16 h-12 object-cover rounded-lg border border-[#E5E7EB]" width={64} height={48} loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-[#E5E7EB]">
                         <ImageIcon className="w-5 h-5 text-gray-400" />
@@ -228,7 +231,7 @@ export function AdminProjects() {
                     )}
                   </td>
                   <td className="p-4 font-medium">
-                    <div>{project.title}</div>
+                    <div>{project.titleEn}</div>
                     {project.category && (
                       <span className="text-xs text-gray-400">{project.category}</span>
                     )}
