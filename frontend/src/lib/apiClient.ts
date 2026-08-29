@@ -18,8 +18,14 @@ export async function fetchApi<T = unknown>(
       headers.set('Authorization', `Bearer ${session.access_token}`);
     }
 
-    // Construct full URL: either /api/endpoint or http://localhost:3000/api/endpoint
-    const url = API_BASE ? `${API_BASE}/api${endpoint}` : `/api${endpoint}`;
+    // Construct full URL intelligently
+    const base = API_BASE ? API_BASE.replace(/\/+$/, '') : '';
+    const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    
+    // If API_BASE is exactly '/api' or ends with '/api', we don't prepend it again
+    const prefix = base.endsWith('/api') ? '' : '/api';
+    
+    const url = `${base}${prefix}${path}`;
     const response = await fetch(url, {
       ...options,
       headers,
