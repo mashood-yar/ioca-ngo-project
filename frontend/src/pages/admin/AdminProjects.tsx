@@ -152,11 +152,15 @@ export function AdminProjects() {
   const handleDelete = async () => {
     if (!selectedProject) return;
     try {
-      await fetchApi(`/projects/${selectedProject.id}`, { method: 'DELETE' });
+      const { error } = await fetchApi(`/projects/${selectedProject.id}`, { method: 'DELETE' });
+      if (error) {
+        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to delete: ${error}`, variant: 'error' } }));
+        return;
+      }
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Project deleted', variant: 'success' } }));
       loadProjects();
-    } catch (err) {
-      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to delete', variant: 'error' } }));
+    } catch (err: any) {
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to delete: ${err.message || err}`, variant: 'error' } }));
     }
   };
 

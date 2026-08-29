@@ -144,11 +144,15 @@ export function AdminPrograms() {
   const handleDelete = async () => {
     if (!selectedProgram) return;
     try {
-      await fetchApi(`/programs/${selectedProgram.id}`, { method: 'DELETE' });
+      const { error } = await fetchApi(`/programs/${selectedProgram.id}`, { method: 'DELETE' });
+      if (error) {
+        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to delete: ${error}`, variant: 'error' } }));
+        return;
+      }
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Program deleted', variant: 'success' } }));
       loadPrograms();
-    } catch (err) {
-      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to delete', variant: 'error' } }));
+    } catch (err: any) {
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to delete: ${err.message || err}`, variant: 'error' } }));
     }
   };
 
