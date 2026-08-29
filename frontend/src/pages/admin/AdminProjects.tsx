@@ -38,11 +38,14 @@ export function AdminProjects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
+    titleEn: '',
+    titleUr: '',
+    descEn: '',
+    descUr: '',
     status: 'ongoing',
     category: '',
-    location: '',
+    locationEn: '',
+    locationUr: '',
     progress: 0,
     is_featured: false,
     start_date: '',
@@ -72,11 +75,14 @@ export function AdminProjects() {
     if (project) {
       setSelectedProject(project);
       setFormData({
-        title: project.title,
-        description: project.description,
+        titleEn: (project as any).titleEn || project.title,
+        titleUr: (project as any).titleUr || '',
+        descEn: (project as any).descEn || project.description,
+        descUr: (project as any).descUr || '',
         status: project.status || 'ongoing',
         category: project.category || '',
-        location: project.location || '',
+        locationEn: (project as any).locationEn || project.location,
+        locationUr: (project as any).locationUr || '',
         progress: project.progress ?? 0,
         is_featured: project.is_featured || false,
         start_date: project.start_date ? new Date(project.start_date).toISOString().slice(0, 10) : '',
@@ -84,7 +90,7 @@ export function AdminProjects() {
       });
     } else {
       setSelectedProject(null);
-      setFormData({ title: '', description: '', status: 'ongoing', category: '', location: '', progress: 0, is_featured: false, start_date: '', end_date: '' });
+      setFormData({ titleEn: '', titleUr: '', descEn: '', descUr: '', status: 'ongoing', category: '', locationEn: '', locationUr: '', progress: 0, is_featured: false, start_date: '', end_date: '' });
     }
     setSelectedFile(null);
     setIsFormOpen(true);
@@ -102,15 +108,18 @@ export function AdminProjects() {
       }
 
       const payload = {
-        title: formData.title,
-        description: formData.description,
+        titleEn: formData.titleEn,
+        titleUr: formData.titleUr,
+        descEn: formData.descEn,
+        descUr: formData.descUr,
         status: formData.status,
-        category: formData.category || null,
-        location: formData.location || null,
+        category: formData.category,
+        locationEn: formData.locationEn,
+        locationUr: formData.locationUr,
         progress: formData.progress,
-        isFeatured: formData.is_featured,
-        startDate: formData.start_date ? new Date(formData.start_date).toISOString() : null,
-        endDate: formData.end_date ? new Date(formData.end_date).toISOString() : null,
+        is_featured: formData.is_featured,
+        start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
+        end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
         imageUrl,
       };
 
@@ -279,28 +288,26 @@ export function AdminProjects() {
         title={selectedProject ? 'Edit Project' : 'New Project'}
       >
         <form onSubmit={handleSave} className="space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-[#111827] mb-1">Title</label>
-            <input
-              type="text"
-              required
-              value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] transition-colors duration-150"
-              placeholder="Project title"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-[#111827] mb-1">Description</label>
-            <textarea
-              required
-              rows={4}
-              value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] transition-colors duration-150"
-              placeholder="Describe the project"
-            />
-          </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1">Title (English)</label>
+                <input type="text" required value={formData.titleEn} onChange={e => setFormData({ ...formData, titleEn: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition-colors duration-150" placeholder="Project title" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1 text-right font-urdu">Title (Urdu)</label>
+                <input type="text" dir="rtl" required value={formData.titleUr} onChange={e => setFormData({ ...formData, titleUr: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-urdu transition-colors duration-150" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1">Description (English)</label>
+                <textarea required rows={3} value={formData.descEn} onChange={e => setFormData({ ...formData, descEn: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition-colors duration-150" placeholder="Describe the project" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1 text-right font-urdu">Description (Urdu)</label>
+                <textarea dir="rtl" required rows={3} value={formData.descUr} onChange={e => setFormData({ ...formData, descUr: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-urdu transition-colors duration-150" />
+              </div>
+            </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-[#111827] mb-1">Status</label>
@@ -327,15 +334,15 @@ export function AdminProjects() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-[#111827] mb-1">Location</label>
-              <input
-                type="text"
-                value={formData.location}
-                onChange={e => setFormData({ ...formData, location: e.target.value })}
-                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] transition-colors duration-150"
-                placeholder="e.g. Lahore, Punjab"
-              />
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Location (English)</label>
+              <input type="text" value={formData.locationEn} onChange={e => setFormData({ ...formData, locationEn: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition-colors duration-150" />
             </div>
+            <div>
+              <label className="block text-sm font-semibold text-[#111827] mb-1 text-right font-urdu">Location (Urdu)</label>
+              <input type="text" dir="rtl" value={formData.locationUr} onChange={e => setFormData({ ...formData, locationUr: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-urdu transition-colors duration-150" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-[#111827] mb-1">Progress ({formData.progress}%)</label>
               <input
@@ -347,8 +354,6 @@ export function AdminProjects() {
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0D9488]"
               />
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-[#111827] mb-1">Start Date</label>
               <input

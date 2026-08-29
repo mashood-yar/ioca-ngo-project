@@ -94,24 +94,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const isFeatured = body.is_featured ?? body.isFeatured
       const startDate = body.start_date ?? body.startDate
       const endDate = body.end_date ?? body.endDate
-      const authorId = body.author_id ?? body.authorId ?? user.id
-      const slug = body.slug || slugify(body.title)
-
+      
       const { data: project, error } = await supabase
         .from('projects')
         .insert({
-          title: body.title,
-          description: body.description,
+          title_en: (body as any).titleEn,
+          title_ur: (body as any).titleUr,
+          desc_en: (body as any).descEn,
+          desc_ur: (body as any).descUr,
+          location_en: (body as any).locationEn,
+          location_ur: (body as any).locationUr,
+          category: body.category,
           status: body.status && body.status !== '' ? body.status : 'ongoing',
+          progress: body.progress || 0,
+          is_featured: body.is_featured || false,
+          start_date: body.start_date || null,
+          end_date: body.end_date || null,
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
-          slug: slug || null,
-          category: body.category || null,
-          location: body.location && body.location !== '' ? body.location : null,
-          progress: body.progress ?? 0,
-          is_featured: isFeatured ?? false,
-          start_date: startDate && startDate !== '' ? startDate : null,
-          end_date: endDate && endDate !== '' ? endDate : null,
-          author_id: authorId || null,
         })
         .select()
         .single()
@@ -125,38 +124,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const body = updateProjectSchema.parse(req.body)
+      const body: any = req.body
 
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
-      if (body.title !== undefined && body.title !== null) updates.title = body.title
-      if (body.description !== undefined && body.description !== null) updates.description = body.description
+      if (body.titleEn !== undefined) updates.title_en = body.titleEn
+      if (body.titleUr !== undefined) updates.title_ur = body.titleUr
+      if (body.descEn !== undefined) updates.desc_en = body.descEn
+      if (body.descUr !== undefined) updates.desc_ur = body.descUr
+      if (body.locationEn !== undefined) updates.location_en = body.locationEn
+      if (body.locationUr !== undefined) updates.location_ur = body.locationUr
+      if (body.category !== undefined) updates.category = body.category
       if (body.status !== undefined) updates.status = body.status && body.status !== '' ? body.status : 'ongoing'
+      if (body.progress !== undefined) updates.progress = body.progress
+      if (body.is_featured !== undefined) updates.is_featured = body.is_featured
+      if (body.start_date !== undefined) updates.start_date = body.start_date
+      if (body.end_date !== undefined) updates.end_date = body.end_date
       
-      const imageUrl = body.image_url !== undefined ? body.image_url : body.imageUrl
-      if (imageUrl !== undefined) updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null
-
-      if (body.slug !== undefined) {
-        updates.slug = body.slug && body.slug !== '' ? body.slug : null
-      } else if (body.title !== undefined && body.title !== null) {
-        updates.slug = slugify(body.title)
+      const imageUrl = body.image_url !== undefined ? body.image_url : body.image
+      if (imageUrl !== undefined) {
+        updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null
       }
-
-      if (body.category !== undefined) updates.category = body.category || null
-
-      if (body.location !== undefined) updates.location = body.location && body.location !== '' ? body.location : null
-      if (body.progress !== undefined) updates.progress = body.progress ?? 0
-      
-      const isFeatured = body.is_featured !== undefined ? body.is_featured : body.isFeatured
-      if (isFeatured !== undefined) updates.is_featured = isFeatured ?? false
-
-      const startDate = body.start_date !== undefined ? body.start_date : body.startDate
-      if (startDate !== undefined) updates.start_date = startDate && startDate !== '' ? startDate : null
-
-      const endDate = body.end_date !== undefined ? body.end_date : body.endDate
-      if (endDate !== undefined) updates.end_date = endDate && endDate !== '' ? endDate : null
-
-      const authorId = body.author_id !== undefined ? body.author_id : body.authorId
-      if (authorId !== undefined) updates.author_id = authorId || null
 
       const { data: project, error } = await supabase
         .from('projects')

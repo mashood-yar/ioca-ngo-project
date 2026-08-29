@@ -71,27 +71,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 3. POST /api/programs — Admin: create program
-    if (req.method === 'POST' && !id) {
+    if (req.method === 'POST') {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const body = createProgramSchema.parse(req.body)
-      const imageUrl = body.image_url ?? body.imageUrl
-      const imagePublicId = body.image_public_id ?? body.imagePublicId
-      const authorId = body.author_id ?? body.authorId ?? user.id
-      const slug = body.slug || slugify(body.title)
+      const body: any = req.body
+      const imageUrl = body.image_url || body.image
+      const iconUrl = body.icon_url || body.icon
+      const heroImageUrl = body.hero_image_url || body.heroImage
 
       const { data: program, error } = await supabase
         .from('programs')
         .insert({
-          title: body.title,
-          description: body.description,
+          title_en: body.titleEn,
+          title_ur: body.titleUr,
+          desc_en: body.descEn,
+          desc_ur: body.descUr,
+          content_en: body.contentEn,
+          content_ur: body.contentUr,
           category: body.category,
+          status: body.status || 'active',
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
-          image_public_id: imagePublicId && imagePublicId !== '' ? imagePublicId : null,
-          status: body.status,
-          slug: slug || null,
-          author_id: authorId || null,
+          icon_url: iconUrl && iconUrl !== '' ? await processImageField(iconUrl) : null,
+          hero_image_url: heroImageUrl && heroImageUrl !== '' ? await processImageField(heroImageUrl) : null,
         })
         .select()
         .single()
@@ -105,28 +107,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const body = updateProgramSchema.parse(req.body)
-
+      const body: any = req.body
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
-      if (body.title !== undefined && body.title !== null) updates.title = body.title
-      if (body.description !== undefined && body.description !== null) updates.description = body.description
+
+      if (body.titleEn !== undefined) updates.title_en = body.titleEn
+      if (body.titleUr !== undefined) updates.title_ur = body.titleUr
+      if (body.descEn !== undefined) updates.desc_en = body.descEn
+      if (body.descUr !== undefined) updates.desc_ur = body.descUr
+      if (body.contentEn !== undefined) updates.content_en = body.contentEn
+      if (body.contentUr !== undefined) updates.content_ur = body.contentUr
       if (body.category !== undefined) updates.category = body.category
       if (body.status !== undefined) updates.status = body.status
 
-      const imageUrl = body.image_url !== undefined ? body.image_url : body.imageUrl
-      if (imageUrl !== undefined) updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null
-
-      const imagePublicId = body.image_public_id !== undefined ? body.image_public_id : body.imagePublicId
-      if (imagePublicId !== undefined) updates.image_public_id = imagePublicId || null
-
-      if (body.slug !== undefined) {
-        updates.slug = body.slug && body.slug !== '' ? body.slug : null
-      } else if (body.title !== undefined && body.title !== null) {
-        updates.slug = slugify(body.title)
+      const imageUrl = body.image_url !== undefined ? body.image_url : body.image
+      if (imageUrl !== undefined) {
+        updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null
       }
-
-      const authorId = body.author_id !== undefined ? body.author_id : body.authorId
-      if (authorId !== undefined) updates.author_id = authorId || null
+      
+      const iconUrl = body.icon_url !== undefined ? body.icon_url : body.icon
+      if (iconUrl !== undefined) {
+        updates.icon_url = iconUrl && iconUrl !== '' ? await processImageField(iconUrl) : null
+      }
+      
+      const heroImageUrl = body.hero_image_url !== undefined ? body.hero_image_url : body.heroImage
+      if (heroImageUrl !== undefined) {
+        updates.hero_image_url = heroImageUrl && heroImageUrl !== '' ? await processImageField(heroImageUrl) : null
+      }
 
       const { data: program, error } = await supabase
         .from('programs')

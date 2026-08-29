@@ -258,28 +258,36 @@ export function AdminPrograms() {
         title={selectedProgram ? 'Edit Program' : 'New Program'}
       >
         <form onSubmit={handleSave} className="space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-[#111827] mb-1">Title</label>
-            <input
-              type="text"
-              required
-              value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] transition-colors duration-150"
-              placeholder="Program title"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-[#111827] mb-1">Description</label>
-            <textarea
-              required
-              rows={4}
-              value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] transition-colors duration-150"
-              placeholder="Describe the program"
-            />
-          </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1">Title (English)</label>
+                <input type="text" required value={formData.titleEn} onChange={e => setFormData({ ...formData, titleEn: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition-colors duration-150" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1 text-right font-urdu">Title (Urdu)</label>
+                <input type="text" dir="rtl" required value={formData.titleUr} onChange={e => setFormData({ ...formData, titleUr: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-urdu transition-colors duration-150" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1">Description (English)</label>
+                <textarea required rows={3} value={formData.descEn} onChange={e => setFormData({ ...formData, descEn: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition-colors duration-150" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1 text-right font-urdu">Description (Urdu)</label>
+                <textarea dir="rtl" required rows={3} value={formData.descUr} onChange={e => setFormData({ ...formData, descUr: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-urdu transition-colors duration-150" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1">Content (English)</label>
+                <textarea required rows={4} value={formData.contentEn} onChange={e => setFormData({ ...formData, contentEn: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition-colors duration-150" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#111827] mb-1 text-right font-urdu">Content (Urdu)</label>
+                <textarea dir="rtl" required rows={4} value={formData.contentUr} onChange={e => setFormData({ ...formData, contentUr: e.target.value })} className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-urdu transition-colors duration-150" />
+              </div>
+            </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-[#111827] mb-1">Category</label>

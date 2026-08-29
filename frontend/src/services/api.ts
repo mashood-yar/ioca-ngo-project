@@ -32,24 +32,25 @@ export async function getProjects(): Promise<Project[]> {
   return data.map((row: any) => {
     const status = row.status === 'completed' ? 'completed' : 'ongoing';
     const progress = typeof row.progress === 'number' ? row.progress : (status === 'completed' ? 100 : 50);
-    const location = row.location || '';
+    const locationEn = row.location_en || '';
+    const locationUr = row.location_ur || locationEn;
     const dateStr = row.start_date
       ? new Date(row.start_date).toLocaleDateString()
       : new Date(row.created_at).toLocaleDateString();
     return {
       id: row.id,
-      titleEn: row.title,
-      titleUr: row.title,
-      descEn: row.description,
-      descUr: row.description,
-      locationEn: location,
-      locationUr: location,
+      titleEn: row.title_en,
+      titleUr: row.title_ur || row.title_en,
+      descEn: row.desc_en,
+      descUr: row.desc_ur || row.desc_en,
+      locationEn: locationEn,
+      locationUr: locationUr,
       status,
       statusEn: status === 'completed' ? 'Completed' : 'Ongoing',
       statusUr: status === 'completed' ? 'مکمل' : 'جاری',
-      date: dateStr,
-      image: row.image_url ?? '/assets/proj-education.webp',
+      image: row.image_url || '/assets/appeal1.webp',
       progress,
+      date: dateStr,
     };
   });
 }
@@ -72,7 +73,25 @@ export async function getNews(): Promise<any[]> {
 // ---------------------------------------------------------
 
 export async function getPrograms(): Promise<Program[]> {
-  return mockPrograms;
+  const { data, error } = await fetchApi<any[]>('/programs');
+  
+  if (error || !data || data.length === 0) {
+    console.warn('Backend error or unreachable, falling back to mock programs.', error);
+    return mockPrograms;
+  }
+
+  return data.map((row: any) => ({
+    id: row.id,
+    titleEn: row.title_en,
+    titleUr: row.title_ur || row.title_en,
+    descEn: row.desc_en,
+    descUr: row.desc_ur || row.desc_en,
+    contentEn: row.content_en || row.desc_en,
+    contentUr: row.content_ur || row.desc_ur || row.desc_en,
+    icon: row.icon_url || 'Target', // Default icon
+    image: row.image_url || '/assets/edu.webp', // Default image
+    heroImage: row.hero_image_url || '/assets/edu-hero.webp',
+  }));
 }
 
 export async function getCampaigns(): Promise<Campaign[]> {
