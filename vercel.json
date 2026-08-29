@@ -16,6 +16,11 @@
     }
   ],
   "rewrites": [
+    { "source": "/api/site-settings", "destination": "/api/site-settings/index" },
+    { "source": "/api/impact-stats", "destination": "/api/impact-stats/index" },
+    { "source": "/api/impact-stats/(.*)", "destination": "/api/impact-stats/index" },
+    { "source": "/api/testimonials", "destination": "/api/testimonials/index" },
+    { "source": "/api/testimonials/(.*)", "destination": "/api/testimonials/index" },
     { "source": "/api/contacts", "destination": "/api/contacts/index" },
     { "source": "/api/donations", "destination": "/api/donations/index" },
     { "source": "/api/events", "destination": "/api/events/index" },

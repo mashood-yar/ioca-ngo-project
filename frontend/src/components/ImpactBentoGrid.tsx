@@ -1,90 +1,86 @@
-import React, { useRef, useEffect } from 'react';
-import { Droplets, GraduationCap, HeartPulse, CheckCircle2 } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { Droplets, GraduationCap, HeartPulse, CheckCircle2, Waves, Users, Star, BookOpen } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { toUrduNumerals } from '../utils/formatters';
+import { fetchApi } from '../lib/apiClient';
 
+interface ImpactStat {
+  id: string;
+  label_en: string;
+  label_ur: string;
+  value: number;
+  suffix: string;
+  icon: string;
+  color: string;
+  sort_order: number;
+}
 
 interface ImpactBentoGridProps {
   isUrdu: boolean;
 }
 
+// Map icon name strings to actual Lucide components
+const ICON_MAP: Record<string, React.ElementType> = {
+  HeartPulse,
+  GraduationCap,
+  Droplets,
+  Waves,
+  Users,
+  Star,
+  BookOpen,
+};
+
+// Map color names to Tailwind classes
+const COLOR_MAP: Record<string, { bg: string; text: string; colSpan: string; hasPattern: boolean }> = {
+  teal:  { bg: 'bg-brand-teal',  text: 'text-brand-white', colSpan: 'col-span-2', hasPattern: true },
+  gold:  { bg: 'bg-brand-gold',  text: 'text-brand-navy',  colSpan: 'col-span-1', hasPattern: false },
+  white: { bg: 'bg-brand-white border border-brand-navy/10', text: 'text-brand-navy', colSpan: 'col-span-1', hasPattern: false },
+  navy:  { bg: 'bg-brand-navy',  text: 'text-brand-white', colSpan: 'col-span-2', hasPattern: true },
+};
+
 /** Animated counter that counts up to a target value */
 const CountUp = ({ target, suffix, isInView, isUrdu }: { target: number, suffix: string, isInView: boolean, isUrdu: boolean }) => {
   const nodeRef = useRef<HTMLSpanElement>(null);
-  
+
   useEffect(() => {
     if (!isInView || !nodeRef.current) return;
     let start = 0;
-    const duration = window.innerWidth < 768 ? 1000 : 2000; // Faster on mobile
+    const duration = window.innerWidth < 768 ? 1000 : 2000;
     const step = (timestamp: number) => {
       start = start || timestamp;
       const progress = Math.min((timestamp - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       const currentCount = Math.floor(eased * target);
-      
       const displayStr = currentCount.toLocaleString();
       if (nodeRef.current) {
         nodeRef.current.textContent = (isUrdu ? toUrduNumerals(displayStr) : displayStr) + suffix;
       }
-      
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
   }, [isInView, target, suffix, isUrdu]);
-  
+
   return <span ref={nodeRef}>0{suffix}</span>;
 };
 
 const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const [stats, setStats] = useState<ImpactStat[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const stats = [
-    {
-      id: 'medical',
-      value: 500,
-      suffix: '+',
-      labelEn: 'Medical Camps Organized',
-      labelUr: 'طبی کیمپ منعقد ہوئے',
-      icon: HeartPulse,
-      bg: 'bg-brand-teal',
-      textColor: 'text-brand-white',
-      colSpan: 'col-span-2',
-      hasPattern: true,
-    },
-    {
-      id: 'children',
-      value: 50,
-      suffix: 'K',
-      labelEn: 'Children Educated',
-      labelUr: 'بچوں کو تعلیم دی گئی',
-      icon: GraduationCap,
-      bg: 'bg-brand-gold',
-      textColor: 'text-brand-navy',
-      colSpan: 'col-span-1',
-      hasPattern: false,
-    },
-    {
-      id: 'water',
-      value: 1200,
-      suffix: '+',
-      labelEn: 'Water Projects',
-      labelUr: 'پانی کے منصوبے',
-      icon: Droplets,
-      bg: 'bg-brand-white border border-brand-navy/10',
-      textColor: 'text-brand-navy',
-      colSpan: 'col-span-1',
-      hasPattern: false,
-    },
-  ];
+  useEffect(() => {
+    fetchApi<ImpactStat[]>('/api/impact-stats')
+      .then(({ data }) => { if (data) setStats(data); })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <section id="impact" className="py-12 md:py-24 bg-brand-gray relative" ref={ref}>
-      {/* Top curve overlapping the Hero section */}
-      <div 
-        className="absolute left-0 right-0 h-10 md:h-16 bg-brand-gray pointer-events-none z-20" 
-        style={{ top: 0, transform: 'translateY(-99%)', clipPath: 'ellipse(60% 100% at 50% 100%)' }} 
-        aria-hidden="true" 
+      <div
+        className="absolute left-0 right-0 h-10 md:h-16 bg-brand-gray pointer-events-none z-20"
+        style={{ top: 0, transform: 'translateY(-99%)', clipPath: 'ellipse(60% 100% at 50% 100%)' }}
+        aria-hidden="true"
       />
       <div className="max-w-7xl mx-auto px-4 md:px-16 relative z-10">
         <motion.div
@@ -102,37 +98,43 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {stats.map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={stat.id}
-                className={`${stat.colSpan} ${stat.bg} ${stat.textColor} rounded-xl p-5 md:p-8 flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all min-h-[150px] md:min-h-[220px]`}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-              >
-                {stat.hasPattern && (
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0 opacity-[0.08] pointer-events-none"
-                    style={{ backgroundImage: 'url("/assets/pattern-jali-accent.webp")', backgroundSize: '150px' }}
-                  />
-                )}
-                <Icon className="w-8 h-8 md:w-10 md:h-10 relative z-10 mb-4 md:mb-0" />
-                <div className="relative z-10">
-                  <p className="text-2xl md:text-4xl font-extrabold">
-                    {isInView ? <CountUp target={stat.value} suffix={stat.suffix} isInView={isInView} isUrdu={isUrdu} /> : '0'}
-                  </p>
-                  <p className={`text-sm md:text-lg mt-1 opacity-80 ${isUrdu ? 'font-urduBody' : ''}`}>
-                    {isUrdu ? stat.labelUr : stat.labelEn}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+          {loading
+            ? [1, 2, 3].map(i => (
+              <div key={i} className={`${i === 1 ? 'col-span-2' : 'col-span-1'} bg-brand-gray rounded-xl animate-pulse min-h-[150px] md:min-h-[220px]`} />
+            ))
+            : stats.map((stat, idx) => {
+              const Icon = ICON_MAP[stat.icon] ?? HeartPulse;
+              const style = COLOR_MAP[stat.color] ?? COLOR_MAP.teal;
+              return (
+                <motion.div
+                  key={stat.id}
+                  className={`${style.colSpan} ${style.bg} ${style.text} rounded-xl p-5 md:p-8 flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all min-h-[150px] md:min-h-[220px]`}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                >
+                  {style.hasPattern && (
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 opacity-[0.08] pointer-events-none"
+                      style={{ backgroundImage: 'url("/assets/pattern-jali-accent.webp")', backgroundSize: '150px' }}
+                    />
+                  )}
+                  <Icon className="w-8 h-8 md:w-10 md:h-10 relative z-10 mb-4 md:mb-0" />
+                  <div className="relative z-10">
+                    <p className="text-2xl md:text-4xl font-extrabold">
+                      {isInView ? <CountUp target={stat.value} suffix={stat.suffix} isInView={isInView} isUrdu={isUrdu} /> : '0'}
+                    </p>
+                    <p className={`text-sm md:text-lg mt-1 opacity-80 ${isUrdu ? 'font-urduBody' : ''}`}>
+                      {isUrdu ? stat.label_ur : stat.label_en}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })
+          }
 
-          {/* Full-width certification box */}
+          {/* Full-width certification box — always shown */}
           <motion.div
             className="col-span-2 bg-brand-navy text-brand-white rounded-xl p-5 md:p-8 flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg transition-all relative overflow-hidden min-h-[150px] md:min-h-[220px]"
             initial={{ opacity: 0, y: 30 }}
@@ -165,7 +167,6 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
               </div>
             </div>
           </motion.div>
-
         </div>
       </div>
     </section>

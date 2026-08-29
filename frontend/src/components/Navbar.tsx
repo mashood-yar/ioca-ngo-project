@@ -4,6 +4,7 @@ import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-reac
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { optimizeImage } from '../lib/optimizeImage';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 
 interface NavbarProps {
   isUrdu: boolean;
@@ -25,6 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
   };
 
   const { user, isAdmin, signOut, signInWithGoogle } = useAuth();
+  const { settings } = useSiteSettings();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -103,7 +105,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
       >
         <div className="max-w-7xl mx-auto px-4 py-4 md:px-16 flex items-center justify-between">
           <Link to="/" className="flex items-center" onClick={closeMenu}>
-            <img src="/assets/logos/horizontal-main-logo-teal.webp" alt="IOCA Logo" className="h-10 md:h-12 w-auto object-contain" />
+            <img src={settings.logo_url} alt="IOCA Logo" className="h-10 md:h-12 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation */}
