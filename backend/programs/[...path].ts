@@ -14,8 +14,12 @@ const slugify = (text: string) => {
 }
 
 const createProgramSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string().min(1, 'Description is required'),
+  titleEn: z.string().min(1, 'English Title is required'),
+  titleUr: z.string().min(1, 'Urdu Title is required'),
+  descEn: z.string().min(1, 'English Description is required'),
+  descUr: z.string().min(1, 'Urdu Description is required'),
+  contentEn: z.string().nullable().optional().or(z.literal('')),
+  contentUr: z.string().nullable().optional().or(z.literal('')),
   category: z.enum(['education', 'health', 'youth', 'community_bonding']),
   imageUrl: z.string().nullable().optional().or(z.literal('')),
   image_url: z.string().nullable().optional().or(z.literal('')),

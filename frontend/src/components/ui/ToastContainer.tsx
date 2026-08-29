@@ -14,12 +14,13 @@ export const ToastContainer: React.FC = () => {
   useEffect(() => {
     const handleToast = (e: Event) => {
       const customEvent = e as CustomEvent;
-      const detail = customEvent.detail?.detail || customEvent.detail;
-      const type = customEvent.detail?.type || 'info';
+      const data = customEvent.detail;
+      const message = typeof data === 'string' ? data : (data?.message || data?.detail || 'Notification');
+      const type = data?.variant || data?.type || 'info';
       
       const newToast: ToastData = {
         id: Math.random().toString(36).substring(2, 9),
-        message: typeof detail === 'string' ? detail : 'Notification',
+        message,
         type: (type as ToastVariant) || 'info'
       };
 

@@ -22,14 +22,17 @@ const slugify = (text: string) => {
 }
 
 const createProjectSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string().min(1, 'Description is required'),
+  titleEn: z.string().min(1, 'English Title is required'),
+  titleUr: z.string().min(1, 'Urdu Title is required'),
+  descEn: z.string().min(1, 'English Description is required'),
+  descUr: z.string().min(1, 'Urdu Description is required'),
   status: z.string().optional().nullable().or(z.literal('')),
   imageUrl: z.string().nullable().optional().or(z.literal('')),
   image_url: z.string().nullable().optional().or(z.literal('')),
   slug: z.string().nullable().optional().or(z.literal('')),
   category: z.string().nullable().optional().or(z.literal('')),
-  location: z.string().nullable().optional().or(z.literal('')),
+  locationEn: z.string().nullable().optional().or(z.literal('')),
+  locationUr: z.string().nullable().optional().or(z.literal('')),
   progress: z.number().int().min(0).max(100).optional().nullable(),
   isFeatured: z.boolean().optional().nullable(),
   is_featured: z.boolean().optional().nullable(),
@@ -98,12 +101,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data: project, error } = await supabase
         .from('projects')
         .insert({
-          title_en: (body as any).titleEn,
-          title_ur: (body as any).titleUr,
-          desc_en: (body as any).descEn,
-          desc_ur: (body as any).descUr,
-          location_en: (body as any).locationEn,
-          location_ur: (body as any).locationUr,
+          title: body.titleEn,
+          description: body.descEn,
+          title_en: body.titleEn,
+          title_ur: body.titleUr,
+          desc_en: body.descEn,
+          desc_ur: body.descUr,
+          location_en: body.locationEn,
+          location_ur: body.locationUr,
           category: body.category,
           status: body.status && body.status !== '' ? body.status : 'ongoing',
           progress: body.progress || 0,
@@ -127,9 +132,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const body: any = req.body
 
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
-      if (body.titleEn !== undefined) updates.title_en = body.titleEn
+      if (body.titleEn !== undefined) {
+        updates.title_en = body.titleEn
+        updates.title = body.titleEn
+      }
       if (body.titleUr !== undefined) updates.title_ur = body.titleUr
-      if (body.descEn !== undefined) updates.desc_en = body.descEn
+      if (body.descEn !== undefined) {
+        updates.desc_en = body.descEn
+        updates.description = body.descEn
+      }
       if (body.descUr !== undefined) updates.desc_ur = body.descUr
       if (body.locationEn !== undefined) updates.location_en = body.locationEn
       if (body.locationUr !== undefined) updates.location_ur = body.locationUr
