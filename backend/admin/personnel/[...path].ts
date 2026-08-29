@@ -4,7 +4,7 @@ import { allowCors } from '../../_lib/cors';
 import { err, ok } from '../../_lib/response';
 import { requireAdmin } from '../../_lib/auth';
 import { processImageField, uploadBase64Image } from '../../_lib/upload';
-import QRCode from 'qrcode';
+import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
 
 function generateUid(category: string): string {
