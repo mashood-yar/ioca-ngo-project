@@ -1,7 +1,7 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseAdmin } from '../../_lib/supabase';
+﻿import { VercelRequest, VercelResponse } from '@vercel/node';
+import { supabase } from '../../_lib/supabase';
 import { allowCors } from '../../_lib/cors';
-import { sendError, sendSuccess } from '../../_lib/response';
+import { err, ok } from '../../_lib/response';
 import { requireAdmin } from '../../_lib/auth';
 import { processImageField, uploadBase64Image } from '../../_lib/upload';
 import QRCode from 'qrcode';
@@ -23,13 +23,13 @@ async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (req.method === 'GET' && route === '') {
       // List all personnel
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from('personnel')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) return sendError(res, 500, 'Error fetching personnel');
-      return sendSuccess(res, data || []);
+      if (error) return err(res, 500, 'Error fetching personnel');
+      return ok(res, data || []);
     }
 
     if (req.method === 'POST' && route === '') {
@@ -38,16 +38,16 @@ async function handler(req: VercelRequest, res: VercelResponse) {
 
       // H-01: Validate required fields
       if (!full_name || typeof full_name !== 'string' || full_name.trim().length === 0) {
-        return sendError(res, 400, 'Full name is required');
+        return err(res, 400, 'Full name is required');
       }
       if (!title || typeof title !== 'string' || title.trim().length === 0) {
-        return sendError(res, 400, 'Title is required');
+        return err(res, 400, 'Title is required');
       }
       if (!category || !['board', 'partner', 'employee', 'volunteer'].includes(category)) {
-        return sendError(res, 400, 'Invalid category. Must be one of: board, partner, employee, volunteer');
+        return err(res, 400, 'Invalid category. Must be one of: board, partner, employee, volunteer');
       }
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return sendError(res, 400, 'Invalid email format');
+        return err(res, 400, 'Invalid email format');
       }
 
       // Upload profile image if it is base64
@@ -60,7 +60,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       let uid = generateUid(category);
       let retries = 0;
       while (retries < 5) {
-        const { data: existing } = await supabaseAdmin
+        const { data: existing } = await supabase
           .from('personnel')
           .select('id')
           .eq('uid', uid)
@@ -81,7 +81,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       // Upload QR Code to Cloudinary
       const { url: qr_code_url } = await uploadBase64Image(qrDataUrl, 'ioca/qrcodes');
 
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from('personnel')
         .insert([{
           category,
@@ -98,8 +98,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         .select()
         .single();
 
-      if (error) return sendError(res, 500, error.message);
-      return sendSuccess(res, data);
+      if (error) return err(res, 500, error.message);
+      return ok(res, data);
     }
 
     if (req.method === 'PUT' && route) {
@@ -112,7 +112,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         profile_image_url = await processImageField(profile_image, 'ioca/personnel');
       }
 
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from('personnel')
         .update({
           full_name,
@@ -128,29 +128,31 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         .select()
         .single();
 
-      if (error) return sendError(res, 500, error.message);
-      return sendSuccess(res, data);
+      if (error) return err(res, 500, error.message);
+      return ok(res, data);
     }
 
     if (req.method === 'DELETE' && route) {
       // Instead of DELETE, we change status to 'former'
       const id = route;
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from('personnel')
         .update({ status: 'former', updated_at: new Date().toISOString() })
         .eq('id', id)
         .select()
         .single();
 
-      if (error) return sendError(res, 500, error.message);
-      return sendSuccess(res, data);
+      if (error) return err(res, 500, error.message);
+      return ok(res, data);
     }
 
-    return sendError(res, 404, 'Not found');
+    return err(res, 404, 'Not found');
   } catch (error: any) {
     console.error('Personnel API Error:', error);
-    return sendError(res, 500, 'Internal server error');
+    return err(res, 500, 'Internal server error');
   }
 }
 
 export default allowCors(handler);
+
+
