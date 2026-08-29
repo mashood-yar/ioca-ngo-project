@@ -1,4 +1,4 @@
-﻿import { VercelRequest, VercelResponse } from '@vercel/node';
+import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabase } from './_lib/supabase';
 import { allowCors } from './_lib/cors';
 import { err, ok } from './_lib/response';

@@ -36,7 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const id = segments[0] === 'index' ? undefined : segments[0]
 
   try {
-    // 0. GET /api/gallery/categories — Public: list unique categories
+    // 0. GET /api/gallery/categories â€” Public: list unique categories
     if (req.method === 'GET' && id === 'categories') {
       const { data, error } = await supabase
         .from('gallery')
@@ -48,7 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, uniqueCategories.filter(Boolean))
     }
 
-    // 1. GET /api/gallery — Public: list all gallery images
+    // 1. GET /api/gallery â€” Public: list all gallery images
     if (req.method === 'GET' && !id) {
       const category = req.query.category as string | undefined;
       
@@ -68,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, images)
     }
 
-    // 2. GET /api/gallery/:id — Public: get single gallery image
+    // 2. GET /api/gallery/:id â€” Public: get single gallery image
     if (req.method === 'GET' && id && id !== 'categories') {
       const { data: image, error } = await supabase
         .from('gallery')
@@ -86,7 +86,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, image)
     }
 
-    // 3. POST /api/gallery — Admin: upload gallery image
+    // 3. POST /api/gallery â€” Admin: upload gallery image
     if (req.method === 'POST' && !id) {
       const user = await requireAdmin(req, res)
       if (!user) return
@@ -122,7 +122,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, image, 201)
     }
 
-    // 4. PUT /api/gallery/:id — Admin: update gallery image
+    // 4. PUT /api/gallery/:id â€” Admin: update gallery image
     if (req.method === 'PUT' && id) {
       const user = await requireAdmin(req, res)
       if (!user) return
@@ -159,7 +159,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, image)
     }
 
-    // 5. DELETE /api/gallery/:id — Admin: delete gallery image
+    // 5. DELETE /api/gallery/:id â€” Admin: delete gallery image
     if (req.method === 'DELETE' && id) {
       const user = await requireAdmin(req, res)
       if (!user) return

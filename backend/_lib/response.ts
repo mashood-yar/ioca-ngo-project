@@ -1,4 +1,4 @@
-﻿import type { VercelResponse } from '@vercel/node'
+import type { VercelResponse } from '@vercel/node'
 
 export const ok = (res: VercelResponse, data: unknown, status = 200) =>
   res.status(status).json({ success: true, data })
