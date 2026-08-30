@@ -60,7 +60,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // 1. GET /api/projects — Public: list all projects
     if (req.method === 'GET' && !id) {
-      const { is_featured, limit } = req.query
+      const { is_featured, limit, status } = req.query
       
       let query = supabase
         .from('projects')
@@ -69,6 +69,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (is_featured === 'true') {
         query = query.eq('is_featured', true)
+      }
+      
+      if (status) {
+        query = query.eq('status', status as string)
       }
       
       if (limit) {
