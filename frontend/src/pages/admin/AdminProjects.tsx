@@ -74,18 +74,18 @@ export function AdminProjects() {
     loadProjects();
   }, []);
 
-  const handleOpenForm = (project?: Project) => {
+  const handleOpenForm = (project?: any) => {
     if (project) {
       setSelectedProject(project);
       setFormData({
-        titleEn: project.titleEn || '',
-        titleUr: (project as any).titleUr || '',
-        descEn: project.descEn || '',
-        descUr: (project as any).descUr || '',
+        titleEn: project.title_en || project.titleEn || project.title || '',
+        titleUr: project.title_ur || project.titleUr || '',
+        descEn: project.desc_en || project.descEn || project.description || '',
+        descUr: project.desc_ur || project.descUr || '',
         status: project.status || 'ongoing',
         category: project.category || '',
-        locationEn: project.locationEn || '',
-        locationUr: (project as any).locationUr || '',
+        locationEn: project.location_en || project.locationEn || '',
+        locationUr: project.location_ur || project.locationUr || '',
         progress: project.progress ?? 0,
         is_featured: project.is_featured || false,
         start_date: project.start_date ? new Date(project.start_date).toISOString().slice(0, 10) : '',

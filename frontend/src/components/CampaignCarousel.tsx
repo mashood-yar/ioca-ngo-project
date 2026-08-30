@@ -31,7 +31,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi<Project[]>('/api/projects?is_featured=true&limit=6')
+    fetchApi<Project[]>('/projects?is_featured=true&limit=6')
       .then(({ data }) => {
         if (data && data.length > 0) {
           setProjects(data);

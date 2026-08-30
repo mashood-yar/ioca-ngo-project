@@ -74,16 +74,16 @@ export function AdminPrograms() {
     loadPrograms();
   }, []);
 
-  const handleOpenForm = (program?: Program) => {
+  const handleOpenForm = (program?: any) => {
     if (program) {
       setSelectedProgram(program);
       setFormData({
-        titleEn: program.titleEn || '',
-        titleUr: program.titleUr || '',
-        descEn: program.descEn || '',
-        descUr: program.descUr || '',
-        contentEn: program.contentEn || '',
-        contentUr: program.contentUr || '',
+        titleEn: program.title_en || program.titleEn || program.title || '',
+        titleUr: program.title_ur || program.titleUr || '',
+        descEn: program.desc_en || program.descEn || program.description || '',
+        descUr: program.desc_ur || program.descUr || '',
+        contentEn: program.content_en || program.contentEn || program.content || '',
+        contentUr: program.content_ur || program.contentUr || '',
         category: program.category || 'education',
         status: program.status || 'active',
       });

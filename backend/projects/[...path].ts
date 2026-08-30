@@ -60,10 +60,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // 1. GET /api/projects — Public: list all projects
     if (req.method === 'GET' && !id) {
-      const { data: projects, error } = await supabase
+      const { is_featured, limit } = req.query
+      
+      let query = supabase
         .from('projects')
         .select('*')
         .order('created_at', { ascending: false })
+
+      if (is_featured === 'true') {
+        query = query.eq('is_featured', true)
+      }
+      
+      if (limit) {
+        query = query.limit(parseInt(limit as string, 10))
+      }
+
+      const { data: projects, error } = await query
 
       if (error) throw new Error(error.message)
       return ok(res, projects)
