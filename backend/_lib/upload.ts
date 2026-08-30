@@ -2,9 +2,15 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import sharp from 'sharp';
 
 // Initialize Cloudflare R2 Client
+// Ensure endpoint does not have bucket name appended by the user
+let cleanEndpoint = process.env.R2_ENDPOINT || '';
+if (cleanEndpoint.endsWith('/' + process.env.R2_BUCKET_NAME)) {
+  cleanEndpoint = cleanEndpoint.replace('/' + process.env.R2_BUCKET_NAME, '');
+}
+
 const s3Client = new S3Client({
   region: 'auto',
-  endpoint: process.env.R2_ENDPOINT,
+  endpoint: cleanEndpoint,
   credentials: {
     accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
@@ -30,9 +36,9 @@ export const uploadBase64Image = async (
       .toBuffer();
 
     // 3. Generate a unique filename
-    const prefix = folder ? `${folder}/` : 'ioca/';
+    const prefix = folder ? folder + '/' : 'ioca/';
     const uniqueId = Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-    const fileName = `${prefix}${uniqueId}.webp`;
+    const fileName = prefix + uniqueId + '.webp';
 
     // 4. Upload to Cloudflare R2
     const command = new PutObjectCommand({
@@ -45,8 +51,11 @@ export const uploadBase64Image = async (
     await s3Client.send(command);
 
     // 5. Construct Public URL
-    const publicUrl = process.env.R2_PUBLIC_URL || '';
-    const url = `${publicUrl}/${fileName}`;
+    let publicUrl = process.env.R2_PUBLIC_URL || '';
+    if (publicUrl.endsWith('/')) {
+        publicUrl = publicUrl.slice(0, -1);
+    }
+    const url = publicUrl + '/' + fileName;
 
     return {
       url,
@@ -66,3 +75,4 @@ export const processImageField = async (imageUrl?: string, folder?: string): Pro
   }
   return imageUrl;
 }
+
