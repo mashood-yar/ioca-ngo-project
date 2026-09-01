@@ -33,7 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── POST /api/impact-stats ──────────────────────────────────────────────
     // Admin only: create a new stat
     if (req.method === 'POST' && !id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const { label_en, label_ur, value, suffix, icon, color, sort_order } = req.body
 
@@ -54,7 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── PATCH /api/impact-stats/:id ─────────────────────────────────────────
     // Admin only: update a stat
     if (req.method === 'PATCH' && id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const { label_en, label_ur, value, suffix, icon, color, sort_order, is_active } = req.body
 
@@ -82,7 +82,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── DELETE /api/impact-stats/:id ────────────────────────────────────────
     // Admin only: delete a stat
     if (req.method === 'DELETE' && id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const { error } = await supabase
         .from('impact_stats')
