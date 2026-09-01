@@ -44,7 +44,7 @@ export const VerifyID: React.FC = () => {
   return (
     <>
       <SEO title="ID Verification | IOCA" description="Verify IOCA Personnel ID" />
-      <div className="min-h-screen bg-brand-gray flex items-center justify-center p-4">
+      <div className="py-24 bg-brand-gray flex items-center justify-center p-4">
         {/* M-06: rounded-2xl → rounded-xl to match brand shape language */}
         <div className={`max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden border ${borderColor}`}>
           
@@ -57,17 +57,23 @@ export const VerifyID: React.FC = () => {
             <h1 className={`text-2xl font-bold ${themeColor}`}>
               {isActive ? 'Verified ID' : 'Invalid / Suspended ID'}
             </h1>
-            <p className="text-brand-navy/60 mt-1">International Organization for Community Advancement</p>
+            <p className="text-brand-navy/60 mt-1 text-sm">International Organization for Community Advancement</p>
           </div>
 
           {person && (
             <div className="p-6">
               <div className="flex justify-center -mt-16 mb-6">
-                <img
-                  src={person.profile_image_url ? optimizeImage(person.profile_image_url, { width: 150 }) : '/assets/team-1.webp'}
-                  alt={person.full_name}
-                  className={`w-32 h-32 rounded-full object-cover border-4 ${isActive ? 'border-green-500' : 'border-red-500'} bg-white`}
-                />
+                <div className={`w-32 h-32 rounded-full overflow-hidden border-4 ${isActive ? 'border-green-500' : 'border-red-500'} bg-white flex items-center justify-center text-brand-navy font-bold text-4xl shadow-md`}>
+                  {person.profile_image_url ? (
+                    <img
+                      src={optimizeImage(person.profile_image_url, { width: 150 })}
+                      alt={person.full_name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span>{person.full_name.charAt(0).toUpperCase()}</span>
+                  )}
+                </div>
               </div>
 
               <div className="text-center mb-6">
