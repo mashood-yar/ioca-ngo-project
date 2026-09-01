@@ -26,7 +26,7 @@ const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi<Testimonial[]>('/api/testimonials')
+    fetchApi<Testimonial[]>('/testimonials')
       .then(({ data }) => { if (data) setTestimonials(data); })
       .finally(() => setLoading(false));
   }, []);

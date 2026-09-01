@@ -53,6 +53,8 @@ export function AdminLayout() {
     { to: '/admin/projects', label: 'Active Appeals & Projects', icon: Heart },
     { to: '/admin/programs', label: 'Programs', icon: Target },
     { to: '/admin/personnel', label: 'Team & Personnel', icon: Users },
+    { to: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
+    { to: '/admin/impact-stories', label: 'Impact Stories', icon: Megaphone },
     { to: '/admin/gallery', label: 'Gallery', icon: Image },
     { to: '/admin/posts', label: 'News & Updates', icon: Megaphone },
     { to: '/admin/events', label: 'Events', icon: Calendar },

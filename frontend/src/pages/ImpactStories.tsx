@@ -1,15 +1,30 @@
 import React, { useState, useRef } from 'react';
 import SEO from '../components/SEO';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Quote, Calendar, Tag } from 'lucide-react';
-import { impactStories } from '../data/mockData';
+import { ChevronDown, Calendar, Tag } from 'lucide-react';
 import { optimizeImage } from '../lib/optimizeImage';
+
+import { fetchApi } from '../lib/apiClient';
+
+interface Story {
+  id: string;
+  title_en: string;
+  title_ur?: string;
+  excerpt_en: string;
+  excerpt_ur?: string;
+  content_en: string;
+  content_ur?: string;
+  image_url: string;
+  category: string;
+  published_at: string;
+}
 
 interface ImpactStoriesProps {
   isUrdu: boolean;
 }
 
 const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
+  const [stories, setStories] = useState<Story[]>([]);
   const [expandedStory, setExpandedStory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const ref = useRef(null);
@@ -17,8 +32,11 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
+    fetchApi<Story[]>('/impact-stories')
+      .then(({ data }) => {
+        if (data) setStories(data);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const toggleStory = (id: string) => {
@@ -83,8 +101,12 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
                   </div>
                 ))}
               </>
+            ) : stories.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-brand-navy/60">No impact stories found.</p>
+              </div>
             ) : (
-            impactStories.map((story, idx) => {
+            stories.map((story, idx) => {
               const isExpanded = expandedStory === story.id;
               return (
                 <motion.article
@@ -99,35 +121,35 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
                     {/* Image */}
                     <div className="md:col-span-2 h-48 md:h-full overflow-hidden">
                       <img
-                        src={optimizeImage(story.image, { width: 400 })}
-                        alt={isUrdu ? story.titleUr : story.titleEn}
+                        src={optimizeImage(story.image_url || '/assets/impact-ali.webp', { width: 400 })}
+                        alt={isUrdu ? (story.title_ur || story.title_en) : story.title_en}
                         className="w-full h-full object-cover"
                         loading="lazy"
                         decoding="async"
                         width={400}
-                        height={300}
+                        height={200}
                       />
                     </div>
 
                     {/* Content */}
-                    <div className="md:col-span-3 p-6 md:p-10 flex flex-col">
+                    <div className="md:col-span-3 p-6 md:p-10 flex flex-col h-full">
                       <div className="flex flex-wrap items-center gap-2 mb-4">
                         <span className="flex items-center gap-1 text-[11px] bg-brand-teal/10 text-brand-teal px-3 py-1 rounded-full font-medium">
                           <Tag className="w-3 h-3" />
-                          {isUrdu ? story.categoryUr : story.categoryEn}
+                          {story.category}
                         </span>
                         <span className="flex items-center gap-1 text-[11px] text-brand-navy/40">
                           <Calendar className="w-3 h-3" />
-                          {story.date}
+                          {new Date(story.published_at || new Date()).toLocaleDateString()}
                         </span>
                       </div>
 
                       <h2 className={`text-xl md:text-2xl font-bold text-brand-navy mb-3 ${isUrdu ? 'font-urduHeading' : ''}`}>
-                        {isUrdu ? story.titleUr : story.titleEn}
+                        {isUrdu ? (story.title_ur || story.title_en) : story.title_en}
                       </h2>
 
                       <p className={`text-brand-navy/60 leading-relaxed mb-4 ${isUrdu ? 'font-urduBody' : ''}`}>
-                        {isUrdu ? story.excerptUr : story.excerptEn}
+                        {isUrdu ? (story.excerpt_ur || story.excerpt_en) : story.excerpt_en}
                       </p>
 
                       <AnimatePresence>
@@ -140,17 +162,10 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
                             className="overflow-hidden"
                           >
                             <div className={`text-brand-navy/70 leading-relaxed space-y-4 mb-6 ${isUrdu ? 'font-urduBody' : ''}`}>
-                              {(isUrdu ? story.contentUr : story.contentEn).split('\n\n').map((para, i) => (
+                              {(isUrdu ? (story.content_ur || story.content_en) : story.content_en)?.split('\n\n').map((para, i) => (
                                 <p key={i}>{para}</p>
                               ))}
                             </div>
-
-                            <blockquote className="border-s-4 border-brand-gold ps-6 py-2 mb-4">
-                              <Quote className="w-5 h-5 text-brand-gold mb-2" aria-hidden="true" />
-                              <p className={`text-lg italic text-brand-navy ${isUrdu ? 'font-urduBody' : 'font-serif'}`}>
-                                {isUrdu ? story.quoteUr : story.quoteEn}
-                              </p>
-                            </blockquote>
                           </motion.div>
                         )}
                       </AnimatePresence>

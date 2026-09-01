@@ -39,6 +39,8 @@ const MembershipApply = lazy(() => import('./pages/membership/MembershipApply').
 const MembershipWaiting = lazy(() => import('./pages/membership/MembershipWaiting').then(m => ({ default: m.MembershipWaiting })));
 const VerifyID = lazy(() => import('./pages/VerifyID').then(m => ({ default: m.VerifyID })));
 const AdminPersonnel = lazy(() => import('./pages/admin/AdminPersonnel').then(m => ({ default: m.AdminPersonnel })));
+const AdminTestimonials = lazy(() => import('./pages/admin/AdminTestimonials').then(m => ({ default: m.AdminTestimonials })));
+const AdminImpactStories = lazy(() => import('./pages/admin/AdminImpactStories').then(m => ({ default: m.AdminImpactStories })));
 const AdminGallery = lazy(() => import('./pages/admin/AdminGallery').then(m => ({ default: m.AdminGallery })));
 const AdminSiteSettings = lazy(() => import('./pages/admin/AdminSiteSettings').then(m => ({ default: m.AdminSiteSettings })));
 const AdminProjects = lazy(() => import('./pages/admin/AdminProjects').then(m => ({ default: m.AdminProjects })));
@@ -124,6 +126,8 @@ function App() {
               <Route path="donations" element={<AdminDonations />} />
               <Route path="queries" element={<AdminQueries />} />
               <Route path="personnel" element={<AdminPersonnel />} />
+              <Route path="testimonials" element={<AdminTestimonials />} />
+              <Route path="impact-stories" element={<AdminImpactStories />} />
               <Route path="gallery" element={<AdminGallery />} />
               <Route path="site-settings" element={<AdminSiteSettings />} />
               <Route path="projects" element={<AdminProjects />} />

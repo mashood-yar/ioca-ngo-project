@@ -32,8 +32,7 @@ const ImpactStoriesCarousel: React.FC<ImpactStoriesCarouselProps> = ({ isUrdu })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Impact stories are stored as news items with category = 'impact_story'
-    fetchApi<Story[]>('/api/news?limit=5')
+    fetchApi<Story[]>('/impact-stories?limit=5')
       .then(({ data }) => { if (data) setStories(data); })
       .finally(() => setLoading(false));
   }, []);

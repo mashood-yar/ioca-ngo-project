@@ -269,3 +269,53 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ==============================================================================
+-- Testimonials Table
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.testimonials (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    quote_en TEXT NOT NULL,
+    quote_ur TEXT,
+    name_en TEXT NOT NULL,
+    name_ur TEXT,
+    location_en TEXT NOT NULL,
+    location_ur TEXT,
+    initial VARCHAR(1) NOT NULL,
+    bg_color TEXT DEFAULT 'white',
+    sort_order INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access on testimonials" ON public.testimonials FOR SELECT USING (true);
+CREATE POLICY "Allow authenticated to insert testimonials" ON public.testimonials FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Allow authenticated to update testimonials" ON public.testimonials FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Allow authenticated to delete testimonials" ON public.testimonials FOR DELETE TO authenticated USING (true);
+
+-- ==============================================================================
+-- Impact Stories Table
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.impact_stories (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title_en TEXT NOT NULL,
+    title_ur TEXT,
+    excerpt_en TEXT,
+    excerpt_ur TEXT,
+    content_en TEXT,
+    content_ur TEXT,
+    image_url TEXT,
+    category TEXT DEFAULT 'General',
+    published_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.impact_stories ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access on impact_stories" ON public.impact_stories FOR SELECT USING (true);
+CREATE POLICY "Allow authenticated to insert impact_stories" ON public.impact_stories FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Allow authenticated to update impact_stories" ON public.impact_stories FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Allow authenticated to delete impact_stories" ON public.impact_stories FOR DELETE TO authenticated USING (true);
+
