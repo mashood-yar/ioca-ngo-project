@@ -70,7 +70,7 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi<ImpactStat[]>('/api/impact-stats')
+    fetchApi<ImpactStat[]>('/impact-stats')
       .then(({ data }) => { if (data) setStats(data); })
       .finally(() => setLoading(false));
   }, []);

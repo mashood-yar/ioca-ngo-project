@@ -31,7 +31,7 @@ async function router(req: VercelRequest, res: VercelResponse) {
   if (parts[1] === 'donations') { req.query.path = parts.slice(2); return donations(req, res); }
   if (parts[1] === 'events') { req.query.path = parts.slice(2); return events(req, res); }
   if (parts[1] === 'gallery') { req.query.path = parts.slice(2); return gallery(req, res); }
-  if (parts[1] === 'impact-stats') return impactStats(req, res);
+  if (parts[1] === 'impact-stats') { req.query.path = parts.slice(2); return impactStats(req, res); }
   if (parts[1] === 'misc') { req.query.path = parts.slice(2); return misc(req, res); }
   if (parts[1] === 'news') { req.query.path = parts.slice(2); return news(req, res); }
   if (parts[1] === 'programs') { req.query.path = parts.slice(2); return programs(req, res); }
