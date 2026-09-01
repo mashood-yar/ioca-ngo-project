@@ -48,7 +48,7 @@ export const VerifyID: React.FC = () => {
         {/* M-06: rounded-2xl → rounded-xl to match brand shape language */}
         <div className={`max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden border ${borderColor}`}>
           
-          <div className={`${bgColor} p-6 text-center border-b ${borderColor}`}>
+          <div className={`${bgColor} p-6 pb-14 text-center border-b ${borderColor}`}>
             {isActive ? (
               <ShieldCheck className={`w-16 h-16 mx-auto mb-4 ${themeColor}`} />
             ) : (

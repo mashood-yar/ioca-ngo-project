@@ -198,13 +198,13 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
               team.map((member, i) => (
                 <motion.div
                   key={member.id}
-                  className="bg-white rounded-xl overflow-hidden shadow-lg border border-brand-navy/5 flex flex-col group"
+                  className="bg-white rounded-xl overflow-hidden shadow-lg border border-brand-navy/5 flex flex-col group hover:shadow-xl transition-shadow duration-300"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
-                  <div className="w-48 h-48 mx-auto rounded-full overflow-hidden mb-6 border-4 border-brand-teal/20 relative bg-brand-navy/5 flex items-center justify-center">
+                  <div className="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full overflow-hidden mt-8 mb-4 border-4 border-brand-teal/20 relative bg-brand-teal/5 flex items-center justify-center">
                     {member.profile_image_url ? (
                       <img 
                         src={optimizeImage(member.profile_image_url, { width: 300 })} 
@@ -213,20 +213,20 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
                         loading="lazy"
                       />
                     ) : (
-                      <span className="text-6xl font-bold text-brand-navy/30">{member.full_name.charAt(0).toUpperCase()}</span>
+                      <span className="text-5xl md:text-6xl font-bold text-brand-navy/80">{member.full_name.charAt(0).toUpperCase()}</span>
                     )}
-                    <div className="absolute inset-0 bg-brand-navy/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-brand-navy/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
-                  <div className="p-4 md:p-6 text-center flex-grow flex flex-col justify-center">
-                    <h3 className="text-sm md:text-xl font-bold text-brand-navy mb-1">
+                  <div className="p-4 md:p-6 text-center flex-grow flex flex-col justify-start">
+                    <h3 className="text-lg md:text-xl font-bold text-brand-navy mb-1">
                       {member.full_name}
                     </h3>
-                    <p className="text-xs md:text-sm text-brand-teal font-medium mb-2">
+                    <p className="text-sm text-brand-teal font-medium mb-3">
                       {member.title}
                     </p>
-                    <p className="text-xs text-brand-navy/60 hidden md:block">
-                      {member.bio}
-                    </p>
+                      <p className="text-sm text-brand-navy/70 line-clamp-3">
+                        {member.bio}
+                      </p>
                   </div>
                 </motion.div>
               ))
