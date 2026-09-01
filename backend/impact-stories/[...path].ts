@@ -71,7 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 3. POST /api/impact-stories
     if (req.method === 'POST' && !id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const body = createImpactStorySchema.parse(req.body)
       const imageUrl = body.image_url ?? body.imageUrl
@@ -97,7 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 4. PATCH /api/impact-stories/:id
     if (req.method === 'PATCH' && id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const body = updateImpactStorySchema.parse(req.body)
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
@@ -128,7 +128,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 5. DELETE /api/impact-stories/:id
     if (req.method === 'DELETE' && id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const { error } = await supabase
         .from('impact_stories')

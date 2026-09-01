@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Admin only: upsert one or more settings
     // Body: { key: value, key2: value2, ... }
     if (req.method === 'PATCH') {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const updates = req.body as Record<string, string>
       if (!updates || typeof updates !== 'object' || Array.isArray(updates)) {

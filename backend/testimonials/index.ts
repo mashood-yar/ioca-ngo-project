@@ -32,7 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── POST /api/testimonials ──────────────────────────────────────────────
     // Admin only: create a new testimonial
     if (req.method === 'POST' && !id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const { quote_en, quote_ur, name_en, name_ur, location_en, location_ur, initial, bg_color, sort_order } = req.body
 
@@ -62,7 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── PATCH /api/testimonials/:id ─────────────────────────────────────────
     // Admin only: update a testimonial
     if (req.method === 'PATCH' && id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const { quote_en, quote_ur, name_en, name_ur, location_en, location_ur, initial, bg_color, sort_order, is_active } = req.body
 
@@ -92,7 +92,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── DELETE /api/testimonials/:id ────────────────────────────────────────
     // Admin only: delete a testimonial
     if (req.method === 'DELETE' && id) {
-      if (await requireAdmin(req, res)) return
+      if (!(await requireAdmin(req, res))) return
 
       const { error } = await supabase
         .from('testimonials')
