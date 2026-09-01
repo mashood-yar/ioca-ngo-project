@@ -39,7 +39,7 @@ export const AdminImpactStats: React.FC = () => {
 
   const loadStats = () => {
     setLoading(true);
-    fetchApi<ImpactStat[]>('/api/impact-stats')
+    fetchApi<ImpactStat[]>('/impact-stats')
       .then(({ data, error }) => {
         if (data) setStats(data);
         if (error) setErrorMsg(error);
@@ -94,7 +94,7 @@ export const AdminImpactStats: React.FC = () => {
     setErrorMsg(null);
 
     const method = editingId ? 'PATCH' : 'POST';
-    const endpoint = editingId ? `/api/impact-stats/${editingId}` : '/api/impact-stats';
+    const endpoint = editingId ? `/impact-stats/${editingId}` : '/impact-stats';
 
     const { error } = await fetchApi(endpoint, {
       method,
@@ -116,7 +116,7 @@ export const AdminImpactStats: React.FC = () => {
     setIsDeleting(true);
     setErrorMsg(null);
     
-    const { error } = await fetchApi(`/api/impact-stats/${itemToDelete.id}`, { method: 'DELETE' });
+    const { error } = await fetchApi(`/impact-stats/${itemToDelete.id}`, { method: 'DELETE' });
     
     setIsDeleting(false);
     if (error) {

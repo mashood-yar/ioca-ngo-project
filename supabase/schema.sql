@@ -33,13 +33,17 @@ CREATE TABLE IF NOT EXISTS public.donations (
   email TEXT NOT NULL,
   phone TEXT,
   amount NUMERIC NOT NULL,
+  currency TEXT DEFAULT 'PKR',
   payment_method TEXT NOT NULL,
+  transaction_id TEXT,
   screenshot_url TEXT,
   screenshot_public_id TEXT,
   status TEXT NOT NULL DEFAULT 'pending',
   message TEXT,
+  notes TEXT,
   confirmed_at TIMESTAMP WITH TIME ZONE,
   receipt_sent BOOLEAN NOT NULL DEFAULT FALSE,
+  project_id UUID REFERENCES public.projects(id) ON DELETE SET NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
