@@ -97,7 +97,7 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 grid-flow-dense">
           {loading
             ? [1, 2, 3].map(i => (
               <div key={i} className={`${i === 1 ? 'col-span-2' : 'col-span-1'} bg-brand-gray rounded-xl animate-pulse min-h-[150px] md:min-h-[220px]`} />
@@ -136,7 +136,7 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
 
           {/* Full-width certification box — always shown */}
           <motion.div
-            className="col-span-2 bg-brand-navy text-brand-white rounded-xl p-5 md:p-8 flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg transition-all relative overflow-hidden min-h-[150px] md:min-h-[220px]"
+            className="col-span-2 md:col-span-3 bg-brand-navy text-brand-white rounded-xl p-5 md:p-8 flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg transition-all relative overflow-hidden min-h-[150px] md:min-h-[220px]"
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.4 }}
