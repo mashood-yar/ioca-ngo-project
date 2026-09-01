@@ -41,6 +41,7 @@ const VerifyID = lazy(() => import('./pages/VerifyID').then(m => ({ default: m.V
 const AdminPersonnel = lazy(() => import('./pages/admin/AdminPersonnel').then(m => ({ default: m.AdminPersonnel })));
 const AdminTestimonials = lazy(() => import('./pages/admin/AdminTestimonials').then(m => ({ default: m.AdminTestimonials })));
 const AdminImpactStories = lazy(() => import('./pages/admin/AdminImpactStories').then(m => ({ default: m.AdminImpactStories })));
+const AdminImpactStats = lazy(() => import('./pages/admin/AdminImpactStats').then(m => ({ default: m.AdminImpactStats })));
 const AdminGallery = lazy(() => import('./pages/admin/AdminGallery').then(m => ({ default: m.AdminGallery })));
 const AdminSiteSettings = lazy(() => import('./pages/admin/AdminSiteSettings').then(m => ({ default: m.AdminSiteSettings })));
 const AdminProjects = lazy(() => import('./pages/admin/AdminProjects').then(m => ({ default: m.AdminProjects })));
@@ -128,6 +129,7 @@ function App() {
               <Route path="personnel" element={<AdminPersonnel />} />
               <Route path="testimonials" element={<AdminTestimonials />} />
               <Route path="impact-stories" element={<AdminImpactStories />} />
+              <Route path="impact-stats" element={<AdminImpactStats />} />
               <Route path="gallery" element={<AdminGallery />} />
               <Route path="site-settings" element={<AdminSiteSettings />} />
               <Route path="projects" element={<AdminProjects />} />

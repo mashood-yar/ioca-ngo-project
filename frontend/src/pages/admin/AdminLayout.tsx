@@ -18,6 +18,7 @@ import {
   Target,
   Heart,
   Megaphone,
+  TrendingUp,
   
 } from 'lucide-react';
 
@@ -55,6 +56,7 @@ export function AdminLayout() {
     { to: '/admin/personnel', label: 'Team & Personnel', icon: Users },
     { to: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
     { to: '/admin/impact-stories', label: 'Impact Stories', icon: Megaphone },
+    { to: '/admin/impact-stats', label: 'Impact Stats', icon: TrendingUp },
     { to: '/admin/gallery', label: 'Gallery', icon: Image },
     { to: '/admin/posts', label: 'News & Updates', icon: Megaphone },
     { to: '/admin/events', label: 'Events', icon: Calendar },
