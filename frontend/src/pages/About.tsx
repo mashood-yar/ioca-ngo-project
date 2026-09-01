@@ -204,16 +204,18 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
-                  <div className="overflow-hidden">
-                    <img
-                      src={member.profile_image_url ? optimizeImage(member.profile_image_url, { width: 300 }) : '/assets/team-1.webp'}
-                      alt={member.full_name}
-                      className="w-full h-36 md:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                      decoding="async"
-                      width={300}
-                      height={256}
-                    />
+                  <div className="w-48 h-48 mx-auto rounded-full overflow-hidden mb-6 border-4 border-brand-teal/20 relative bg-brand-navy/5 flex items-center justify-center">
+                    {member.profile_image_url ? (
+                      <img 
+                        src={optimizeImage(member.profile_image_url, { width: 300 })} 
+                        alt={member.full_name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="text-6xl font-bold text-brand-navy/30">{member.full_name.charAt(0).toUpperCase()}</span>
+                    )}
+                    <div className="absolute inset-0 bg-brand-navy/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                   <div className="p-4 md:p-6 text-center flex-grow flex flex-col justify-center">
                     <h3 className="text-sm md:text-xl font-bold text-brand-navy mb-1">

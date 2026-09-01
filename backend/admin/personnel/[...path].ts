@@ -107,9 +107,31 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       const id = route;
       const { full_name, email, phone, profile_image, title, bio, status } = req.body;
 
+      // Fetch existing user to check for QR code
+      const { data: existingUser, error: fetchErr } = await supabase
+        .from('personnel')
+        .select('*')
+        .eq('id', id)
+        .single();
+        
+      if (fetchErr || !existingUser) return err(res, 404, 'Personnel not found');
+
       let profile_image_url = req.body.profile_image_url;
       if (profile_image && profile_image.startsWith('data:image/')) {
         profile_image_url = await processImageField(profile_image, 'ioca/personnel');
+      }
+
+      let qr_code_url = existingUser.qr_code_url;
+      if (!qr_code_url && existingUser.uid) {
+        const baseUrl = process.env.SITE_URL
+          || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://ioca.org');
+        const verifyUrl = `${baseUrl}/verify/${existingUser.uid}`;
+        const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
+          color: { dark: '#0a2540', light: '#ffffff' }
+        });
+        
+        const uploadedQr = await uploadBase64Image(qrDataUrl, 'ioca/qrcodes');
+        qr_code_url = uploadedQr.url;
       }
 
       const { data, error } = await supabase
@@ -119,6 +141,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
           email,
           phone,
           profile_image_url,
+          qr_code_url,
           status,
           title,
           bio,

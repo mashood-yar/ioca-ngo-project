@@ -71,7 +71,7 @@ export const AdminPersonnel: React.FC = () => {
       title: person.title || '',
       bio: person.bio || '',
       status: person.status,
-      profile_image: ''
+      profile_image: person.profile_image_url || ''
     });
     setErrorMsg(null);
     setIsAdding(true);
@@ -249,8 +249,12 @@ export const AdminPersonnel: React.FC = () => {
             {personnel.map(p => (
               <tr key={p.id} className="hover:bg-brand-gray/50">
                 <td className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-brand-navy/10 overflow-hidden">
-                    <img src={p.profile_image_url ? optimizeImage(p.profile_image_url, { width: 100 }) : '/assets/team-1.webp'} alt={p.full_name} className="w-full h-full object-cover" />
+                  <div className="w-10 h-10 rounded-full bg-brand-navy/10 overflow-hidden flex items-center justify-center text-brand-navy font-bold">
+                    {p.profile_image_url ? (
+                      <img src={optimizeImage(p.profile_image_url, { width: 100 })} alt={p.full_name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span>{p.full_name.charAt(0).toUpperCase()}</span>
+                    )}
                   </div>
                   <div>
                     <p className="font-semibold text-brand-navy">{p.full_name}</p>
