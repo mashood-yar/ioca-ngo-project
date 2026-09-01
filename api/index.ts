@@ -15,6 +15,7 @@ import projects from '../backend/projects/[...path]';
 import siteSettings from '../backend/site-settings/index';
 import team from '../backend/team/index';
 import testimonials from '../backend/testimonials/index';
+import impactStories from '../backend/impact-stories/[...path]';
 import verify from '../backend/verify/[uid]';
 
 async function router(req: VercelRequest, res: VercelResponse) {
@@ -38,6 +39,7 @@ async function router(req: VercelRequest, res: VercelResponse) {
   if (parts[1] === 'site-settings') return siteSettings(req, res);
   if (parts[1] === 'team') return team(req, res);
   if (parts[1] === 'testimonials') return testimonials(req, res);
+  if (parts[1] === 'impact-stories') { req.query.path = parts.slice(2); return impactStories(req, res); }
   if (parts[1] === 'verify') { req.query.uid = parts[2]; return verify(req, res); }
   
   if (parts[1] === 'admin') { req.query.path = ['admin', ...parts.slice(2)]; return misc(req, res); }

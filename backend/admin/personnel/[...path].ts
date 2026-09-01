@@ -14,8 +14,8 @@ function generateUid(category: string): string {
 }
 
 async function handler(req: VercelRequest, res: VercelResponse) {
-  const path = req.query.path as string[];
-  const route = path ? path[0] : '';
+  const path = (req.query.path as string[]) || [];
+  const route = path[0] || '';
 
   try {
     const adminUser = await requireAdmin(req, res);
