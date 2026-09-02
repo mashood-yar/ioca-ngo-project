@@ -347,6 +347,10 @@ export function AdminSiteSettings() {
               <label className="block text-sm font-medium text-gray-700">TikTok URL</label>
               <input type="url" value={formData.tiktok_url || ''} onChange={e => handleChange('tiktok_url', e.target.value)} className="w-full px-3 py-2 border rounded-md" placeholder="https://tiktok.com/..." />
             </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">X (Twitter) URL</label>
+              <input type="url" value={formData.twitter_url || ''} onChange={e => handleChange('twitter_url', e.target.value)} className="w-full px-3 py-2 border rounded-md" placeholder="https://x.com/..." />
+            </div>
           </div>
         )}
 

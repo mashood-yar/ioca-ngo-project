@@ -73,6 +73,13 @@ const Footer: React.FC<FooterProps> = ({ isUrdu }) => {
                     </svg>
                   </a>
                 )}
+                {settings.twitter_url && (
+                  <a href={settings.twitter_url} target="_blank" rel="noopener noreferrer" aria-label="IOCA on X" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-teal hover:border-brand-teal hover:text-brand-white transition-all">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </a>
+                )}
             </div>
           </div>
 
@@ -141,6 +148,12 @@ const Footer: React.FC<FooterProps> = ({ isUrdu }) => {
                 <a href={settings.tiktok_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 hover:bg-brand-teal/20 hover:border-brand-teal/40 transition-all group">
                   <svg className="w-4 h-4 text-brand-gold group-hover:text-brand-white transition-colors shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-1.13 4.39-2.92 5.72-1.78 1.33-4.14 1.76-6.27 1.15-2.14-.61-3.95-2.14-4.81-4.18-.86-2.04-.75-4.48.29-6.43 1.05-1.95 2.98-3.4 5.16-3.83 1.48-.3 3.01-.13 4.41.44v4.13c-1.06-.55-2.32-.61-3.44-.22-1.12.39-2.06 1.3-2.48 2.39-.42 1.09-.27 2.36.4 3.32.67.97 1.84 1.56 3.01 1.63 1.17.07 2.32-.38 3.14-1.22.82-.84 1.25-2.01 1.22-3.18-.01-5.69 0-11.38-.01-17.07Z"/></svg>
                   <span className={`text-sm text-brand-white/80 group-hover:text-brand-white ${isUrdu ? 'font-urduBody' : ''}`}>{isUrdu ? 'ٹک ٹاک پر فالو کریں' : 'Follow on TikTok'}</span>
+                </a>
+              )}
+              {settings.twitter_url && (
+                <a href={settings.twitter_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 hover:bg-brand-teal/20 hover:border-brand-teal/40 transition-all group">
+                  <svg className="w-4 h-4 text-brand-gold group-hover:text-brand-white transition-colors shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                  <span className={`text-sm text-brand-white/80 group-hover:text-brand-white ${isUrdu ? 'font-urduBody' : ''}`}>{isUrdu ? 'ایکس (ٹویٹر) پر فالو کریں' : 'Follow on X'}</span>
                 </a>
               )}
             </div>
