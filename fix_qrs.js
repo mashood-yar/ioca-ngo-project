@@ -50,24 +50,27 @@ const uploadBase64Image = async (base64Str, folder = '') => {
 };
 
 async function generateCustomQR(url, logoPath) {
-  const qrc = QRCode.create(url, { errorCorrectionLevel: 'H' });
+  const qrc = QRCode.create(url, { errorCorrectionLevel: 'Q' });
   const size = qrc.modules.size;
   const data = qrc.modules.data;
   
   const cellSize = 12;
   const margin = 2;
   const width = (size + margin * 2) * cellSize;
+  const padding = 30;
+  const totalWidth = width + padding * 2;
   
-  const bg = '#162842'; // Dark Navy
-  const fg = '#ffffff'; // White
-  const eyeOuter = '#5792c3'; // Light Blue
-  const eyeInner = '#c9962a'; // Gold
+  const bg = '#162842';
+  const fg = '#ffffff';
+  const eyeOuter = '#5792c3';
+  const eyeInner = '#c9962a';
   
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${width}" viewBox="0 0 ${width} ${width}">
-  <rect width="${width}" height="${width}" fill="${bg}" rx="30" />`;
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalWidth}" viewBox="0 0 ${totalWidth} ${totalWidth}">
+  <rect width="${totalWidth}" height="${totalWidth}" fill="${fg}" rx="20" />
+  <rect x="${padding}" y="${padding}" width="${width}" height="${width}" fill="${bg}" rx="20" />`;
   
-  const centerStart = Math.floor(size / 2) - 4;
-  const centerEnd = Math.floor(size / 2) + 4;
+  const centerStart = Math.floor(size / 2) - 3;
+  const centerEnd = Math.floor(size / 2) + 3;
   
   for (let row = 0; row < size; row++) {
     for (let col = 0; col < size; col++) {
@@ -82,25 +85,23 @@ async function generateCustomQR(url, logoPath) {
       
       if (row >= centerStart && row <= centerEnd && col >= centerStart && col <= centerEnd) continue;
       
-      const x = (col + margin) * cellSize;
-      const y = (row + margin) * cellSize;
-      svg += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" fill="${fg}" rx="3" />`;
+      const x = padding + (col + margin) * cellSize;
+      const y = padding + (row + margin) * cellSize;
+      
+      svg += `<rect x="${x}" y="${y}" width="${cellSize + 0.5}" height="${cellSize + 0.5}" fill="${fg}" />`;
     }
   }
   
   const drawEye = (startRow, startCol) => {
-    const x = (startCol + margin) * cellSize;
-    const y = (startRow + margin) * cellSize;
+    const x = padding + (startCol + margin) * cellSize;
+    const y = padding + (startRow + margin) * cellSize;
     const eyeSize = 7 * cellSize;
     const center = eyeSize / 2;
     
     return `
-      <!-- Outer circle -->
       <circle cx="${x + center}" cy="${y + center}" r="${center}" fill="${eyeOuter}" />
-      <!-- Inner cutout -->
       <circle cx="${x + center}" cy="${y + center}" r="${center - cellSize}" fill="${bg}" />
-      <!-- Center dot -->
-      <circle cx="${x + center}" cy="${y + center}" r="${1.5 * cellSize}" fill="${eyeInner}" />
+      <circle cx="${x + center}" cy="${y + center}" r="${1.6 * cellSize}" fill="${eyeInner}" />
     `;
   };
   
@@ -123,7 +124,7 @@ async function generateCustomQR(url, logoPath) {
         throw new Error('Logo not found');
       }
 
-      const logoSize = 9 * cellSize;
+      const logoSize = 7.5 * cellSize;
       
       const logoBg = Buffer.from(`
         <svg width="${logoSize}" height="${logoSize}">
@@ -132,7 +133,7 @@ async function generateCustomQR(url, logoPath) {
       `);
       
       const resizedLogo = await sharp(logoBuffer)
-        .resize(logoSize - 20, logoSize - 20, { fit: 'contain', background: { r:0, g:0, b:0, alpha:0 } })
+        .resize(Math.round(logoSize - 12), Math.round(logoSize - 12), { fit: 'contain', background: { r:0, g:0, b:0, alpha:0 } })
         .toBuffer();
         
       const finalImage = await sharp(svgBuffer)
