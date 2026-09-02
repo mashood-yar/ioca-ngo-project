@@ -28,24 +28,32 @@ export const uploadBase64Image = async (
       throw new Error('Invalid base64 string');
     }
 
+    const mimeType = matches[1];
+    const isSvg = mimeType === 'svg+xml';
     const buffer = Buffer.from(matches[2], 'base64');
 
-    // 2. Convert to WebP using sharp
-    const webpBuffer = await sharp(buffer)
-      .webp({ quality: 80 })
-      .toBuffer();
+    // 2. Convert to WebP using sharp (skip for SVG)
+    let uploadBuffer = buffer;
+    let contentType = 'image/svg+xml';
+    let extension = '.svg';
+    
+    if (!isSvg) {
+      uploadBuffer = await sharp(buffer).webp({ quality: 80 }).toBuffer();
+      contentType = 'image/webp';
+      extension = '.webp';
+    }
 
     // 3. Generate a unique filename
     const prefix = folder ? folder + '/' : 'ioca/';
     const uniqueId = Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-    const fileName = prefix + uniqueId + '.webp';
+    const fileName = prefix + uniqueId + extension;
 
     // 4. Upload to Cloudflare R2
     const command = new PutObjectCommand({
       Bucket: process.env.R2_BUCKET_NAME || 'ioca-assets',
       Key: fileName,
-      Body: webpBuffer,
-      ContentType: 'image/webp'
+      Body: uploadBuffer,
+      ContentType: contentType
     });
 
     await s3Client.send(command);

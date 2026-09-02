@@ -10,13 +10,21 @@ export function useCloudinaryUpload() {
     setError(null);
 
     try {
-      // Compress file to base64 using canvas
+      // Compress file to base64 using canvas (or skip for SVG)
       const base64Str = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = (event) => {
+          const result = event.target?.result as string;
+          
+          // SVGs are already tiny vectors, don't rasterize them!
+          if (file.type === 'image/svg+xml') {
+            resolve(result);
+            return;
+          }
+          
           const img = new Image();
-          img.src = event.target?.result as string;
+          img.src = result;
           img.onload = () => {
             const canvas = document.createElement('canvas');
             const MAX_WIDTH = 1920;
@@ -40,8 +48,12 @@ export function useCloudinaryUpload() {
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx?.drawImage(img, 0, 0, width, height);
-            // Compress to JPEG with 0.8 quality to drastically reduce size
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            
+            // Use WebP to preserve transparency for PNGs. Fallback to PNG if WebP is unsupported.
+            let dataUrl = canvas.toDataURL('image/webp', 0.8);
+            if (!dataUrl.startsWith('data:image/webp')) {
+              dataUrl = canvas.toDataURL('image/png');
+            }
             resolve(dataUrl);
           };
           img.onerror = () => reject(new Error('Failed to load image for compression'));
