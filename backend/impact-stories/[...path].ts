@@ -142,7 +142,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return err(res, 'Method not allowed', 405)
   } catch (e: any) {
     if (e instanceof z.ZodError) {
-      return err(res, 'Validation error', 400, e.errors)
+      return res.status(400).json({ success: false, error: 'Validation error', details: e.errors })
     }
     console.error('[impact-stories API Error]', e)
     return err(res, e.message || 'Internal server error', 500)

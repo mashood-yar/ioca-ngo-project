@@ -11,6 +11,7 @@ import impactStats from '../backend/impact-stats/index';
 import misc from '../backend/misc/[...path]';
 import news from '../backend/news/[...path]';
 import programs from '../backend/programs/[...path]';
+import programCategories from '../backend/program-categories/[...path]';
 import projects from '../backend/projects/[...path]';
 import siteSettings from '../backend/site-settings/index';
 import team from '../backend/team/index';
