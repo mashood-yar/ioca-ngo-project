@@ -144,8 +144,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const tierName = tier?.name || 'Selected Tier'
         const adminEmail = process.env.RESEND_FROM_EMAIL || 'admin@ioca.org'
 
-        sendApplicationConfirmation(user.email!, validatedData.fullName, zoneName, tierName).catch(console.error)
-        sendNewApplicationNotification(adminEmail, validatedData.fullName, zoneName, tierName).catch(console.error)
+        try { await sendApplicationConfirmation(user.email!, validatedData.fullName, zoneName, tierName) } catch(e) { console.error(e) }
+        try { await sendNewApplicationNotification(adminEmail, validatedData.fullName, zoneName, tierName) } catch(e) { console.error(e) }
 
         return ok(res, newApp, 201)
       }
@@ -539,11 +539,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           }
 
           if (validatedData.status === 'rejected') {
-            sendApplicationRejected(
-              application.email,
-              application.full_name,
-              validatedData.adminNotes
-            ).catch(console.error)
+            await sendApplicationRejected(application.email, application.full_name, validatedData.adminNotes).catch(console.error)
           }
 
           return ok(res, { ...application, ...updatePayload })

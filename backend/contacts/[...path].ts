@@ -45,10 +45,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) throw new Error(error.message)
 
-      // Send email notification non-blocking
-      sendContactNotification(validatedData.name, validatedData.email, 'IOCA Website Contact Submission', validatedData.message).catch(e => {
+      // Send email notification (must be awaited in serverless environments)
+      try {
+        await sendContactNotification(validatedData.name, validatedData.email, 'IOCA Website Contact Submission', validatedData.message)
+      } catch (e) {
         console.error('Failed to send contact notification email:', e)
-      })
+      }
 
       return ok(res, data, 201)
     }

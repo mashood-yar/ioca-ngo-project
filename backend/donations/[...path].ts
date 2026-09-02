@@ -329,26 +329,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) throw new Error(error.message)
 
-      // Send confirmation email if status is confirmed
-      if (status === 'confirmed' && data && data.email) {
-        sendDonationThankYouEmail(
-          data.email,
-          data.donor_name,
-          data.amount,
-          data.currency || 'PKR',
-          data.receipt_number || 'N/A',
-          data.projects?.title || null,
-          data.payment_method,
-          data.message
-        ).catch(console.error)
-
-        sendAdminDonationNotification(
-          process.env.RESEND_FROM_EMAIL || 'admin@iocaworld.org',
-          data.donor_name,
-          data.amount,
-          data.projects?.title || 'General Fund'
-        ).catch(console.error)
-      }
+        if (status === 'confirmed' && data && data.email) {
+          try {
+            await sendDonationThankYouEmail(
+              data.email,
+              data.donor_name,
+              data.amount,
+              data.currency || 'PKR',
+              data.receipt_number || 'N/A',
+              data.projects?.title || 'General Fund',
+              data.payment_method,
+              data.message
+            )
+            await sendAdminDonationNotification(
+              process.env.RESEND_FROM_EMAIL || 'admin@iocaworld.org',
+              data.donor_name,
+              data.amount,
+              data.projects?.title || 'General Fund'
+            )
+          } catch (emailError) {
+            console.error('Failed to send donation emails:', emailError)
+          }
+        }
 
       return ok(res, data)
     }
