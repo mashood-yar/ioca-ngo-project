@@ -35,7 +35,7 @@ export function AdminGallery() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const { upload, uploading } = useCloudinaryUpload();
+  const { upload, uploading, error: uploadError } = useCloudinaryUpload();
 
   const loadItems = async () => {
     try {
