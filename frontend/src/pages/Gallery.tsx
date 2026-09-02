@@ -198,14 +198,16 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
                   decoding="async"
                 />
               </div>
-              <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-center overflow-y-auto max-h-[50vh] md:max-h-[85vh]">
-                <h2 className={`text-2xl md:text-3xl font-bold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading text-right' : ''}`}>
-                  {isUrdu ? (selectedImage.title_ur || selectedImage.title_en) : (selectedImage.title_en || selectedImage.title_ur)}
-                </h2>
-                <div className="w-16 h-1 bg-brand-teal mb-6 rounded-full"></div>
-                <p className={`text-brand-navy/70 leading-relaxed text-base md:text-lg ${isUrdu ? 'font-urduBody text-right' : ''}`}>
-                  {isUrdu ? (selectedImage.desc_ur || selectedImage.desc_en) : (selectedImage.desc_en || selectedImage.desc_ur)}
-                </p>
+              <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col overflow-y-auto max-h-[50vh] md:max-h-[85vh]">
+                <div className="my-auto py-4">
+                  <h2 className={`text-2xl md:text-3xl font-bold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading text-right' : ''}`}>
+                    {isUrdu ? (selectedImage.title_ur || selectedImage.title_en) : (selectedImage.title_en || selectedImage.title_ur)}
+                  </h2>
+                  <div className="w-16 h-1 bg-brand-teal mb-6 rounded-full"></div>
+                  <p className={`text-brand-navy/70 leading-relaxed text-base md:text-lg ${isUrdu ? 'font-urduBody text-right' : ''}`}>
+                    {isUrdu ? (selectedImage.desc_ur || selectedImage.desc_en) : (selectedImage.desc_en || selectedImage.desc_ur)}
+                  </p>
+                </div>
                 <div className="mt-8">
                   <span className="inline-block bg-brand-navy/5 text-brand-teal text-sm px-4 py-1.5 rounded-full font-medium uppercase tracking-wider capitalize">
                     {selectedImage.category}
