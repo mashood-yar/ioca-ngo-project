@@ -44,9 +44,9 @@ export function useCloudinaryUpload() {
             const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
             resolve(dataUrl);
           };
-          img.onerror = (err) => reject(new Error('Failed to load image for compression'));
+          img.onerror = () => reject(new Error('Failed to load image for compression'));
         };
-        reader.onerror = (err) => reject(err);
+        reader.onerror = () => reject(new Error('Failed to read file'));
       });
 
       const { data, error: apiError } = await fetchApi<{ url: string; publicId: string }>('/misc/upload', {
