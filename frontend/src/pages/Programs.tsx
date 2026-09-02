@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { optimizeImage } from '../lib/optimizeImage';
 import { fetchApi } from '../lib/apiClient';
 import type { Program, ProgramCategory } from '../types';
