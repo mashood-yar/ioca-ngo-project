@@ -15,6 +15,14 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
+  const [programSubLinks, setProgramSubLinks] = useState<{to: string, labelEn: string, labelUr: string}[]>([]);
+  useEffect(() => {
+    fetch('/api/programs').then(r => r.json()).then(res => {
+      if (res.data) {
+        setProgramSubLinks(res.data.filter((p: any) => p.status === 'active').map((p: any) => ({ to: `/programs/$ {p.id}`, labelEn: p.title_en, labelUr: p.title_ur })));
+      }
+    }).catch(() => {});
+  }, []);
   const location = useLocation();
   const programsRef = useRef<HTMLDivElement>(null);
   const programsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -81,12 +89,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const programSubLinks = [
-    { to: '/programs/education', labelEn: 'Education', labelUr: 'تعلیم' },
-    { to: '/programs/health', labelEn: 'Health', labelUr: 'صحت' },
-    { to: '/programs/youth', labelEn: 'Youth', labelUr: 'نوجوانوں کی ترقی' },
-    { to: '/programs/community-bonding', labelEn: 'Community Bonding', labelUr: 'معاشرتی روابط' },
-  ];
+  
 
   return (
     <>
@@ -404,3 +407,4 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
 };
 
 export default Navbar;
+
