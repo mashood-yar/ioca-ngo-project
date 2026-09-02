@@ -102,7 +102,7 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
             >
               {program.category && (
                 <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-teal/20 text-brand-teal mb-6 border border-brand-teal/20 backdrop-blur-sm ${isUrdu ? 'flex-row-reverse' : ''}`}>
-                  {program.category.icon_svg && <span dangerouslySetInnerHTML={{ __html: program.category.icon_svg }} className="w-4 h-4" />}
+                  {program.category.icon_svg && <span dangerouslySetInnerHTML={{ __html: program.category.icon_svg }} className="flex items-center justify-center w-5 h-5 [&>svg]:w-full [&>svg]:h-full [&>svg]:stroke-brand-teal" />}
                   <span className={`text-sm font-semibold tracking-wide ${isUrdu ? 'font-urduBody' : ''}`}>
                     {isUrdu ? program.category.name_ur : program.category.name_en}
                   </span>
