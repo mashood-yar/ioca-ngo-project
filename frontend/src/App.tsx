@@ -1,4 +1,4 @@
-﻿import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -98,6 +98,9 @@ function App() {
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
   const [initialAmount, setInitialAmount] = useState<number | null>(null);
   const [initialIsMonthly, setInitialIsMonthly] = useState<boolean>(false);
+
+  const { isAdmin, loading: authLoading } = useAuth();
+  const { settings, loading: settingsLoading } = useSiteSettings();
 
   React.useEffect(() => {
     document.documentElement.lang = isUrdu ? 'ur' : 'en';
