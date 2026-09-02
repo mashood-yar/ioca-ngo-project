@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from 'react';
+﻿import React, { useState, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -6,6 +6,7 @@ import DonationModal from './components/DonationModal';
 import { PageLoadingSpinner } from './components/PageLoadingSpinner';
 import { MaintenanceScreen } from './components/MaintenanceScreen';
 import { useSiteSettings } from './hooks/useSiteSettings';
+import { useAuth } from './hooks/useAuth';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { ToastContainer } from './components/ui/ToastContainer';
@@ -70,13 +71,13 @@ class ErrorBoundary extends React.Component<
         <div className={`min-h-screen flex items-center justify-center text-center p-8 ${isUrdu ? 'font-urduBody rtl' : 'ltr'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
           <div>
             <h1 className="text-3xl font-bold text-brand-navy mb-4">
-              {isUrdu ? 'Ú©Ú†Ú¾ ØºÙ„Ø· ÛÙˆ Ú¯ÛŒØ§' : 'Something went wrong'}
+              {isUrdu ? 'ÃšÂ©Ãšâ€ ÃšÂ¾ Ã˜ÂºÃ™â€žÃ˜Â· Ã›ÂÃ™Ë† ÃšÂ¯Ã›Å’Ã˜Â§' : 'Something went wrong'}
             </h1>
             <p className="text-brand-navy/70 mb-6">
-              {isUrdu ? 'Ø¨Ø±Ø§Û Ú©Ø±Ù… ØµÙØ­Û Ø±ÛŒÙØ±ÛŒØ´ Ú©Ø±ÛŒÚº ÛŒØ§ Ø¨Ø¹Ø¯ Ù…ÛŒÚº Ø¯ÙˆØ¨Ø§Ø±Û Ú©ÙˆØ´Ø´ Ú©Ø±ÛŒÚºÛ”' : 'Please refresh the page or try again later.'}
+              {isUrdu ? 'Ã˜Â¨Ã˜Â±Ã˜Â§Ã›Â ÃšÂ©Ã˜Â±Ã™â€¦ Ã˜ÂµÃ™ÂÃ˜Â­Ã›Â Ã˜Â±Ã›Å’Ã™ÂÃ˜Â±Ã›Å’Ã˜Â´ ÃšÂ©Ã˜Â±Ã›Å’ÃšÂº Ã›Å’Ã˜Â§ Ã˜Â¨Ã˜Â¹Ã˜Â¯ Ã™â€¦Ã›Å’ÃšÂº Ã˜Â¯Ã™Ë†Ã˜Â¨Ã˜Â§Ã˜Â±Ã›Â ÃšÂ©Ã™Ë†Ã˜Â´Ã˜Â´ ÃšÂ©Ã˜Â±Ã›Å’ÃšÂºÃ›â€' : 'Please refresh the page or try again later.'}
             </p>
             <button onClick={() => window.location.reload()} className="bg-brand-teal text-brand-white px-6 py-3 rounded-lg font-semibold">
-              {isUrdu ? 'ØµÙØ­Û Ø±ÛŒÙØ±ÛŒØ´ Ú©Ø±ÛŒÚº' : 'Refresh Page'}
+              {isUrdu ? 'Ã˜ÂµÃ™ÂÃ˜Â­Ã›Â Ã˜Â±Ã›Å’Ã™ÂÃ˜Â±Ã›Å’Ã˜Â´ ÃšÂ©Ã˜Â±Ã›Å’ÃšÂº' : 'Refresh Page'}
             </button>
           </div>
         </div>
@@ -205,4 +206,5 @@ function App() {
 }
 
 export default App;
+
 
