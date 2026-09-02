@@ -35,6 +35,7 @@ async function router(req: VercelRequest, res: VercelResponse) {
   if (parts[1] === 'misc') { req.query.path = parts.slice(2); return misc(req, res); }
   if (parts[1] === 'news') { req.query.path = parts.slice(2); return news(req, res); }
   if (parts[1] === 'programs') { req.query.path = parts.slice(2); return programs(req, res); }
+  if (parts[1] === 'program-categories') { req.query.path = parts.slice(2); return programCategories(req, res); }
   if (parts[1] === 'projects') { req.query.path = parts.slice(2); return projects(req, res); }
   if (parts[1] === 'site-settings') return siteSettings(req, res);
   if (parts[1] === 'team') return team(req, res);

@@ -20,7 +20,10 @@ const createProgramSchema = z.object({
   descUr: z.string().min(1, 'Urdu Description is required'),
   contentEn: z.string().nullable().optional().or(z.literal('')),
   contentUr: z.string().nullable().optional().or(z.literal('')),
-  category: z.enum(['education', 'health', 'youth', 'community_bonding']),
+  categoryId: z.string().uuid('Invalid Category ID'),
+  statsBeneficiaries: z.number().default(0),
+  statsProjects: z.number().default(0),
+  statsVolunteers: z.number().default(0),
   imageUrl: z.string().nullable().optional().or(z.literal('')),
   image_url: z.string().nullable().optional().or(z.literal('')),
   imagePublicId: z.string().nullable().optional().or(z.literal('')),
@@ -49,7 +52,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET' && !id) {
       const { data: programs, error } = await supabase
         .from('programs')
-        .select('*')
+        .select('*, category:program_categories(*)')
         .order('created_at', { ascending: false })
 
       if (error) throw new Error(error.message)
@@ -60,7 +63,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET' && id) {
       const { data: program, error } = await supabase
         .from('programs')
-        .select('*')
+        .select('*, category:program_categories(*)')
         .eq('id', id)
         .single()
 
@@ -93,7 +96,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           desc_ur: body.descUr,
           content_en: body.contentEn,
           content_ur: body.contentUr,
-          category: body.category,
+          category_id: body.categoryId,
+          stats_beneficiaries: body.statsBeneficiaries,
+          stats_projects: body.statsProjects,
+          stats_volunteers: body.statsVolunteers,
           status: body.status || 'active',
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
           icon_url: iconUrl && iconUrl !== '' ? await processImageField(iconUrl) : null,
@@ -120,7 +126,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (body.descUr !== undefined) updates.desc_ur = body.descUr
       if (body.contentEn !== undefined) updates.content_en = body.contentEn
       if (body.contentUr !== undefined) updates.content_ur = body.contentUr
-      if (body.category !== undefined) updates.category = body.category
+      if (body.categoryId !== undefined) updates.category_id = body.categoryId
+      if (body.statsBeneficiaries !== undefined) updates.stats_beneficiaries = body.statsBeneficiaries
+      if (body.statsProjects !== undefined) updates.stats_projects = body.statsProjects
+      if (body.statsVolunteers !== undefined) updates.stats_volunteers = body.statsVolunteers
       if (body.status !== undefined) updates.status = body.status
 
       const imageUrl = body.image_url !== undefined ? body.image_url : body.image

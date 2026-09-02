@@ -2,22 +2,33 @@
 // IOCA - Centralized Type Definitions
 // ============================================================
 
+export interface ProgramCategory {
+  id: string;
+  name_en: string;
+  name_ur: string;
+  slug: string;
+  icon_svg: string | null;
+  sort_order: number;
+}
+
 export interface Program {
   id: string;
-  titleEn: string;
-  titleUr: string;
-  descEn: string;
-  descUr: string;
-  contentEn: string;
-  contentUr: string;
-  icon: string;
-  image: string;
-  heroImage?: string;
-  stats: {
-    beneficiaries: number;
-    projects: number;
-    volunteers: number;
-  };
+  title_en: string;
+  title_ur: string;
+  desc_en: string;
+  desc_ur: string;
+  content_en: string;
+  content_ur: string;
+  category_id: string;
+  category?: ProgramCategory;
+  image_url: string | null;
+  hero_image_url?: string | null;
+  icon_url?: string | null;
+  stats_beneficiaries: number;
+  stats_projects: number;
+  stats_volunteers: number;
+  status: 'active' | 'inactive';
+  created_at: string;
 }
 
 export interface Project {
