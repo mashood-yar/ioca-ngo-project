@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Save, Plus, Trash2 } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
@@ -7,7 +7,7 @@ import { optimizeImage } from '../../lib/optimizeImage';
 
 export function AdminSiteSettings() {
   const { settings: initialSettings, loading: initialLoading } = useSiteSettings();
-  const [activeTab, setActiveTab] = useState<'logo' | 'contact' | 'social' | 'hero'>('hero');
+  const [activeTab, setActiveTab] = useState<'general' | 'logo' | 'contact' | 'social' | 'hero'>('general');
   
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
@@ -75,7 +75,7 @@ export function AdminSiteSettings() {
       const uploadResult = await upload(file, 'ioca/hero');
       if (uploadResult) {
         const currentSlides = formData.hero_slides ? JSON.parse(formData.hero_slides) : [];
-        const newSlide = { url: uploadResult.url, alt_en: 'New Slide', alt_ur: 'نیا سلائیڈ' };
+        const newSlide = { url: uploadResult.url, alt_en: 'New Slide', alt_ur: 'Ù†ÛŒØ§ Ø³Ù„Ø§Ø¦ÛŒÚˆ' };
         handleChange('hero_slides', JSON.stringify([...currentSlides, newSlide]));
       }
     } catch (err: any) {
@@ -119,9 +119,10 @@ export function AdminSiteSettings() {
         <p className="text-sm text-gray-500 mt-1">Manage global website configuration, logos, and hero section.</p>
       </div>
 
-      <div className="flex space-x-1 border-b border-gray-200">
-        {[
-          { id: 'hero', label: 'Hero Section' },
+      <div className="flex space-x-1 border-b border-gray-200 overflow-x-auto">
+          {[
+            { id: 'general', label: 'General / Status' },
+            { id: 'hero', label: 'Hero Section' },
           { id: 'logo', label: 'Logos & Branding' },
           { id: 'contact', label: 'Contact Info' },
           { id: 'social', label: 'Social Links' },
@@ -142,7 +143,29 @@ export function AdminSiteSettings() {
 
       <form onSubmit={handleSave} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
         
-        {/* HERO TAB */}
+        {/* GENERAL TAB */}
+          {activeTab === 'general' && (
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Site Status</h3>
+                <p className="text-sm text-gray-500 mb-4">Enable maintenance mode to temporarily hide the public site from visitors. (Admins can still view the site).</p>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={formData.maintenance_mode === 'true'}
+                    onChange={(e) => handleChange('maintenance_mode', e.target.checked ? 'true' : 'false')}
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-teal/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                  <span className="ml-3 text-sm font-medium text-gray-900">
+                    {formData.maintenance_mode === 'true' ? 'Maintenance Mode is ACTIVE' : 'Maintenance Mode is OFF'}
+                  </span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {/* HERO TAB */}
         {activeTab === 'hero' && (
           <div className="space-y-6">
             <div className="space-y-3">
@@ -258,9 +281,9 @@ export function AdminSiteSettings() {
                   {(formData.hero_slides ? JSON.parse(formData.hero_slides) : []).map((slide: any, idx: number) => (
                     <div key={idx} className="flex gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200 items-start">
                       <div className="flex flex-col gap-1 items-center mt-2">
-                        <button type="button" onClick={() => moveSlide(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-brand-teal disabled:opacity-30">▲</button>
+                        <button type="button" onClick={() => moveSlide(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-brand-teal disabled:opacity-30">â–²</button>
                         <span className="text-xs font-bold text-gray-400">{idx + 1}</span>
-                        <button type="button" onClick={() => moveSlide(idx, 1)} disabled={idx === (JSON.parse(formData.hero_slides).length - 1)} className="text-gray-400 hover:text-brand-teal disabled:opacity-30">▼</button>
+                        <button type="button" onClick={() => moveSlide(idx, 1)} disabled={idx === (JSON.parse(formData.hero_slides).length - 1)} className="text-gray-400 hover:text-brand-teal disabled:opacity-30">â–¼</button>
                       </div>
                       <img src={optimizeImage(slide.url, { width: 200 })} alt="Slide Preview" className="w-32 h-20 object-cover rounded shadow-sm" />
                       <div className="flex-1 space-y-2">
@@ -400,3 +423,6 @@ export function AdminSiteSettings() {
     </div>
   );
 }
+
+
+

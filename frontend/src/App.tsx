@@ -4,6 +4,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import DonationModal from './components/DonationModal';
 import { PageLoadingSpinner } from './components/PageLoadingSpinner';
+import { MaintenanceScreen } from './components/MaintenanceScreen';
+import { useSiteSettings } from './hooks/useSiteSettings';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { ToastContainer } from './components/ui/ToastContainer';
@@ -68,13 +70,13 @@ class ErrorBoundary extends React.Component<
         <div className={`min-h-screen flex items-center justify-center text-center p-8 ${isUrdu ? 'font-urduBody rtl' : 'ltr'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
           <div>
             <h1 className="text-3xl font-bold text-brand-navy mb-4">
-              {isUrdu ? 'کچھ غلط ہو گیا' : 'Something went wrong'}
+              {isUrdu ? 'Ú©Ú†Ú¾ ØºÙ„Ø· ÛÙˆ Ú¯ÛŒØ§' : 'Something went wrong'}
             </h1>
             <p className="text-brand-navy/70 mb-6">
-              {isUrdu ? 'براہ کرم صفحہ ریفریش کریں یا بعد میں دوبارہ کوشش کریں۔' : 'Please refresh the page or try again later.'}
+              {isUrdu ? 'Ø¨Ø±Ø§Û Ú©Ø±Ù… ØµÙØ­Û Ø±ÛŒÙØ±ÛŒØ´ Ú©Ø±ÛŒÚº ÛŒØ§ Ø¨Ø¹Ø¯ Ù…ÛŒÚº Ø¯ÙˆØ¨Ø§Ø±Û Ú©ÙˆØ´Ø´ Ú©Ø±ÛŒÚºÛ”' : 'Please refresh the page or try again later.'}
             </p>
             <button onClick={() => window.location.reload()} className="bg-brand-teal text-brand-white px-6 py-3 rounded-lg font-semibold">
-              {isUrdu ? 'صفحہ ریفریش کریں' : 'Refresh Page'}
+              {isUrdu ? 'ØµÙØ­Û Ø±ÛŒÙØ±ÛŒØ´ Ú©Ø±ÛŒÚº' : 'Refresh Page'}
             </button>
           </div>
         </div>
@@ -141,10 +143,27 @@ function App() {
     );
   }
 
+  const isPublicRoute = !location.pathname.startsWith('/admin') && !location.pathname.startsWith('/user/login') && !location.pathname.startsWith('/login');
+  const isMaintenanceActive = settings?.maintenance_mode === 'true';
+
+  if (isMaintenanceActive && isPublicRoute && !isAdmin) {
+    if (authLoading || settingsLoading) {
+      return <PageLoader />;
+    }
+    return <MaintenanceScreen isUrdu={isUrdu} />;
+  }
+
   return (
     <div className={`min-h-screen bg-brand-gray text-brand-navy selection:bg-brand-navy selection:text-brand-white pb-[72px] md:pb-0 ${isUrdu ? 'font-urduBody' : 'font-sans'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
       <ToastContainer />
       <ScrollToTop />
+      
+      {isMaintenanceActive && isAdmin && isPublicRoute && (
+        <div className="bg-red-600 text-white text-center py-2 text-sm font-bold shadow-md relative z-50">
+          MAINTENANCE MODE IS ACTIVE. Public visitors cannot see the site.
+        </div>
+      )}
+
       <Navbar isUrdu={isUrdu} setIsUrdu={setIsUrdu} onDonateClick={() => handleDonateClick(null)} />
 
       <main id="main-content">
@@ -186,3 +205,4 @@ function App() {
 }
 
 export default App;
+

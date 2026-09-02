@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { fetchApi } from '../lib/apiClient';
 
 interface SiteSettings {
@@ -25,19 +25,20 @@ const DEFAULTS: SiteSettings = {
   linkedin_url: 'https://www.linkedin.com/company/ioca-official',
   hero_mode: 'slideshow',
   hero_headline_en: 'Transforming Communities',
-  hero_headline_ur: 'پاکستان میں تبدیلی لا رہے ہیں',
-  hero_subheadline_en: 'Across Pakistan — One Life at a Time',
-  hero_subheadline_ur: 'ایک زندگی، ایک کمیونٹی',
-  hero_eyebrow_en: 'PCP Certified NGO — Since 2004',
-  hero_eyebrow_ur: 'PCP مصدقہ این جی او',
+  hero_headline_ur: 'Ù¾Ø§Ú©Ø³ØªØ§Ù† Ù…ÛŒÚº ØªØ¨Ø¯ÛŒÙ„ÛŒ Ù„Ø§ Ø±ÛÛ’ ÛÛŒÚº',
+  hero_subheadline_en: 'Across Pakistan â€” One Life at a Time',
+  hero_subheadline_ur: 'Ø§ÛŒÚ© Ø²Ù†Ø¯Ú¯ÛŒØŒ Ø§ÛŒÚ© Ú©Ù…ÛŒÙˆÙ†Ù¹ÛŒ',
+  hero_eyebrow_en: 'PCP Certified NGO â€” Since 2004',
+  hero_eyebrow_ur: 'PCP Ù…ØµØ¯Ù‚Û Ø§ÛŒÙ† Ø¬ÛŒ Ø§Ùˆ',
   hero_cta_primary_text_en: 'Donate Now',
-  hero_cta_primary_text_ur: 'عطیہ کریں',
+  hero_cta_primary_text_ur: 'Ø¹Ø·ÛŒÛ Ú©Ø±ÛŒÚº',
   hero_cta_primary_url: '/donate',
-  hero_cta_secondary_text_en: 'Explore Programs →',
-  hero_cta_secondary_text_ur: 'پروگرامز دیکھیں ←',
+  hero_cta_secondary_text_en: 'Explore Programs â†’',
+  hero_cta_secondary_text_ur: 'Ù¾Ø±ÙˆÚ¯Ø±Ø§Ù…Ø² Ø¯ÛŒÚ©Ú¾ÛŒÚº â†',
   hero_cta_secondary_url: '/programs',
   hero_static_image_url: '/assets/hero-slider/service-to-humanity.webp',
-  hero_slides: '[{"url":"/assets/hero-slider/service-to-humanity.webp","alt_en":"Volunteers serving the community","alt_ur":"رضاکار کمیونٹی کی خدمت کر رہے ہیں"},{"url":"/assets/hero-slider/a-ray-of-hope.webp","alt_en":"A ray of hope","alt_ur":"امید کی کرن"},{"url":"/assets/hero-slider/a-healthy-society.webp","alt_en":"Building a healthy society","alt_ur":"صحت مند معاشرے کی تعمیر"}]',
+  hero_slides: '[{"url":"/assets/hero-slider/service-to-humanity.webp","alt_en":"Volunteers serving the community","alt_ur":"Ø±Ø¶Ø§Ú©Ø§Ø± Ú©Ù…ÛŒÙˆÙ†Ù¹ÛŒ Ú©ÛŒ Ø®Ø¯Ù…Øª Ú©Ø± Ø±ÛÛ’ ÛÛŒÚº"},{"url":"/assets/hero-slider/a-ray-of-hope.webp","alt_en":"A ray of hope","alt_ur":"Ø§Ù…ÛŒØ¯ Ú©ÛŒ Ú©Ø±Ù†"},{"url":"/assets/hero-slider/a-healthy-society.webp","alt_en":"Building a healthy society","alt_ur":"ØµØ­Øª Ù…Ù†Ø¯ Ù…Ø¹Ø§Ø´Ø±Û’ Ú©ÛŒ ØªØ¹Ù…ÛŒØ±"}]',
+  maintenance_mode: 'false',
 };
 
 // Module-level cache so we only fetch once per page load
@@ -95,3 +96,4 @@ export function invalidateSiteSettingsCache() {
   cachedSettings = null;
   fetchPromise = null;
 }
+
