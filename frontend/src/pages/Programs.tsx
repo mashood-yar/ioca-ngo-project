@@ -12,8 +12,6 @@ interface ProgramsProps {
 }
 
 const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
   const [programs, setPrograms] = useState<Program[]>([]);
   
   const [loading, setLoading] = useState(true);
@@ -39,7 +37,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
   return (
     <>
       <SEO 
-        title={isUrdu ? '???????? | IOCA' : 'Programs | IOCA'}
+        title={isUrdu ? 'پروگرامز | IOCA' : 'Programs | IOCA'}
         description="Explore IOCA's programs in education, healthcare, youth empowerment, and community development across Pakistan."
         isUrdu={isUrdu}
       />
@@ -53,11 +51,11 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
             transition={{ duration: 0.6 }}
           >
             <h1 className={`text-4xl md:text-6xl font-extrabold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
-              {isUrdu ? '????? ????????' : 'Our Programs'}
+              {isUrdu ? 'ہمارے پروگرامز' : 'Our Programs'}
             </h1>
             <p className={`text-brand-navy/60 text-base md:text-lg max-w-2xl ${isUrdu ? 'font-urduBody' : ''}`}>
               {isUrdu
-                ? '?? ??????? ??? ??? ?????? ???? ???????? ?? ????? ??? ????? ?????? ?? ????????? ?? ????? ???????? ?? ???????? ????? ????'
+                ? 'ہم تعلیم، صحت، نوجوانوں کی ترقی، اور کمیونٹی بانڈنگ کے پروگراموں کے ذریعے پاکستان بھر میں کمیونٹیز کو بااختیار بناتے ہیں۔'
                 : 'We empower communities across Pakistan through education, healthcare, youth development, and community bonding programs.'}
             </p>
           </motion.div>
@@ -67,12 +65,13 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
           ) : programs.length === 0 ? (
             <div className="py-20 text-center text-[#6B7280]">No programs available at the moment.</div>
           ) : (
-            <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {programs.map((prog, idx) => (
                 <motion.div
                   key={prog.id}
                   initial={{ opacity: 0, y: 30 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "0px 0px -20px 0px" }}
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                 >
                   <Link

@@ -126,7 +126,7 @@ export function AdminProgramCategories() {
               {categories.map((cat) => (
                 <tr key={cat.id} className="hover:bg-[#F9FAFB] transition-colors">
                   <td className="py-4 px-6">
-                    <div className="w-10 h-10 bg-brand-white flex items-center justify-center rounded-lg text-brand-navy shadow-sm" dangerouslySetInnerHTML={{ __html: cat.icon_svg || '' }} />
+                    <div className="w-10 h-10 bg-white flex items-center justify-center rounded-lg text-brand-navy shadow-sm [&>svg]:w-6 [&>svg]:h-6 [&>svg]:stroke-brand-navy" dangerouslySetInnerHTML={{ __html: cat.icon_svg || '' }} />
                   </td>
                   <td className="py-4 px-6 text-sm font-medium text-[#111827]">{cat.name_en}</td>
                   <td className="py-4 px-6 text-sm font-medium text-[#111827] text-right font-urdu">{cat.name_ur}</td>

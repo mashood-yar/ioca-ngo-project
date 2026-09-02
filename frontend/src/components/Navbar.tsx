@@ -19,7 +19,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
   useEffect(() => {
     fetch('/api/programs').then(r => r.json()).then(res => {
       if (res.data) {
-        setProgramSubLinks(res.data.filter((p: any) => p.status === 'active').map((p: any) => ({ to: `/programs/$ {p.id}`, labelEn: p.title_en, labelUr: p.title_ur })));
+        setProgramSubLinks(res.data.filter((p: any) => p.status === 'active').map((p: any) => ({ to: `/programs/${p.id}`, labelEn: p.title_en, labelUr: p.title_ur })));
       }
     }).catch(() => {});
   }, []);
