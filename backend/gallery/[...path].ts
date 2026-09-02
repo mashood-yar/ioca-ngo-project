@@ -102,7 +102,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data: image, error } = await supabase
         .from('gallery')
         .insert({
-          title: body.title,
+          title: body.title || body.title_en || 'Untitled',
           title_en: body.title_en,
           title_ur: body.title_ur,
           desc_en: body.desc_en,
