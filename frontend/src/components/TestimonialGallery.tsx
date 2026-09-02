@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Quote } from 'lucide-react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { fetchApi } from '../lib/apiClient';
 
 interface Testimonial {
@@ -20,8 +20,6 @@ interface TestimonialGalleryProps {
 }
 
 const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '0px' });
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,25 +44,26 @@ const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
   }
 
   return (
-    <section id="stories" ref={ref} className="bg-brand-gray relative py-12 md:py-24 overflow-hidden">
+    <section id="stories" className="bg-brand-gray relative py-12 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-16 relative z-10">
         <motion.div
           className={`mb-12 ${isUrdu ? 'text-right' : 'text-left'}`}
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "0px 0px -100px 0px" }}
           transition={{ duration: 0.6 }}
         >
           <h2 className={`text-3xl md:text-5xl font-extrabold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
-            {isUrdu ? 'کمیونٹی کی آوازیں' : 'Voices from Our Community'}
+            {isUrdu ? 'ہمارے کمیونٹی کی آوازیں' : 'Voices from Our Community'}
           </h2>
           <p className={`text-brand-navy/60 text-base md:text-lg max-w-2xl ${isUrdu ? 'font-urduBody' : ''}`}>
-            {isUrdu ? 'ان لوگوں سے سنیں جن کی زندگیاں بدل گئیں۔' : 'Hear directly from the people whose lives have been transformed.'}
+            {isUrdu ? 'ان لوگوں کی کہانیاں سنیں جن کی زندگیاں بدل چکی ہیں۔' : 'Hear directly from the people whose lives have been transformed.'}
           </p>
         </motion.div>
 
         {testimonials.length === 0 ? (
           <p className="text-brand-navy/40 text-center py-12">
-            {isUrdu ? 'ابھی کوئی گواہی نہیں ہے۔' : 'No testimonials yet.'}
+            {isUrdu ? 'ابھی کوئی تعریف نہیں ہے۔' : 'No testimonials yet.'}
           </p>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
@@ -77,7 +76,8 @@ const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
                     isTeal ? 'bg-brand-teal text-brand-white' : 'bg-brand-white text-brand-navy border border-brand-navy/5'
                   } ${idx === 2 ? 'md:hidden lg:block' : ''}`}
                   initial={{ opacity: 0, y: 30 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "0px 0px -50px 0px" }}
                   transition={{ duration: 0.5, delay: idx * 0.15 }}
                 >
                   {isTeal && (
