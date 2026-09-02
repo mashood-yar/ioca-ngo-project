@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import { useState } from 'react';
 import { AdminProgramsList } from './AdminProgramsList';
 import { AdminProgramCategories } from './AdminProgramCategories';
 
@@ -26,3 +26,4 @@ export function AdminPrograms() {
     </div>
   );
 }
+

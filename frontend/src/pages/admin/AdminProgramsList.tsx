@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
@@ -25,7 +25,7 @@ export function AdminProgramsList() {
   
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
-  const { upload, uploading } = useCloudinaryUpload();
+  const { upload } = useCloudinaryUpload();
 
   const loadData = async () => {
     try {
@@ -124,7 +124,7 @@ export function AdminProgramsList() {
           <h2 className="text-2xl font-bold text-[#111827]">Programs Management</h2>
           <p className="text-[#6B7280] mt-1">Manage IOCA programs across all categories</p>
         </div>
-        <AdminButton onClick={() => openForm()} icon={Plus}>New Program</AdminButton>
+        <AdminButton onClick={() => openForm()} icon={<Plus className="w-4 h-4 mr-2" />}>New Program</AdminButton>
       </div>
 
       <div className="flex gap-2 pb-4 overflow-x-auto">
@@ -246,13 +246,15 @@ export function AdminProgramsList() {
           </div>
 
           <div className="pt-4 border-t flex justify-end gap-3">
-            <AdminButton type="button" variant="secondary" onClick={() => setIsFormOpen(false)}>Cancel</AdminButton>
+            <AdminButton type="button" variant="ghost" onClick={() => setIsFormOpen(false)}>Cancel</AdminButton>
             <AdminButton type="submit" isLoading={saving}>Save Program</AdminButton>
           </div>
         </form>
       </Modal>
 
-      <ConfirmDialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} onConfirm={handleDelete} title="Delete Program" message="Are you sure you want to delete this program?" confirmLabel="Delete" isDangerous />
+      <ConfirmDialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} onConfirm={handleDelete} title="Delete Program" message="Are you sure you want to delete this program?" confirmLabel="Delete"  />
     </div>
   );
 }
+
+

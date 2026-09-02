@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { motion, useInView } from 'framer-motion';
@@ -15,18 +15,18 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
   const [programs, setPrograms] = useState<Program[]>([]);
-  const [categories, setCategories] = useState<ProgramCategory[]>([]);
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [progRes, catRes] = await Promise.all([
+        const [progRes] = await Promise.all([
           fetchApi<Program[]>('/programs'),
           fetchApi<ProgramCategory[]>('/program-categories')
         ]);
         if (progRes.data) setPrograms(progRes.data.filter(p => p.status === 'active'));
-        if (catRes.data) setCategories(catRes.data);
+        
       } catch (err) {
         console.error('Failed to fetch programs data:', err);
       } finally {
@@ -39,7 +39,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
   return (
     <>
       <SEO 
-        title={isUrdu ? 'پروگرامز | IOCA' : 'Programs | IOCA'}
+        title={isUrdu ? '???????? | IOCA' : 'Programs | IOCA'}
         description="Explore IOCA's programs in education, healthcare, youth empowerment, and community development across Pakistan."
         isUrdu={isUrdu}
       />
@@ -53,11 +53,11 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
             transition={{ duration: 0.6 }}
           >
             <h1 className={`text-4xl md:text-6xl font-extrabold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
-              {isUrdu ? 'ہمارے پروگرامز' : 'Our Programs'}
+              {isUrdu ? '????? ????????' : 'Our Programs'}
             </h1>
             <p className={`text-brand-navy/60 text-base md:text-lg max-w-2xl ${isUrdu ? 'font-urduBody' : ''}`}>
               {isUrdu
-                ? 'ہم پاکستان بھر میں تعلیم، صحت، نوجوانوں کی ترقی، اور سماجی تعلقات کے پروگراموں کے ذریعے کمیونٹیز کو بااختیار بناتے ہیں۔'
+                ? '?? ??????? ??? ??? ?????? ???? ???????? ?? ????? ??? ????? ?????? ?? ????????? ?? ????? ???????? ?? ???????? ????? ????'
                 : 'We empower communities across Pakistan through education, healthcare, youth development, and community bonding programs.'}
             </p>
           </motion.div>
@@ -109,7 +109,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                             {formatCompact(prog.stats_beneficiaries, isUrdu)}+
                           </div>
                           <div className={`text-xs font-semibold text-brand-navy/60 uppercase tracking-wider ${isUrdu ? 'font-urduBody text-right' : ''}`}>
-                            {isUrdu ? 'مستفیدین' : 'Beneficiaries'}
+                            {isUrdu ? '????????' : 'Beneficiaries'}
                           </div>
                         </div>
                         <div>
@@ -117,7 +117,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                             {formatCompact(prog.stats_projects, isUrdu)}
                           </div>
                           <div className={`text-xs font-semibold text-brand-navy/60 uppercase tracking-wider ${isUrdu ? 'font-urduBody text-right' : ''}`}>
-                            {isUrdu ? 'پروجیکٹس' : 'Projects'}
+                            {isUrdu ? '????????' : 'Projects'}
                           </div>
                         </div>
                       </div>
@@ -134,3 +134,5 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
 };
 
 export default Programs;
+
+

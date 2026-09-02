@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
@@ -15,19 +15,19 @@ interface ProgramDetailsProps {
 const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
   const { id } = useParams<{ id: string }>();
   const [program, setProgram] = useState<Program | null>(null);
-  const [relatedPrograms, setRelatedPrograms] = useState<Program[]>([]);
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadProgram = async () => {
       try {
-        const { data, error } = await fetchApi<Program>(`/programs/${id}`);
+        const { data } = await fetchApi<Program>(`/programs/${id}`);
         if (data) {
           setProgram(data);
           // Fetch all active programs for the "Related Programs" section
           const allRes = await fetchApi<Program[]>('/programs');
           if (allRes.data) {
-            setRelatedPrograms(allRes.data.filter(p => p.id !== id && p.status === 'active').slice(0, 3));
+            
           }
         }
       } catch (err) {
@@ -48,10 +48,10 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
       <div className="min-h-[60vh] flex items-center justify-center text-center px-4">
         <div>
           <h1 className={`text-2xl font-bold text-brand-navy mb-3 ${isUrdu ? 'font-urduHeading' : ''}`}>
-            {isUrdu ? 'پروگرام نہیں ملا' : 'Program not found'}
+            {isUrdu ? '??????? ???? ???' : 'Program not found'}
           </h1>
           <Link to="/programs" className="text-brand-teal font-medium hover:underline">
-            {isUrdu ? 'تمام پروگرامز دیکھیں' : 'View all programs'}
+            {isUrdu ? '???? ???????? ??????' : 'View all programs'}
           </Link>
         </div>
       </div>
@@ -59,9 +59,9 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
   }
 
   const stats = [
-    { icon: Users, value: formatCompact(program.stats_beneficiaries, isUrdu), labelEn: 'Beneficiaries', labelUr: 'مستفیدین' },
-    { icon: FolderOpen, value: formatCompact(program.stats_projects, isUrdu), labelEn: 'Projects', labelUr: 'پروجیکٹس' },
-    { icon: UserCheck, value: formatCompact(program.stats_volunteers, isUrdu), labelEn: 'Volunteers', labelUr: 'رضاکار' },
+    { icon: Users, value: formatCompact(program.stats_beneficiaries, isUrdu), labelEn: 'Beneficiaries', labelUr: '????????' },
+    { icon: FolderOpen, value: formatCompact(program.stats_projects, isUrdu), labelEn: 'Projects', labelUr: '????????' },
+    { icon: UserCheck, value: formatCompact(program.stats_volunteers, isUrdu), labelEn: 'Volunteers', labelUr: '??????' },
   ];
 
   return (
@@ -92,7 +92,7 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
               className="inline-flex items-center text-brand-white/80 hover:text-brand-teal transition-colors mb-8 group"
             >
               <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-              {isUrdu ? 'پروگرامز پر واپس جائیں' : 'Back to Programs'}
+              {isUrdu ? '???????? ?? ???? ?????' : 'Back to Programs'}
             </Link>
 
             <motion.div
@@ -134,7 +134,7 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
               <div className={`lg:col-span-1 ${isUrdu ? 'lg:order-1' : ''}`}>
                 <div className="bg-brand-white rounded-2xl shadow-xl shadow-brand-navy/5 border border-brand-navy/10 p-8 sticky top-24">
                   <h3 className={`text-xl font-bold text-brand-navy mb-8 pb-4 border-b border-brand-navy/10 ${isUrdu ? 'font-urduHeading text-right' : ''}`}>
-                    {isUrdu ? 'پروگرام کا اثر' : 'Program Impact'}
+                    {isUrdu ? '??????? ?? ???' : 'Program Impact'}
                   </h3>
                   <div className="space-y-8">
                     {stats.map((stat, idx) => (
@@ -157,7 +157,7 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
                       to="/donate"
                       className={`w-full block text-center py-4 px-6 bg-brand-teal hover:bg-brand-teal-dark text-white rounded-xl font-semibold transition-colors shadow-lg shadow-brand-teal/20 ${isUrdu ? 'font-urduBody text-lg' : ''}`}
                     >
-                      {isUrdu ? 'اس پروگرام کی حمایت کریں' : 'Support This Program'}
+                      {isUrdu ? '?? ??????? ?? ????? ????' : 'Support This Program'}
                     </Link>
                   </div>
                 </div>
@@ -172,3 +172,4 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
 };
 
 export default ProgramDetails;
+

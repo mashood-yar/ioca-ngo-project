@@ -5,7 +5,7 @@
 // ============================================================
 
 import type {
-  Program,
+  
   Project,
   TeamMember,
   Campaign,
@@ -16,7 +16,7 @@ import type {
 // ────────────────────────────────────────────────────────────
 // PROGRAMS
 // ────────────────────────────────────────────────────────────
-export const programs: Program[] = [
+export const programs: any = [
   {
     id: 'education',
     titleEn: 'Education',
@@ -440,5 +440,8 @@ export const impactStories: ImpactStory[] = [
     date: '2023',
   },
 ];
+
+
+
 
 

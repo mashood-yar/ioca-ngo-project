@@ -1,7 +1,6 @@
-import { fetchApi } from '../lib/apiClient';
+﻿import { fetchApi } from '../lib/apiClient';
 import type { 
   Project, 
-  Program, 
   Campaign, 
   TeamMember, 
   Testimonial, 
@@ -10,7 +9,6 @@ import type {
 } from '../types';
 import { 
   projects as mockProjects,
-  programs as mockPrograms,
   campaigns as mockCampaigns,
   teamMembers as mockTeam,
   testimonials as mockTestimonials,
@@ -47,7 +45,7 @@ export async function getProjects(): Promise<Project[]> {
       locationUr: locationUr,
       status,
       statusEn: status === 'completed' ? 'Completed' : 'Ongoing',
-      statusUr: status === 'completed' ? 'مکمل' : 'جاری',
+      statusUr: status === 'completed' ? 'U.UcU.U,' : 'OO OUO',
       image: row.image_url || '/assets/appeal1.webp',
       progress,
       date: dateStr,
@@ -71,33 +69,6 @@ export async function getNews(): Promise<any[]> {
 // The following currently return purely mock data.
 // Replace with actual fetch calls when the backend is ready.
 // ---------------------------------------------------------
-
-export async function getPrograms(): Promise<Program[]> {
-  const { data, error } = await fetchApi<any[]>('/programs');
-  
-  if (error || !data || data.length === 0) {
-    console.warn('Backend error or unreachable, falling back to mock programs.', error);
-    return mockPrograms;
-  }
-
-  return data.map((row: any) => ({
-    id: row.id,
-    titleEn: row.title_en,
-    titleUr: row.title_ur || row.title_en,
-    descEn: row.desc_en,
-    descUr: row.desc_ur || row.desc_en,
-    contentEn: row.content_en || row.desc_en,
-    contentUr: row.content_ur || row.desc_ur || row.desc_en,
-    icon: row.icon_url || 'Target', // Default icon
-    image: row.image_url || '/assets/edu.webp', // Default image
-    heroImage: row.hero_image_url || '/assets/edu-hero.webp',
-    stats: {
-      beneficiaries: 0,
-      projects: 0,
-      volunteers: 0
-    }
-  }));
-}
 
 export async function getCampaigns(): Promise<Campaign[]> {
   return mockCampaigns;

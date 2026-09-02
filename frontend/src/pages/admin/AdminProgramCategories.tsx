@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
@@ -107,7 +107,7 @@ export function AdminProgramCategories() {
           <h2 className="text-2xl font-bold text-[#111827]">Program Categories</h2>
           <p className="text-[#6B7280] mt-1">Manage categories for the programs page</p>
         </div>
-        <AdminButton onClick={() => openForm()} icon={Plus}>New Category</AdminButton>
+        <AdminButton onClick={() => openForm()} icon={<Plus className="w-4 h-4 mr-2" />}>New Category</AdminButton>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-[#E5E7EB] overflow-hidden">
@@ -172,13 +172,14 @@ export function AdminProgramCategories() {
             <input type="number" required value={formData.sortOrder} onChange={e => setFormData({ ...formData, sortOrder: parseInt(e.target.value) })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488]" />
           </div>
           <div className="pt-4 border-t flex justify-end gap-3">
-            <AdminButton type="button" variant="secondary" onClick={() => setIsFormOpen(false)}>Cancel</AdminButton>
+            <AdminButton type="button" variant="ghost" onClick={() => setIsFormOpen(false)}>Cancel</AdminButton>
             <AdminButton type="submit" isLoading={saving}>Save Category</AdminButton>
           </div>
         </form>
       </Modal>
 
-      <ConfirmDialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} onConfirm={handleDelete} title="Delete Category" message="Are you sure you want to delete this category? This cannot be undone." confirmLabel="Delete" isDangerous />
+      <ConfirmDialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} onConfirm={handleDelete} title="Delete Category" message="Are you sure you want to delete this category? This cannot be undone." confirmLabel="Delete"  />
     </div>
   );
 }
+
