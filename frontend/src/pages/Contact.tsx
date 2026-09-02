@@ -3,6 +3,7 @@ import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { MapPin, Mail, Phone, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { sendContactEmail } from '../lib/sendContactEmail';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 
 interface ContactProps {
   isUrdu: boolean;
@@ -97,36 +98,38 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
     }
   };
 
+  const { settings } = useSiteSettings();
+
   const contactInfo = [
     {
       icon: MapPin,
       titleEn: 'Visit Us',
       titleUr: 'ہم سے ملیں',
-      textEn: 'IOCA Head Office,\nLahore, Pakistan',
-      textUr: 'IOCA ہیڈ آفس، لاہور، پاکستان',
+      textEn: settings.contact_address || 'IOCA Head Office,\nLahore, Pakistan',
+      textUr: settings.contact_address || 'IOCA Head Office,\nLahore, Pakistan', // CMS currently only stores English
     },
     {
       icon: Mail,
       titleEn: 'Email Us',
       titleUr: 'ای میل کریں',
-      textEn: 'info@ioca.org',
-      textUr: 'info@ioca.org',
-      href: 'mailto:info@ioca.org',
+      textEn: settings.contact_email || 'info@ioca.org',
+      textUr: settings.contact_email || 'info@ioca.org',
+      href: `mailto:${settings.contact_email || 'info@ioca.org'}`,
     },
     {
       icon: Phone,
       titleEn: 'Call Us',
       titleUr: 'فون کریں',
-      textEn: '+92 42 3576 1234',
-      textUr: '+92 42 3576 1234',
-      href: 'tel:+924235761234',
+      textEn: settings.contact_phone || '+92 42 3576 1234',
+      textUr: settings.contact_phone || '+92 42 3576 1234',
+      href: `tel:${(settings.contact_phone || '+92 42 3576 1234').replace(/[^0-9+]/g, '')}`,
     },
     {
       icon: Clock,
       titleEn: 'Office Hours',
       titleUr: 'دفتری اوقات',
       textEn: 'Mon – Fri: 9:00 AM – 5:00 PM\nSat: 10:00 AM – 2:00 PM',
-      textUr: 'پیر سے جمعہ: صبح 9 سے شام 5 بجے\nہفتہ: صبح 10 سے دوپہر 2 بجے',
+      textUr: 'پیر تا جمعہ: صبح 9 سے شام 5 بجے\nہفتہ: صبح 10 سے دوپہر 2 بجے',
     },
   ];
 
