@@ -4,7 +4,8 @@ import { allowCors } from '../../_lib/cors';
 import { err, ok } from '../../_lib/response';
 import { requireAdmin } from '../../_lib/auth';
 import { processImageField, uploadBase64Image } from '../../_lib/upload';
-import * as QRCode from 'qrcode';
+import { generateCustomQR } from '../../_lib/qrGenerator';
+import path from 'path';
 import * as crypto from 'crypto';
 
 function generateUid(category: string): string {
@@ -73,9 +74,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       // H-03: Use environment variable for base URL instead of hardcoded domain
       const baseUrl = process.env.SITE_URL || 'https://iocaworld.org';
       const verifyUrl = `${baseUrl}/verify/${uid}`;
-      const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
-        color: { dark: '#0a2540', light: '#ffffff' }
-      });
+      const logoPath = `${baseUrl}/assets/logos/logo-icon-white.webp`;
+      const qrDataUrl = await generateCustomQR(verifyUrl, logoPath);
       
       // Upload QR Code to Cloudinary
       const { url: qr_code_url } = await uploadBase64Image(qrDataUrl, 'ioca/qrcodes');
@@ -124,9 +124,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       let qr_code_url = existingUser.qr_code_url;
       if (!qr_code_url && existingUser.uid) {
         const verifyUrlInner = `${baseUrl}/verify/${existingUser.uid}`;
-        const qrDataUrlInner = await QRCode.toDataURL(verifyUrlInner, {
-          color: { dark: '#0a2540', light: '#ffffff' }
-        });
+        const logoPath = `${baseUrl}/assets/logos/logo-icon-white.webp`;
+        const qrDataUrlInner = await generateCustomQR(verifyUrlInner, logoPath);
         
         const uploadedQr = await uploadBase64Image(qrDataUrlInner, 'ioca/qrcodes');
         qr_code_url = uploadedQr.url;
