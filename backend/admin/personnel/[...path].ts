@@ -71,8 +71,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // H-03: Use environment variable for base URL instead of hardcoded domain
-      const baseUrl = process.env.SITE_URL
-        || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://ioca.org');
+      const baseUrl = process.env.SITE_URL || 'https://iocaworld.org';
       const verifyUrl = `${baseUrl}/verify/${uid}`;
       const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
         color: { dark: '#0a2540', light: '#ffffff' }
@@ -121,16 +120,15 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         profile_image_url = await processImageField(profile_image, 'ioca/personnel');
       }
 
+      const baseUrl = process.env.SITE_URL || 'https://iocaworld.org';
       let qr_code_url = existingUser.qr_code_url;
       if (!qr_code_url && existingUser.uid) {
-        const baseUrl = process.env.SITE_URL
-          || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://ioca.org');
-        const verifyUrl = `${baseUrl}/verify/${existingUser.uid}`;
-        const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
+        const verifyUrlInner = `${baseUrl}/verify/${existingUser.uid}`;
+        const qrDataUrlInner = await QRCode.toDataURL(verifyUrlInner, {
           color: { dark: '#0a2540', light: '#ffffff' }
         });
         
-        const uploadedQr = await uploadBase64Image(qrDataUrl, 'ioca/qrcodes');
+        const uploadedQr = await uploadBase64Image(qrDataUrlInner, 'ioca/qrcodes');
         qr_code_url = uploadedQr.url;
       }
 
