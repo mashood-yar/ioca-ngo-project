@@ -21,7 +21,7 @@ interface TestimonialGalleryProps {
 
 const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = useInView(ref, { once: true, margin: '0px' });
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
