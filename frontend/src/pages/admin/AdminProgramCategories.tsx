@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
@@ -59,7 +59,7 @@ export function AdminProgramCategories() {
     e.preventDefault();
     setSaving(true);
     try {
-      const url = selectedCategory ? /program-categories/ : '/program-categories';
+      const url = selectedCategory ? `/program-categories/${selectedCategory.id}` : '/program-categories';
       const method = selectedCategory ? 'PUT' : 'POST';
 
       const result = await fetchApi<any>(url, {
@@ -68,7 +68,7 @@ export function AdminProgramCategories() {
       });
 
       if (result.error) {
-        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: Failed to save: , variant: 'error' } }));
+        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to save: ${result.error}`, variant: 'error' } }));
         return;
       }
 
@@ -85,9 +85,9 @@ export function AdminProgramCategories() {
   const handleDelete = async () => {
     if (!selectedCategory) return;
     try {
-      const result = await fetchApi(/program-categories/, { method: 'DELETE' });
+      const result = await fetchApi(`/program-categories/${selectedCategory.id}`, { method: 'DELETE' });
       if (result.error) {
-        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: Failed to delete: , variant: 'error' } }));
+        window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to delete: ${result.error}`, variant: 'error' } }));
         return;
       }
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Category deleted', variant: 'success' } }));

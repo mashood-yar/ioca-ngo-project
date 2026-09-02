@@ -39,7 +39,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
   return (
     <>
       <SEO 
-        title={isUrdu ? 'U_OU^U_OO U.O | IOCA' : 'Programs | IOCA'}
+        title={isUrdu ? 'پروگرامز | IOCA' : 'Programs | IOCA'}
         description="Explore IOCA's programs in education, healthcare, youth empowerment, and community development across Pakistan."
         isUrdu={isUrdu}
       />
@@ -52,12 +52,12 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className={\	ext-4xl md:text-6xl font-extrabold text-brand-navy mb-4 \\}>
-              {isUrdu ? 'OU.OO1U' U_OU^U_OO U.O' : 'Our Programs'}
+            <h1 className={`text-4xl md:text-6xl font-extrabold text-brand-navy mb-4 ${isUrdu ? 'font-urduHeading' : ''}`}>
+              {isUrdu ? 'ہمارے پروگرامز' : 'Our Programs'}
             </h1>
-            <p className={\	ext-brand-navy/60 text-base md:text-lg max-w-2xl \\}>
+            <p className={`text-brand-navy/60 text-base md:text-lg max-w-2xl ${isUrdu ? 'font-urduBody' : ''}`}>
               {isUrdu
-                ? 'OU. U.OO1U' U_OU^U_OO U.O UcU' O_O1UOUU OOU,UO U' O U^O UcU.UOU^U+U1UO OU^O1 OOO1U+U?OOOUOU' U+U^OU^O U+U^U UcUO OOU,UO O U^O UcU.UOU^U+U1UO OU?O1 U_OU^O3UOO UcU' OOUOO1U' U_O UcO3OO U+ O"U_O U.UOU UcU.UOU^U+U1UOO UcU^ O"O O OrOUOO O O"U+O  OU?U' U?UOUU"'
+                ? 'ہم پاکستان بھر میں تعلیم، صحت، نوجوانوں کی ترقی، اور سماجی تعلقات کے پروگراموں کے ذریعے کمیونٹیز کو بااختیار بناتے ہیں۔'
                 : 'We empower communities across Pakistan through education, healthcare, youth development, and community bonding programs.'}
             </p>
           </motion.div>
@@ -76,7 +76,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                 >
                   <Link
-                    to={\/programs/\\}
+                    to={`/programs/${prog.id}`}
                     className="group block bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all h-full flex flex-col"
                   >
                     <div className="relative h-48 md:h-64 overflow-hidden shrink-0 bg-gray-100">
@@ -95,11 +95,11 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                         {prog.category?.icon_svg && (
                           <div className="w-10 h-10 bg-brand-navy/5 rounded-full flex items-center justify-center text-brand-navy" dangerouslySetInnerHTML={{ __html: prog.category.icon_svg }} />
                         )}
-                        <h2 className={\	ext-2xl font-bold text-brand-navy group-hover:text-brand-teal transition-colors \\}>
+                        <h2 className={`text-2xl font-bold text-brand-navy group-hover:text-brand-teal transition-colors ${isUrdu ? 'font-urduHeading text-right w-full' : ''}`}>
                           {isUrdu ? prog.title_ur : prog.title_en}
                         </h2>
                       </div>
-                      <p className={\	ext-brand-navy/70 leading-relaxed mb-6 flex-grow \\}>
+                      <p className={`text-brand-navy/70 leading-relaxed mb-6 flex-grow ${isUrdu ? 'font-urduBody text-right' : ''}`}>
                         {isUrdu ? prog.desc_ur : prog.desc_en}
                       </p>
                       
@@ -108,16 +108,16 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                           <div className="text-xl md:text-2xl font-bold text-brand-teal mb-1">
                             {formatCompact(prog.stats_beneficiaries, isUrdu)}+
                           </div>
-                          <div className={\	ext-xs font-semibold text-brand-navy/60 uppercase tracking-wider \\}>
-                            {isUrdu ? 'U.O3OU?UOO_UOU+' : 'Beneficiaries'}
+                          <div className={`text-xs font-semibold text-brand-navy/60 uppercase tracking-wider ${isUrdu ? 'font-urduBody text-right' : ''}`}>
+                            {isUrdu ? 'مستفیدین' : 'Beneficiaries'}
                           </div>
                         </div>
                         <div>
                           <div className="text-xl md:text-2xl font-bold text-brand-teal mb-1">
                             {formatCompact(prog.stats_projects, isUrdu)}
                           </div>
-                          <div className={\	ext-xs font-semibold text-brand-navy/60 uppercase tracking-wider \\}>
-                            {isUrdu ? 'U_OU^OUOUcU1O3' : 'Projects'}
+                          <div className={`text-xs font-semibold text-brand-navy/60 uppercase tracking-wider ${isUrdu ? 'font-urduBody text-right' : ''}`}>
+                            {isUrdu ? 'پروجیکٹس' : 'Projects'}
                           </div>
                         </div>
                       </div>

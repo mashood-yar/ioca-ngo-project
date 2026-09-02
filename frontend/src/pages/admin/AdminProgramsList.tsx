@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
@@ -83,7 +83,7 @@ export function AdminProgramsList() {
       }
 
       const payload = { ...formData, imageUrl };
-      const url = selectedProgram ? \/programs/\\ : '/programs';
+      const url = selectedProgram ? `/programs/${selectedProgram.id}` : '/programs';
       const method = selectedProgram ? 'PUT' : 'POST';
 
       const result = await fetchApi<any>(url, { method, body: JSON.stringify(payload) });
@@ -103,7 +103,7 @@ export function AdminProgramsList() {
   const handleDelete = async () => {
     if (!selectedProgram) return;
     try {
-      const result = await fetchApi(\/programs/\\, { method: 'DELETE' });
+      const result = await fetchApi(`/programs/${selectedProgram.id}`, { method: 'DELETE' });
       if (result.error) throw new Error(result.error);
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Program deleted', variant: 'success' } }));
       setIsDeleteOpen(false);
@@ -128,9 +128,9 @@ export function AdminProgramsList() {
       </div>
 
       <div className="flex gap-2 pb-4 overflow-x-auto">
-        <button onClick={() => setFilterCategory('all')} className={\px-4 py-2 rounded-lg text-sm font-medium transition-colors \\}>All Programs</button>
+        <button onClick={() => setFilterCategory('all')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterCategory === 'all' ? 'bg-[#1E293B] text-white' : 'bg-white text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]'}`}>All Programs</button>
         {categories.map(cat => (
-          <button key={cat.id} onClick={() => setFilterCategory(cat.id)} className={\px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 \\}>
+          <button key={cat.id} onClick={() => setFilterCategory(cat.id)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${filterCategory === cat.id ? 'bg-[#1E293B] text-white' : 'bg-white text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]'}`}>
             <span dangerouslySetInnerHTML={{ __html: cat.icon_svg || '' }} className="w-4 h-4" />
             {cat.name_en}
           </button>
@@ -161,7 +161,7 @@ export function AdminProgramsList() {
                   </td>
                   <td className="py-4 px-6 text-sm text-[#6B7280]">{prog.category?.name_en || 'Unknown'}</td>
                   <td className="py-4 px-6">
-                    <span className={\inline-flex px-2 py-1 text-xs font-semibold rounded-full \\}>{prog.status}</span>
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${prog.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>{prog.status}</span>
                   </td>
                   <td className="py-4 px-6 text-sm text-right space-x-3">
                     <button onClick={() => openForm(prog)} className="text-[#0D9488] hover:text-[#0F766E] transition-colors"><Edit2 className="w-4 h-4" /></button>
