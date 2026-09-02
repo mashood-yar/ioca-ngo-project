@@ -47,6 +47,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const { url } = await processImageField(updates.logo_url_white, 'logos') as any
         if (url) updates.logo_url_white = url
       }
+      if (updates.favicon_url && updates.favicon_url.startsWith('data:image/')) {
+        const { url } = await processImageField(updates.favicon_url, 'logos') as any
+        if (url) updates.favicon_url = url
+      }
+      if (updates.hero_icon_url && updates.hero_icon_url.startsWith('data:image/')) {
+        const { url } = await processImageField(updates.hero_icon_url, 'logos') as any
+        if (url) updates.hero_icon_url = url
+      }
 
       const rows = Object.entries(updates).map(([key, value]) => ({
         key,

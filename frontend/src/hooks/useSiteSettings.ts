@@ -60,6 +60,17 @@ export function useSiteSettings() {
         .then(({ data }) => {
           if (data) {
             cachedSettings = { ...DEFAULTS, ...data };
+            
+            // Dynamically update the favicon if a custom one is set
+            if (data.favicon_url) {
+              let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+              if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.head.appendChild(link);
+              }
+              link.href = data.favicon_url;
+            }
           } else {
             cachedSettings = DEFAULTS;
           }

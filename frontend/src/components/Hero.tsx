@@ -109,7 +109,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             
             {/* Logo Icon */}
             <motion.div className={`w-full ${isUrdu ? 'flex justify-start' : 'flex justify-start'} mb-3 md:mb-4`} {...fadeUp(0.0)}>
-              <img src="/assets/logos/logo-icon-white.webp" alt="" className="h-12 md:h-16 w-auto object-contain drop-shadow-lg" aria-hidden="true" fetchPriority="high" decoding="sync" />
+              <img src={settings.hero_icon_url ? optimizeImage(settings.hero_icon_url, { width: 200 }) : "/assets/logos/logo-icon-white.webp"} alt="" className="h-12 md:h-16 w-auto object-contain drop-shadow-lg" aria-hidden="true" fetchPriority="high" decoding="sync" />
             </motion.div>
             
             {/* Eyebrow */}

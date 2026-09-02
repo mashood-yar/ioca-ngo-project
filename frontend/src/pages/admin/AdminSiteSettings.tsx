@@ -306,6 +306,38 @@ export function AdminSiteSettings() {
                   <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo_url_white')} className="text-sm" />
                 </div>
               </div>
+              
+              <hr />
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Favicon (Browser Tab Icon - .ico, .png, .svg)</label>
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-gray-100 rounded-lg border border-gray-200">
+                    {formData.favicon_url ? (
+                      <img src={optimizeImage(formData.favicon_url, { width: 64 })} alt="Favicon" className="h-8 w-8 object-contain" />
+                    ) : (
+                      <span className="text-gray-400 text-sm">None</span>
+                    )}
+                  </div>
+                  <input type="file" accept="image/*,.ico" onChange={(e) => handleImageUpload(e, 'favicon_url')} className="text-sm" />
+                </div>
+              </div>
+
+              <hr />
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Hero Logo Icon (Shown in the Home Page Banner)</label>
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-brand-navy rounded-lg border border-gray-200">
+                    {formData.hero_icon_url ? (
+                      <img src={optimizeImage(formData.hero_icon_url, { width: 200 })} alt="Hero Icon" className="h-12 object-contain" />
+                    ) : (
+                      <span className="text-white/50 text-sm">None</span>
+                    )}
+                  </div>
+                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero_icon_url')} className="text-sm" />
+                </div>
+              </div>
             </div>
           </div>
         )}
