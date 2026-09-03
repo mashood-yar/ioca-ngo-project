@@ -175,7 +175,7 @@ export const AdminPersonnel: React.FC = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-brand-navy/70">Profile Image</p>
-                <p className="text-xs text-brand-navy/50 mb-2">Click the avatar to upload a photo (max {MAX_IMAGE_SIZE_MB}MB).</p>
+                <p className="text-xs text-brand-navy/50 mb-2">Click the avatar to upload a photo (max {MAX_IMAGE_SIZE_MB}MB).<br/>ℹ️ Recommended: 1:1 Square (e.g. 500x500)</p>
                 <input 
                   type="file" 
                   accept="image/jpeg,image/png,image/webp" 

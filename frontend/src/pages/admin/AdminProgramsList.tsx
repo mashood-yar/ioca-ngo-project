@@ -242,6 +242,7 @@ export function AdminProgramsList() {
           <div>
             <label className="block text-sm font-semibold text-[#111827] mb-1">Cover Image</label>
             <input type="file" accept="image/*" onChange={e => setSelectedFile(e.target.files?.[0] || null)} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#0D9488] text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#0D9488]/10 file:text-[#0D9488] hover:file:bg-[#0D9488]/20" />
+            <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: 16:9 Landscape (e.g. 1920x1080)</p>
             {selectedProgram?.image_url && !selectedFile && <p className="text-xs text-[#6B7280] mt-1">Leave empty to keep current image</p>}
           </div>
 

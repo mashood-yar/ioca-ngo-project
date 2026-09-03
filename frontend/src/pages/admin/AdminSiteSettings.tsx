@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Plus, Trash2 } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
@@ -264,18 +264,22 @@ export function AdminSiteSettings() {
                   )}
                   <div className="flex-1">
                     <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero_static_image_url')} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-teal/10 file:text-brand-teal hover:file:bg-brand-teal/20" />
+                    <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: 16:9 Landscape (e.g. 1920x1080)</p>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="space-y-3">
-                <div className="flex justify-between items-center border-b pb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">Slideshow Images</h3>
-                  <label className="cursor-pointer bg-brand-teal/10 text-brand-teal px-3 py-1.5 rounded-md text-sm font-semibold hover:bg-brand-teal/20 flex items-center gap-1">
-                    <Plus className="w-4 h-4" /> Add Slide
-                    <input type="file" accept="image/*" onChange={handleSlideUpload} className="hidden" />
-                  </label>
-                </div>
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="block text-sm font-semibold text-[#111827]">Slider Images</label>
+                    <div className="flex flex-col items-end">
+                      <label className="cursor-pointer bg-brand-teal/10 text-brand-teal px-3 py-1.5 rounded-md text-sm font-semibold hover:bg-brand-teal/20 flex items-center gap-1">
+                        <Plus className="w-4 h-4" /> Add Slide
+                        <input type="file" accept="image/*" onChange={handleSlideUpload} className="hidden" />
+                      </label>
+                      <p className="text-[11px] text-[#6B7280] mt-1.5">ℹ️ Recommended: 16:9 Landscape</p>
+                    </div>
+                  </div>
                 
                 <div className="space-y-3">
                   {(formData.hero_slides ? JSON.parse(formData.hero_slides) : []).map((slide: any, idx: number) => (
@@ -314,7 +318,10 @@ export function AdminSiteSettings() {
                   <div className="p-4 bg-gray-100 rounded-lg border border-gray-200">
                     <img src={optimizeImage(formData.logo_url, { width: 200 })} alt="Main Logo" className="h-12 object-contain" />
                   </div>
-                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo_url')} className="text-sm" />
+                  <div>
+                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo_url')} className="text-sm" />
+                    <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: Transparent PNG (e.g. 400x150)</p>
+                  </div>
                 </div>
               </div>
               
@@ -326,7 +333,10 @@ export function AdminSiteSettings() {
                   <div className="p-4 bg-brand-navy rounded-lg border border-gray-200">
                     <img src={optimizeImage(formData.logo_url_white, { width: 200 })} alt="White Logo" className="h-12 object-contain" />
                   </div>
-                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo_url_white')} className="text-sm" />
+                  <div>
+                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo_url_white')} className="text-sm" />
+                    <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: Transparent PNG (e.g. 400x150)</p>
+                  </div>
                 </div>
               </div>
               
@@ -334,16 +344,19 @@ export function AdminSiteSettings() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Favicon (Browser Tab Icon - .ico, .png, .svg)</label>
-                <div className="flex items-center gap-4">
-                  <div className="p-4 bg-gray-100 rounded-lg border border-gray-200">
-                    {formData.favicon_url ? (
-                      <img src={optimizeImage(formData.favicon_url, { width: 64 })} alt="Favicon" className="h-8 w-8 object-contain" />
-                    ) : (
-                      <span className="text-gray-400 text-sm">None</span>
-                    )}
+                  <div className="flex items-center gap-4">
+                    <div className="p-4 bg-gray-100 rounded-lg border border-gray-200">
+                      {formData.favicon_url ? (
+                        <img src={optimizeImage(formData.favicon_url, { width: 64 })} alt="Favicon" className="h-8 w-8 object-contain" />
+                      ) : (
+                        <span className="text-gray-400 text-sm">None</span>
+                      )}
+                    </div>
+                    <div>
+                      <input type="file" accept="image/*,.ico" onChange={(e) => handleImageUpload(e, 'favicon_url')} className="text-sm" />
+                      <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: 1:1 Square (e.g. 512x512)</p>
+                    </div>
                   </div>
-                  <input type="file" accept="image/*,.ico" onChange={(e) => handleImageUpload(e, 'favicon_url')} className="text-sm" />
-                </div>
               </div>
 
               <hr />
@@ -358,7 +371,10 @@ export function AdminSiteSettings() {
                       <span className="text-white/50 text-sm">None</span>
                     )}
                   </div>
-                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero_icon_url')} className="text-sm" />
+                  <div>
+                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero_icon_url')} className="text-sm" />
+                    <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: 1:1 Square (e.g. 256x256)</p>
+                  </div>
                 </div>
               </div>
             </div>

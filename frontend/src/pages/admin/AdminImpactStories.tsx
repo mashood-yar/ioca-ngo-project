@@ -190,8 +190,8 @@ export const AdminImpactStories: React.FC = () => {
       <Modal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} title={selectedStory ? 'Edit Story' : 'New Story'} maxWidth="max-w-4xl">
         <form onSubmit={handleSave} className="space-y-6 max-h-[80vh] overflow-y-auto px-1">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="col-span-1 md:col-span-2 flex justify-center mb-4">
-              <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-xl overflow-hidden group border-2 border-dashed border-gray-300">
+            <div className="col-span-1 md:col-span-2 flex flex-col justify-center mb-4">
+              <div className="relative w-full max-w-md h-48 bg-gray-100 rounded-xl overflow-hidden group border-2 border-dashed border-gray-300 mx-auto">
                 {imagePreview ? (
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
@@ -202,6 +202,7 @@ export const AdminImpactStories: React.FC = () => {
                 )}
                 <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
               </div>
+              <p className="text-[11px] text-[#6B7280] mt-2 flex items-center justify-center gap-1 w-full text-center">ℹ️ Recommended: 4:3 or 16:9 Landscape</p>
             </div>
 
             <div>

@@ -196,6 +196,7 @@ export function AdminGallery() {
               className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-teal/10 file:text-brand-teal hover:file:bg-brand-teal/20"
               required={!selectedItem}
             />
+            <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: Any Format (Landscape 16:9 or Portrait 4:3)</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
