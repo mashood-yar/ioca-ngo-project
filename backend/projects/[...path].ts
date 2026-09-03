@@ -92,11 +92,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 2. GET /api/projects/:id — Public: get single project
     if (req.method === 'GET' && id) {
-      const { data: project, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('id', id)
-        .single()
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      let query = supabase.from('projects').select('*');
+      
+      if (uuidRegex.test(id)) {
+        query = query.eq('id', id);
+      } else {
+        query = query.eq('slug', id);
+      }
+
+      const { data: project, error } = await query.single();
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -137,6 +142,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           start_date: body.start_date || null,
           end_date: body.end_date || null,
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
+          slug: slugify(body.titleEn),
         })
         .select()
         .single()
@@ -156,6 +162,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (body.titleEn !== undefined) {
         updates.title_en = body.titleEn
         updates.title = body.titleEn
+        if (body.titleEn) updates.slug = slugify(body.titleEn)
       }
       if (body.titleUr !== undefined) updates.title_ur = body.titleUr
       if (body.descEn !== undefined) {

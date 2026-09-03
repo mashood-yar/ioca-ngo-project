@@ -33,17 +33,28 @@ export interface Program {
 
 export interface Project {
   id: string;
+  title?: string;
   titleEn: string;
   titleUr: string;
+  title_en?: string;
+  title_ur?: string;
   descEn: string;
   descUr: string;
+  description?: string;
   locationEn: string;
   locationUr: string;
-  status: 'ongoing' | 'completed' | 'paused' | 'upcoming';
+  status: 'ongoing' | 'completed' | 'paused' | 'upcoming' | string;
   statusEn: string;
   statusUr: string;
   date: string;
+  start_date?: string;
+  startDate?: string;
+  end_date?: string;
+  endDate?: string;
   image: string;
+  image_url?: string;
+  category?: string;
+  slug?: string;
   progress: number;
 }
 
