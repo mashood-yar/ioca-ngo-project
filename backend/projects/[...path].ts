@@ -72,7 +72,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
       
       if (status) {
-        query = query.eq('status', status as string)
+        const statuses = (status as string).split(',');
+        if (statuses.length > 1) {
+          query = query.in('status', statuses);
+        } else {
+          query = query.eq('status', status as string);
+        }
       }
       
       if (limit) {

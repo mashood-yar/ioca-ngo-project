@@ -39,7 +39,7 @@ export interface Project {
   descUr: string;
   locationEn: string;
   locationUr: string;
-  status: 'ongoing' | 'completed';
+  status: 'ongoing' | 'completed' | 'paused' | 'upcoming';
   statusEn: string;
   statusUr: string;
   date: string;

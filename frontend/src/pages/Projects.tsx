@@ -13,7 +13,7 @@ interface ProjectsProps {
 }
 
 const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
-  const [activeFilter, setActiveFilter] = useState<'all' | 'ongoing' | 'completed'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'ongoing' | 'upcoming' | 'completed'>('all');
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
@@ -36,8 +36,9 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
   }, [isUrdu]);
 
   const filters = [
-    { key: 'all' as const, labelEn: 'All Projects', labelUr: 'تمام پروجیکٹس' },
+    { key: 'all' as const, labelEn: 'All Projects', labelUr: 'تمام پراجیکٹس' },
     { key: 'ongoing' as const, labelEn: 'Ongoing', labelUr: 'جاری' },
+    { key: 'upcoming' as const, labelEn: 'Upcoming', labelUr: 'جلد آ رہا ہے' },
     { key: 'completed' as const, labelEn: 'Completed', labelUr: 'مکمل' },
   ];
 
@@ -137,10 +138,14 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
                   <span className={`absolute top-3 ${isUrdu ? 'right-3' : 'left-3'} text-[10px] md:text-xs font-bold uppercase px-2 md:px-3 py-1 rounded-full flex items-center gap-1 ${
                     project.status === 'ongoing'
                       ? 'bg-brand-teal text-brand-white'
+                      : project.status === 'upcoming'
+                      ? 'bg-purple-600 text-brand-white'
                       : 'bg-brand-gold text-brand-navy'
                   }`}>
                     {project.status === 'ongoing'
                       ? <Clock className="w-3 h-3" />
+                      : project.status === 'upcoming'
+                      ? <Calendar className="w-3 h-3" />
                       : <CheckCircle2 className="w-3 h-3" />
                     }
                     {isUrdu ? project.statusUr : project.statusEn}

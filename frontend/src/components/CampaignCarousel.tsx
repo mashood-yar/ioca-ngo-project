@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Heart } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { optimizeImage } from '../lib/optimizeImage';
 import { fetchApi } from '../lib/apiClient';
+import { Link } from 'react-router-dom';
 
 interface Project {
   id: string;
@@ -14,6 +15,7 @@ interface Project {
   title?: string;
   image_url?: string;
   category?: string;
+  status?: string;
   is_featured?: boolean;
   slug?: string;
 }
@@ -31,7 +33,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi<Project[]>('/projects?is_featured=true&status=ongoing&limit=6')
+    fetchApi<Project[]>('/projects?is_featured=true&status=ongoing,upcoming&limit=6')
       .then(({ data }) => {
         if (data && data.length > 0) {
           setProjects(data);
@@ -143,6 +145,11 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
                       {project.category}
                     </span>
                   )}
+                  {project.status === 'upcoming' && (
+                    <span className={`absolute top-4 ${isUrdu ? 'left-4' : 'right-4'} text-[11px] font-bold uppercase px-3 py-1 rounded-full bg-purple-600 text-brand-white shadow-md`}>
+                      {isUrdu ? 'جلد آ رہا ہے' : 'Upcoming'}
+                    </span>
+                  )}
                 </div>
 
                 {/* Content */}
@@ -154,13 +161,22 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
                     {getDesc(project)}
                   </p>
 
-                  <button
-                    onClick={() => onDonateClick(getTitle(project))}
-                    className="w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors bg-brand-teal text-brand-white hover:opacity-90 shadow-md shadow-brand-teal/20 mt-auto"
-                  >
-                    <Heart className="w-4 h-4" />
-                    {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
-                  </button>
+                  {project.status === 'upcoming' ? (
+                    <Link
+                      to={`/projects/${project.slug || project.id}`}
+                      className="w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors bg-purple-600 text-brand-white hover:opacity-90 shadow-md shadow-purple-600/20 mt-auto"
+                    >
+                      {isUrdu ? 'مزید جانیں' : 'Learn More'}
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => onDonateClick(getTitle(project))}
+                      className="w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors bg-brand-teal text-brand-white hover:opacity-90 shadow-md shadow-brand-teal/20 mt-auto"
+                    >
+                      <Heart className="w-4 h-4" />
+                      {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
+                    </button>
+                  )}
                 </div>
               </motion.div>
             ))

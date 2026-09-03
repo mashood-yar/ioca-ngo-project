@@ -29,6 +29,7 @@ const statusColors: Record<string, string> = {
   ongoing: 'bg-blue-100 text-blue-700',
   completed: 'bg-green-100 text-green-700',
   paused: 'bg-amber-100 text-amber-700',
+  upcoming: 'bg-purple-100 text-purple-700',
 };
 
 export function AdminProjects() {
@@ -189,10 +190,11 @@ export function AdminProjects() {
       {/* Status Filter */}
       <div className="flex flex-wrap gap-2">
         {[
-          { value: 'all', label: 'All Projects' },
-          { value: 'ongoing', label: '🔵 Ongoing' },
+          { value: 'all', label: 'All Status' },
+          { value: 'ongoing', label: '🟢 Ongoing' },
           { value: 'completed', label: '✅ Completed' },
           { value: 'paused', label: '⏸️ Paused' },
+          { value: 'upcoming', label: '⏳ Upcoming' },
         ].map((status) => (
           <button
             key={status.value}
@@ -326,6 +328,7 @@ export function AdminProjects() {
                 <option value="ongoing">Ongoing</option>
                 <option value="completed">Completed</option>
                 <option value="paused">Paused</option>
+                <option value="upcoming">Upcoming</option>
               </select>
             </div>
             <div>
