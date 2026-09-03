@@ -135,7 +135,7 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                   {/* Status Badge */}
-                  <span className={`absolute top-3 ${isUrdu ? 'right-3' : 'left-3'} text-[10px] md:text-xs font-bold uppercase px-2 md:px-3 py-1 rounded-full flex items-center gap-1 ${
+                  <span className={`absolute top-3 ${isUrdu ? 'left-3' : 'right-3'} text-[10px] md:text-xs font-bold uppercase px-2 md:px-3 py-1 rounded-full flex items-center gap-1 ${
                     project.status === 'ongoing'
                       ? 'bg-brand-teal text-brand-white'
                       : project.status === 'upcoming'

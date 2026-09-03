@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, Heart } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Calendar, Clock } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { optimizeImage } from '../lib/optimizeImage';
 import { fetchApi } from '../lib/apiClient';
@@ -146,8 +146,15 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
                     </span>
                   )}
                   {project.status === 'upcoming' && (
-                    <span className={`absolute top-4 ${isUrdu ? 'left-4' : 'right-4'} text-[11px] font-bold uppercase px-3 py-1 rounded-full bg-purple-600 text-brand-white shadow-md`}>
+                    <span className={`absolute top-4 ${isUrdu ? 'left-4' : 'right-4'} text-[11px] font-bold uppercase px-3 py-1 rounded-full bg-purple-600 text-brand-white shadow-md flex items-center gap-1`}>
+                      <Calendar className="w-3 h-3" />
                       {isUrdu ? 'جلد آ رہا ہے' : 'Upcoming'}
+                    </span>
+                  )}
+                  {project.status === 'ongoing' && (
+                    <span className={`absolute top-4 ${isUrdu ? 'left-4' : 'right-4'} text-[11px] font-bold uppercase px-3 py-1 rounded-full bg-brand-teal text-brand-white shadow-md flex items-center gap-1`}>
+                      <Clock className="w-3 h-3" />
+                      {isUrdu ? 'جاری' : 'Ongoing'}
                     </span>
                   )}
                 </div>
