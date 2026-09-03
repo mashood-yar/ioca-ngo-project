@@ -53,7 +53,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
 
   // Loading skeleton
   const Skeleton = () => (
-    <div className="min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center bg-brand-white rounded-xl overflow-hidden shadow-md border-2 border-brand-teal/10 animate-pulse">
+    <div className="w-[85vw] max-w-[350px] lg:max-w-[400px] shrink-0 snap-center bg-brand-white rounded-xl overflow-hidden shadow-md border-2 border-brand-teal/10 animate-pulse">
       <div className="h-40 md:h-48 bg-brand-gray" />
       <div className="p-5 space-y-3">
         <div className="h-6 bg-brand-gray rounded w-3/4" />
@@ -123,7 +123,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ isUrdu, onDonateCli
             projects.map((project, idx) => (
               <motion.div
                 key={project.id}
-                className="group min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center md:snap-start bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 border-brand-teal/20 hover:border-brand-teal will-change-transform"
+                className="group w-[85vw] max-w-[350px] lg:max-w-[400px] shrink-0 snap-center md:snap-start bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow flex flex-col border-2 border-brand-teal/20 hover:border-brand-teal will-change-transform"
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: idx * 0.15 }}

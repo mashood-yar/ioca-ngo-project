@@ -172,9 +172,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (body.start_date !== undefined) updates.start_date = body.start_date
       if (body.end_date !== undefined) updates.end_date = body.end_date
       
-      const imageUrl = body.image_url !== undefined ? body.image_url : body.image
+      const imageUrl = body.image_url !== undefined ? body.image_url : (body.imageUrl !== undefined ? body.imageUrl : body.image)
       if (imageUrl !== undefined) {
-        updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null
+        updates.image_url = imageUrl && imageUrl !== '' ? await processImageField(imageUrl as string) : null
       }
 
       const { data: project, error } = await supabase
