@@ -19,7 +19,7 @@ import {
   Heart,
   Megaphone,
   TrendingUp,
-  
+  HeartHandshake,
 } from 'lucide-react';
 
 export function AdminLayout() {
@@ -63,6 +63,7 @@ export function AdminLayout() {
     { to: '/admin/donations', label: 'Donations & Financials', icon: DollarSign },
     { to: '/admin/queries', label: 'Client Queries', icon: MessageSquare },
     { to: '/admin/applications', label: 'Applications', icon: ClipboardList },
+    { to: '/admin/volunteers', label: 'Volunteers', icon: HeartHandshake },
     { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
   ];
 

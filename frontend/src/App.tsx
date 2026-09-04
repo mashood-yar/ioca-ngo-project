@@ -50,6 +50,7 @@ const AdminGallery = lazy(() => import('./pages/admin/AdminGallery').then(m => (
 const AdminSiteSettings = lazy(() => import('./pages/admin/AdminSiteSettings').then(m => ({ default: m.AdminSiteSettings })));
 const AdminProjects = lazy(() => import('./pages/admin/AdminProjects').then(m => ({ default: m.AdminProjects })));
 const AdminPrograms = lazy(() => import('./pages/admin/AdminPrograms').then(m => ({ default: m.AdminPrograms })));
+const AdminVolunteers = lazy(() => import('./pages/admin/AdminVolunteers').then(m => ({ default: m.AdminVolunteers })));
 
 /** Scrolls to top on route change */
 function ScrollToTop() {
@@ -141,6 +142,7 @@ function App() {
               <Route path="site-settings" element={<AdminSiteSettings />} />
               <Route path="projects" element={<AdminProjects />} />
               <Route path="programs" element={<AdminPrograms />} />
+              <Route path="volunteers" element={<AdminVolunteers />} />
             </Route>
           </Routes>
         </Suspense>
