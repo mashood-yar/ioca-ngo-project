@@ -1,9 +1,10 @@
-﻿import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
+import { sendVolunteerNotification, sendVolunteerAutoresponder } from '../_lib/email'
 
 const volunteerSchema = z.object({
   full_name: z.string().min(2, 'Full name is required'),
@@ -49,6 +50,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .select()
         .single()
       if (error) throw new Error(error.message)
+
+      try {
+        await Promise.all([
+          sendVolunteerNotification(validated.full_name, validated.email, validated.city, validated.skills),
+          sendVolunteerAutoresponder(validated.full_name, validated.email)
+        ])
+      } catch (e) {
+        console.error('Failed to send volunteer emails:', e)
+      }
+
       return ok(res, data, 201)
     }
 

@@ -131,11 +131,12 @@ export async function sendContactNotification(
   subject: string,
   message: string
 ): Promise<void> {
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@example.com';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@iocaworld.org';
   try {
     await resend.emails.send({
       from: fromEmail,
       to: 'iocaworld.org@gmail.com',
+      reply_to: email,
       subject: `New Contact Submission: ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
@@ -151,6 +152,103 @@ export async function sendContactNotification(
     });
   } catch (error) {
     console.error('Failed to send contact notification email:', error);
+  }
+}
+
+export async function sendContactAutoresponder(
+  name: string,
+  email: string
+): Promise<void> {
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@iocaworld.org';
+  try {
+    await resend.emails.send({
+      from: fromEmail,
+      to: email,
+      subject: 'We received your message! - IOCA',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #eaeaea; border-radius: 8px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 25px;">
+            <h2 style="color: #1a5632; margin: 0; font-size: 24px;">Thank You for Reaching Out!</h2>
+          </div>
+          <p style="font-size: 16px; color: #333;">Dear <strong>${name}</strong>,</p>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            We have successfully received your message. Our team is currently reviewing it and will get back to you as soon as possible.
+          </p>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            In the meantime, feel free to explore more about our active projects and programs on our website.
+          </p>
+          <br/>
+          <p style="font-size: 15px; color: #333; font-weight: bold; margin-bottom: 0;">Warm regards,</p>
+          <p style="font-size: 15px; color: #1a5632; margin-top: 5px;">The IOCA Team</p>
+        </div>
+      `
+    });
+  } catch (error) {
+    console.error('Failed to send contact autoresponder email:', error);
+  }
+}
+
+export async function sendVolunteerNotification(
+  name: string,
+  email: string,
+  city: string | null | undefined,
+  skills: string | null | undefined
+): Promise<void> {
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@iocaworld.org';
+  try {
+    await resend.emails.send({
+      from: fromEmail,
+      to: 'iocaworld.org@gmail.com',
+      reply_to: email,
+      subject: `New Volunteer Application: ${name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
+          <h2 style="color: #1a5632; margin-top: 0;">New Volunteer Application</h2>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+          <p><strong>City:</strong> ${city || 'Not specified'}</p>
+          <p><strong>Skills:</strong> ${skills || 'Not specified'}</p>
+          <br/>
+          <p>Log in to the Admin Dashboard to view the full application and approve/reject.</p>
+        </div>
+      `
+    });
+  } catch (error) {
+    console.error('Failed to send volunteer notification email:', error);
+  }
+}
+
+export async function sendVolunteerAutoresponder(
+  name: string,
+  email: string
+): Promise<void> {
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@iocaworld.org';
+  try {
+    await resend.emails.send({
+      from: fromEmail,
+      to: email,
+      subject: 'Volunteer Application Received - IOCA',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #eaeaea; border-radius: 8px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 25px;">
+            <h2 style="color: #1a5632; margin: 0; font-size: 24px;">Thank You for Volunteering!</h2>
+          </div>
+          <p style="font-size: 16px; color: #333;">Dear <strong>${name}</strong>,</p>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            We have successfully received your volunteer application. We are thrilled that you want to join our mission!
+          </p>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            Our team is currently reviewing your details and will get back to you soon regarding the next steps.
+          </p>
+          <br/>
+          <p style="font-size: 15px; color: #333; font-weight: bold; margin-bottom: 0;">Warm regards,</p>
+          <p style="font-size: 15px; color: #1a5632; margin-top: 5px;">The IOCA Team</p>
+        </div>
+      `
+    });
+  } catch (error) {
+    console.error('Failed to send volunteer autoresponder email:', error);
   }
 }
 

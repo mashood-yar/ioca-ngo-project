@@ -4,7 +4,7 @@ import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
-import { sendContactNotification } from '../_lib/email'
+import { sendContactNotification, sendContactAutoresponder } from '../_lib/email'
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -45,11 +45,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) throw new Error(error.message)
 
-      // Send email notification (must be awaited in serverless environments)
+      // Send email notifications (must be awaited in serverless environments)
       try {
-        await sendContactNotification(validatedData.name, validatedData.email, 'IOCA Website Contact Submission', validatedData.message)
+        await Promise.all([
+          sendContactNotification(validatedData.name, validatedData.email, 'IOCA Website Contact Submission', validatedData.message),
+          sendContactAutoresponder(validatedData.name, validatedData.email)
+        ])
       } catch (e) {
-        console.error('Failed to send contact notification email:', e)
+        console.error('Failed to send contact emails:', e)
       }
 
       return ok(res, data, 201)
