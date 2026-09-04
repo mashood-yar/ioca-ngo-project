@@ -177,8 +177,11 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
         );
         if (success && data?.id) {
           setDonationId(data.id);
+          setStep(4); // C3 Fix: Only advance on success
+        } else {
+          // C3 Fix: Show error toast instead of silently trapping user
+          window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to save donation. Please try again.', variant: 'error' } }));
         }
-        setStep(4);
       } else if (step === 3 && paymentMethod === 'online') {
         setStep(4); // go to checkout
       } else {
@@ -550,7 +553,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                           maxLength={19}
                           value={cardNumber}
                           onChange={e => setCardNumber(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 rounded-lg border border-brand-navy/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-teal outline-none transition-all font-mono"
+                          className="w-full ps-10 pe-4 py-3 rounded-lg border border-brand-navy/20 focus:border-brand-gold focus:ring-1 focus:ring-brand-teal outline-none transition-all font-mono"
                         />
                       </div>
                     </div>

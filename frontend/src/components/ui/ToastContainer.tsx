@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Toast, type ToastVariant } from './Toast';
 
@@ -31,9 +31,12 @@ export const ToastContainer: React.FC = () => {
     return () => window.removeEventListener('app-toast', handleToast);
   }, []);
 
-  const removeToast = (id: string) => {
+  // M4: useCallback prevents a new reference on every render, which would reset
+  // the auto-dismiss timer of all existing toasts every time a new one is added.
+  const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
-  };
+  }, []);
+
 
   return (
     <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none">

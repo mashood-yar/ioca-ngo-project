@@ -24,6 +24,7 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
   const [selectedImage, setSelectedImage] = useState<GalleryDBItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [galleryItems, setGalleryItems] = useState<GalleryDBItem[]>([]);
+  const [fetchError, setFetchError] = useState('');
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
@@ -32,13 +33,14 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
       try {
         const { data, error } = await fetchApi<GalleryDBItem[]>('/gallery');
         if (data) setGalleryItems(data);
-        if (error) console.error(error);
+        if (error) setFetchError(isUrdu ? 'گیلری لوڈ نہیں ہو سکی' : 'Failed to load gallery');
       } finally {
         setLoading(false);
       }
     };
     loadGallery();
-  }, []);
+  }, [isUrdu]);
+
 
   // Compute unique categories
   const categories = React.useMemo(() => {
@@ -128,6 +130,11 @@ const Gallery: React.FC<GalleryProps> = ({ isUrdu }) => {
                   <div key={i} className="rounded-xl bg-brand-navy/10 animate-pulse aspect-square shadow-sm border border-brand-navy/5" />
                 ))}
               </>
+            ) : fetchError ? (
+              <div className="col-span-2 md:col-span-3 lg:col-span-4 text-center py-16">
+                <p className="text-red-500 mb-3">{fetchError}</p>
+                <button onClick={() => { setFetchError(''); setLoading(true); fetchApi<GalleryDBItem[]>('/gallery').then(({ data, error }) => { if (data) setGalleryItems(data); if (error) setFetchError(isUrdu ? 'گیلری لوڈ نہیں ہو سکی' : 'Failed to load gallery'); }).finally(() => setLoading(false)); }} className="text-brand-teal underline text-sm">{isUrdu ? 'دوبارہ کوشش کریں' : 'Try again'}</button>
+              </div>
             ) : (
             filtered.map((item, idx) => (
               <motion.button

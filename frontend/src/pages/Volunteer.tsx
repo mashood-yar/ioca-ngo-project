@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Heart, CheckCircle2, Briefcase, Clock, Users } from 'lucide-react';
+import { fetchApi } from '../lib/apiClient';
 
 interface VolunteerProps {
   isUrdu: boolean;
@@ -54,12 +55,13 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-    // Clear error on change
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
@@ -76,13 +78,31 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    // TODO: Backend dev to integrate volunteer registration API endpoint here
-    console.log('Volunteer form data:', formData);
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError('');
+    const { error } = await fetchApi('/volunteers', {
+      method: 'POST',
+      body: JSON.stringify({
+        full_name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        city: formData.city,
+        availability: formData.availability,
+        skills: formData.program,
+        motivation: formData.message,
+      }),
+    });
+    setIsSubmitting(false);
+    if (error) {
+      setSubmitError(isUrdu ? 'کچھ غلط ہو گیا۔ دوبارہ کوشش کریں۔' : 'Something went wrong. Please try again.');
+    } else {
+      setIsSubmitted(true);
+    }
   };
+
 
   const benefits = [
     { icon: Heart, titleEn: 'Make a Difference', titleUr: 'فرق ڈالیں', descEn: 'Directly impact the lives of those in need.', descUr: 'ضرورت مندوں کی زندگیوں پر براہ راست اثر ڈالیں۔' },
@@ -282,12 +302,19 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                 </div>
                 {errors.agreeTerms && <p className="text-red-500 text-xs">{errors.agreeTerms}</p>}
 
+                {submitError && (
+                  <p className="text-red-500 text-sm text-center bg-red-50 border border-red-200 rounded-lg py-2 px-3">{submitError}</p>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full bg-brand-teal text-brand-white font-bold py-4 rounded-xl text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-brand-teal/20"
+                  disabled={isSubmitting}
+                  className="w-full bg-brand-teal text-brand-white font-bold py-4 rounded-xl text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-brand-teal/20 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <Heart className="w-5 h-5" />
-                  {isUrdu ? 'رضاکارانہ درخواست بھیجیں' : 'Submit Application'}
+                  {isSubmitting
+                    ? (isUrdu ? 'بھیج رہے ہیں...' : 'Submitting...')
+                    : (isUrdu ? 'رضاکارانہ درخواست بھیجیں' : 'Submit Application')}
                 </button>
               </form>
             )}

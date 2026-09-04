@@ -14,13 +14,18 @@ interface AboutProps {
 const About: React.FC<AboutProps> = ({ isUrdu }) => {
   const [team, setTeam] = React.useState<Personnel[]>([]);
   const [teamLoading, setTeamLoading] = React.useState(true);
+  const [teamError, setTeamError] = React.useState(false);
 
   React.useEffect(() => {
     fetchApi<Personnel[]>('/team')
-      .then(({ data }) => setTeam(data || []))
-      .catch(console.error)
+      .then(({ data, error }) => {
+        if (error) setTeamError(true);
+        else setTeam(data || []);
+      })
+      .catch(() => setTeamError(true))
       .finally(() => setTeamLoading(false));
   }, []);
+
 
   const values = [
     {
@@ -192,6 +197,11 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {teamLoading ? (
               <p className="text-center col-span-2 lg:col-span-3 text-brand-navy/50">Loading team...</p>
+            ) : teamError ? (
+              <div className="text-center col-span-2 lg:col-span-3 py-8">
+                <p className="text-red-500 mb-3">{isUrdu ? 'ٹیم لوڈ نہیں ہو سکی' : 'Failed to load team members'}</p>
+                <button onClick={() => { setTeamError(false); setTeamLoading(true); fetchApi<Personnel[]>('/team').then(({ data, error }) => { if (error) setTeamError(true); else setTeam(data || []); }).catch(() => setTeamError(true)).finally(() => setTeamLoading(false)); }} className="text-brand-teal underline text-sm">{isUrdu ? 'دوبارہ کوشش کریں' : 'Try again'}</button>
+              </div>
             ) : team.length === 0 ? (
               <p className="text-center col-span-2 lg:col-span-3 text-brand-navy/50">No team members found.</p>
             ) : (

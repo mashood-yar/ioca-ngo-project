@@ -33,12 +33,16 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-2xl'
         onClick={onClose}
       />
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         className={`relative w-full ${maxWidth} bg-white rounded-xl shadow-2xl flex flex-col max-h-[90vh] animate-scale-up`}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+          <h2 id="modal-title" className="text-xl font-semibold text-gray-900">{title}</h2>
           <button
             onClick={onClose}
+            aria-label="Close dialog"
             className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
@@ -51,3 +55,4 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-2xl'
     </div>
   );
 }
+

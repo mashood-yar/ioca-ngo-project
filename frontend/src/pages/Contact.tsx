@@ -357,21 +357,6 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
               )}
             </motion.div>
           </div>
-
-          {/* Map Placeholder */}
-          <motion.div
-            className="mt-12 bg-brand-white rounded-xl overflow-hidden shadow-md h-64 md:h-80 flex items-center justify-center border border-brand-navy/5"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            {/* TODO: Replace with actual Google Maps embed */}
-            <div className="text-center text-brand-navy/30">
-              <MapPin className="w-10 h-10 mx-auto mb-3" />
-              <p className="font-medium">{isUrdu ? 'نقشہ یہاں ظاہر ہوگا' : 'Map will be displayed here'}</p>
-              <p className="text-sm mt-1">IOCA Head Office, Lahore, Pakistan</p>
-            </div>
-          </motion.div>
         </div>
       </div>
     </>

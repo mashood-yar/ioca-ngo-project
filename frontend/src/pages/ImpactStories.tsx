@@ -27,17 +27,21 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
   const [stories, setStories] = useState<Story[]>([]);
   const [expandedStory, setExpandedStory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
   const ref = useRef(null);
   const storyRefs = useRef<{ [key: string]: HTMLElement | null }>({});
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   React.useEffect(() => {
     fetchApi<Story[]>('/impact-stories')
-      .then(({ data }) => {
+      .then(({ data, error }) => {
         if (data) setStories(data);
+        if (error) setFetchError(isUrdu ? 'کہانیاں لوڈ نہیں ہو سکیں' : 'Failed to load stories');
       })
+      .catch(() => setFetchError(isUrdu ? 'کہانیاں لوڈ نہیں ہو سکیں' : 'Failed to load stories'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [isUrdu]);
+
 
   const toggleStory = (id: string) => {
     setExpandedStory(prev => {
@@ -101,6 +105,10 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
                   </div>
                 ))}
               </>
+            ) : fetchError ? (
+              <div className="text-center py-12">
+                <p className="text-red-500 mb-3">{fetchError}</p>
+              </div>
             ) : stories.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-brand-navy/60">No impact stories found.</p>

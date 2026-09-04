@@ -15,7 +15,7 @@ interface ProgramDetailsProps {
 const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
   const { id } = useParams<{ id: string }>();
   const [program, setProgram] = useState<Program | null>(null);
-  
+  const [relatedPrograms, setRelatedPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +27,9 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
           // Fetch all active programs for the "Related Programs" section
           const allRes = await fetchApi<Program[]>('/programs');
           if (allRes.data) {
-            
+            setRelatedPrograms(
+              allRes.data.filter(p => p.id !== data.id && p.status === 'active').slice(0, 3)
+            );
           }
         }
       } catch (err) {
@@ -48,10 +50,10 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
       <div className="min-h-[60vh] flex items-center justify-center text-center px-4">
         <div>
           <h1 className={`text-2xl font-bold text-brand-navy mb-3 ${isUrdu ? 'font-urduHeading' : ''}`}>
-            {isUrdu ? '??????? ???? ???' : 'Program not found'}
+            {isUrdu ? 'پروگرام نہیں ملا' : 'Program not found'}
           </h1>
           <Link to="/programs" className="text-brand-teal font-medium hover:underline">
-            {isUrdu ? '???? ???????? ??????' : 'View all programs'}
+            {isUrdu ? 'تمام پروگرامز دیکھیں' : 'View all programs'}
           </Link>
         </div>
       </div>
@@ -59,10 +61,11 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
   }
 
   const stats = [
-    { icon: Users, value: formatCompact(program.stats_beneficiaries, isUrdu), labelEn: 'Beneficiaries', labelUr: '????????' },
-    { icon: FolderOpen, value: formatCompact(program.stats_projects, isUrdu), labelEn: 'Projects', labelUr: '????????' },
-    { icon: UserCheck, value: formatCompact(program.stats_volunteers, isUrdu), labelEn: 'Volunteers', labelUr: '??????' },
+    { icon: Users, value: formatCompact(program.stats_beneficiaries, isUrdu), labelEn: 'Beneficiaries', labelUr: 'مستفیدین' },
+    { icon: FolderOpen, value: formatCompact(program.stats_projects, isUrdu), labelEn: 'Projects', labelUr: 'منصوبے' },
+    { icon: UserCheck, value: formatCompact(program.stats_volunteers, isUrdu), labelEn: 'Volunteers', labelUr: 'رضاکار' },
   ];
+
 
   return (
     <>
@@ -92,7 +95,7 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
               className="inline-flex items-center text-brand-white/80 hover:text-brand-teal transition-colors mb-8 group"
             >
               <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-              {isUrdu ? '???????? ?? ???? ?????' : 'Back to Programs'}
+              {isUrdu ? 'پروگرامز پر واپس جائیں' : 'Back to Programs'}
             </Link>
 
             <motion.div
@@ -128,13 +131,36 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
                 <div className={`prose prose-lg max-w-none prose-headings:text-brand-navy prose-p:text-brand-navy/70 prose-a:text-brand-teal hover:prose-a:text-brand-teal-dark ${isUrdu ? 'font-urduBody text-right text-xl leading-loose text-justify' : ''}`}>
                   <div dangerouslySetInnerHTML={{ __html: (isUrdu ? program.content_ur : program.content_en)?.replace(/\n/g, '<br/>') || '' }} />
                 </div>
+
+                {/* Related Programs */}
+                {relatedPrograms.length > 0 && (
+                  <div className="pt-8 border-t border-brand-navy/10">
+                    <h3 className={`text-2xl font-bold text-brand-navy mb-6 ${isUrdu ? 'font-urduHeading text-right' : ''}`}>
+                      {isUrdu ? 'متعلقہ پروگرامز' : 'Related Programs'}
+                    </h3>
+                    <div className="grid sm:grid-cols-3 gap-4">
+                      {relatedPrograms.map(rp => (
+                        <Link key={rp.id} to={`/programs/${rp.slug || rp.id}`} className="block group rounded-xl border border-brand-navy/10 overflow-hidden hover:border-brand-teal/40 transition-colors">
+                          {rp.image_url && (
+                            <img src={optimizeImage(rp.image_url, { width: 400 })} alt="" className="w-full h-28 object-cover group-hover:scale-105 transition-transform duration-300" />
+                          )}
+                          <div className="p-4">
+                            <p className={`font-semibold text-brand-navy text-sm leading-snug ${isUrdu ? 'font-urduBody text-right' : ''}`}>
+                              {isUrdu ? rp.title_ur : rp.title_en}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Sidebar */}
               <div className={`lg:col-span-1 ${isUrdu ? 'lg:order-1' : ''}`}>
                 <div className="bg-brand-white rounded-2xl shadow-xl shadow-brand-navy/5 border border-brand-navy/10 p-8 sticky top-24">
                   <h3 className={`text-xl font-bold text-brand-navy mb-8 pb-4 border-b border-brand-navy/10 ${isUrdu ? 'font-urduHeading text-right' : ''}`}>
-                    {isUrdu ? '??????? ?? ???' : 'Program Impact'}
+                    {isUrdu ? 'پروگرام کا اثر' : 'Program Impact'}
                   </h3>
                   <div className="space-y-8">
                     {stats.map((stat, idx) => (
@@ -157,7 +183,7 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
                       to="/donate"
                       className={`w-full block text-center py-4 px-6 bg-brand-teal hover:bg-brand-teal-dark text-white rounded-xl font-semibold transition-colors shadow-lg shadow-brand-teal/20 ${isUrdu ? 'font-urduBody text-lg' : ''}`}
                     >
-                      {isUrdu ? '?? ??????? ?? ????? ????' : 'Support This Program'}
+                      {isUrdu ? 'اس پروگرام کی مدد کریں' : 'Support This Program'}
                     </Link>
                   </div>
                 </div>
@@ -172,4 +198,5 @@ const ProgramDetails: React.FC<ProgramDetailsProps> = ({ isUrdu }) => {
 };
 
 export default ProgramDetails;
+
 

@@ -103,15 +103,25 @@ export function AdminLayout() {
 
       <div className="p-4 border-t border-white/10">
         <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-white/5">
-          <img 
-            src={user?.user_metadata?.avatar_url ? optimizeImage(user.user_metadata.avatar_url, { width: 80 }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.user_metadata?.full_name || 'Admin')}`} 
-            alt="Profile" 
-            className="w-8 h-8 rounded-full"
-            width={32}
-            height={32}
-            loading="lazy"
-            decoding="async"
-          />
+          {user?.user_metadata?.avatar_url ? (
+            <img 
+              src={optimizeImage(user.user_metadata.avatar_url, { width: 80 })}
+              alt="Profile" 
+              className="w-8 h-8 rounded-full"
+              width={32}
+              height={32}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-brand-teal flex items-center justify-center shrink-0" aria-hidden="true">
+              <span className="text-white text-xs font-bold">
+                {(user?.user_metadata?.full_name || user?.email || 'A')
+                  .split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+              </span>
+            </div>
+          )}
+
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate text-white">{user?.user_metadata?.full_name || 'Admin User'}</p>
             <p className="text-xs text-white/60 truncate">{user?.email}</p>

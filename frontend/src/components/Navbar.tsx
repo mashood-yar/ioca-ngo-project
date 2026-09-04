@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { optimizeImage } from '../lib/optimizeImage';
 import { useSiteSettings } from '../hooks/useSiteSettings';
+import { fetchApi } from '../lib/apiClient';
+import type { Program } from '../types';
 
 interface NavbarProps {
   isUrdu: boolean;
@@ -17,15 +19,26 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
   const [programSubLinks, setProgramSubLinks] = useState<{to: string, labelEn: string, labelUr: string}[]>([]);
   useEffect(() => {
-    fetch('/api/programs').then(r => r.json()).then(res => {
+    fetchApi<Program[]>('/programs').then(res => {
       if (res.data) {
-        setProgramSubLinks(res.data.filter((p: any) => p.status === 'active').map((p: any) => ({ to: `/programs/${p.id}`, labelEn: p.title_en, labelUr: p.title_ur })));
+        setProgramSubLinks(
+          res.data
+            .filter(p => p.status === 'active')
+            .map(p => ({ to: `/programs/${p.slug || p.id}`, labelEn: p.title_en, labelUr: p.title_ur }))
+        );
       }
-    }).catch(() => {});
+    });
   }, []);
   const location = useLocation();
   const programsRef = useRef<HTMLDivElement>(null);
   const programsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // M6: Clean up hover timer on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (programsTimerRef.current) clearTimeout(programsTimerRef.current);
+    };
+  }, []);
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMenu = () => {

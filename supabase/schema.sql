@@ -59,24 +59,68 @@ CREATE TABLE IF NOT EXISTS public.news (
 );
 
 -- 5. events table (NGO events)
+-- NOTE: Actual table has been extended via migrations. All columns are documented here.
 CREATE TABLE IF NOT EXISTS public.events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  location TEXT NOT NULL,
+  description TEXT,
+  location TEXT,
+  -- Event timing
   event_date TIMESTAMP WITH TIME ZONE,
+  end_date TIMESTAMP WITH TIME ZONE,
+  -- Media
   image_url TEXT,
+  -- Author
+  author_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  -- Online event support
+  is_online BOOLEAN DEFAULT FALSE,
+  meeting_url TEXT,
+  -- Capacity management
+  capacity INTEGER,
+  -- SEO-friendly slug (auto-generated on insert)
+  slug TEXT UNIQUE,
+  -- Visibility
+  is_published BOOLEAN DEFAULT TRUE,
+  -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+
 -- 6. projects table (NGO projects)
+-- NOTE: Actual table has been extended via migrations. All columns are documented here.
 CREATE TABLE IF NOT EXISTS public.projects (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  status TEXT DEFAULT 'ongoing',
+  -- Bilingual title and description
+  title_en TEXT NOT NULL,
+  title_ur TEXT,
+  desc_en TEXT,
+  desc_ur TEXT,
+  -- Legacy single-language columns (kept for backward compatibility)
+  title TEXT,
+  description TEXT,
+  -- Status: 'ongoing', 'upcoming', 'completed'
+  status TEXT DEFAULT 'ongoing' CHECK (status IN ('ongoing', 'upcoming', 'completed')),
+  -- Media
   image_url TEXT,
+  -- Progress (0-100)
+  progress INTEGER DEFAULT 0,
+  -- Fundraising
+  goal_amount NUMERIC DEFAULT 0,
+  raised_amount NUMERIC DEFAULT 0,
+  -- Dates
+  start_date DATE,
+  end_date DATE,
+  -- Location (bilingual)
+  location_en TEXT,
+  location_ur TEXT,
+  -- SEO-friendly slug (auto-generated from title_en on insert/update)
+  slug TEXT UNIQUE,
+  -- Sorting
+  sort_order INTEGER DEFAULT 0,
+  -- Categorization
+  category TEXT,
+  -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -322,4 +366,33 @@ CREATE POLICY "Allow public read access on impact_stories" ON public.impact_stor
 CREATE POLICY "Allow authenticated to insert impact_stories" ON public.impact_stories FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY "Allow authenticated to update impact_stories" ON public.impact_stories FOR UPDATE TO authenticated USING (true);
 CREATE POLICY "Allow authenticated to delete impact_stories" ON public.impact_stories FOR DELETE TO authenticated USING (true);
+
+-- ============================================================
+-- volunteers table — Volunteer applications submitted via /api/volunteers
+-- Run the CREATE TABLE in Supabase SQL Editor if not yet created.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.volunteers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT,
+  city TEXT,
+  availability TEXT,
+  skills TEXT,
+  motivation TEXT,
+  -- Admin-managed status: pending | reviewed | accepted | rejected
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed', 'accepted', 'rejected')),
+  admin_notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.volunteers ENABLE ROW LEVEL SECURITY;
+-- Anyone can submit an application
+CREATE POLICY "Anyone can submit volunteer application" ON public.volunteers FOR INSERT WITH CHECK (true);
+-- Only admins can read/update/delete (managed via service_role key in backend)
+
+CREATE INDEX IF NOT EXISTS idx_volunteers_status ON public.volunteers (status);
+CREATE INDEX IF NOT EXISTS idx_volunteers_created_at ON public.volunteers (created_at DESC);
+
 

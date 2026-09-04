@@ -102,7 +102,7 @@ const ImpactBentoGrid: React.FC<ImpactBentoGridProps> = ({ isUrdu }) => {
             ? [1, 2, 3].map(i => (
               <div key={i} className={`${i === 1 ? 'col-span-2' : 'col-span-1'} bg-brand-gray rounded-xl animate-pulse min-h-[150px] md:min-h-[220px]`} />
             ))
-            : stats.map((stat, idx) => {
+            : [...stats].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((stat, idx) => {
               const Icon = ICON_MAP[stat.icon] ?? HeartPulse;
               const style = COLOR_MAP[stat.color] ?? COLOR_MAP.teal;
               return (

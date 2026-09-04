@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { ShieldAlert, Users, Mail, Bell, HeartHandshake } from 'lucide-react';
+import { fetchApi } from '../lib/apiClient';
 
 interface DonatePageProps {
   isUrdu: boolean;
@@ -12,11 +13,22 @@ interface DonatePageProps {
 const DonatePage: React.FC<DonatePageProps> = ({ isUrdu }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscribeError, setSubscribeError] = useState('');
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      // In a real app, this would hit an API endpoint to save the email
+    if (!email) return;
+    setSubscribing(true);
+    setSubscribeError('');
+    const { error } = await fetchApi('/misc/newsletter', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+    setSubscribing(false);
+    if (error) {
+      setSubscribeError(isUrdu ? 'کچھ غلط ہو گیا۔ دوبارہ کوشش کریں۔' : 'Something went wrong. Please try again.');
+    } else {
       setSubscribed(true);
       setEmail('');
     }
@@ -123,12 +135,15 @@ const DonatePage: React.FC<DonatePageProps> = ({ isUrdu }) => {
                       />
                       <button
                         type="submit"
-                        className="bg-brand-navy text-white px-6 py-3 rounded-lg font-bold hover:bg-brand-navy/90 transition-colors whitespace-nowrap"
+                        disabled={subscribing}
+                        className="bg-brand-navy text-white px-6 py-3 rounded-lg font-bold hover:bg-brand-navy/90 transition-colors whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        {isUrdu ? 'سبسکرائب کریں' : 'Subscribe'}
+                        {subscribing ? '...' : (isUrdu ? 'سبسکرائب کریں' : 'Subscribe')}
                       </button>
                     </form>
                   )}
+                  {subscribeError && <p className="text-red-500 text-sm mt-2">{subscribeError}</p>}
+
                 </div>
               </div>
             </motion.div>

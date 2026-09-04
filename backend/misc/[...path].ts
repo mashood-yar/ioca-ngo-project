@@ -5,6 +5,7 @@ import { ok, err } from '../_lib/response'
 import { requireAuth, requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
 import { uploadBase64Image } from '../_lib/upload'
+import { Resend } from 'resend'
 import {
   sendApplicationConfirmation,
   sendNewApplicationNotification,
@@ -545,6 +546,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return ok(res, { ...application, ...updatePayload })
         }
       }
+    }
+
+
+    // === Newsletter Subscription ===
+    if (resource === 'newsletter' && req.method === 'POST') {
+      const schema = z.object({ email: z.string().email('Valid email is required') })
+      const { email } = schema.parse(req.body)
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@iocaworld.org'
+
+      await resend.emails.send({
+        from: fromEmail,
+        to: email,
+        subject: 'Welcome to IOCA Updates! 🌟',
+        html: `
+          <div style="font-family:'Segoe UI',sans-serif;max-width:600px;margin:0 auto;padding:30px;border:1px solid #eaeaea;border-radius:8px;">
+            <h2 style="color:#0e7490;margin:0 0 10px;">Thank you for subscribing!</h2>
+            <p style="color:#374151;font-size:15px;">You are now subscribed to updates from <strong>IOCA — International Organization For Community Advancement</strong>.</p>
+            <p style="color:#374151;font-size:14px;">We will keep you informed about our latest projects, impact stories, and upcoming events. Together, we can make a difference.</p>
+            <hr style="border:0;border-top:1px solid #eee;margin:20px 0;" />
+            <p style="color:#9ca3af;font-size:12px;">You received this because you subscribed at iocaworld.org. To unsubscribe, reply to this email.</p>
+          </div>
+        `,
+      })
+
+      // Also notify admin
+      try {
+        await resend.emails.send({
+          from: fromEmail,
+          to: fromEmail,
+          subject: `New Newsletter Subscriber: ${email}`,
+          html: `<p>New subscriber: <strong>${email}</strong></p>`,
+        })
+      } catch {}
+
+      return ok(res, { subscribed: true }, 201)
     }
 
     return err(res, 'Method not allowed', 405)
