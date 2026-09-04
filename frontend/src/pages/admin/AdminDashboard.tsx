@@ -29,12 +29,12 @@ export function AdminDashboard() {
           fetchApi<any[]>('/news'),
         ]);
 
-        const donations = donationsRes.data || [];
-        const queries = queriesRes.data || [];
+        const donations = (donationsRes.data as any)?.donations || (Array.isArray(donationsRes.data) ? donationsRes.data : []);
+        const queries = (queriesRes.data as any)?.contacts || (Array.isArray(queriesRes.data) ? queriesRes.data : []);
         
         setStats({
           members: membersRes.data?.length || 0,
-          donations: donations.reduce((sum, d) => sum + Number(d.amount || 0), 0),
+          donations: donations.reduce((sum: number, d: any) => sum + Number(d.amount || 0), 0),
           queries: queries.length,
           posts: newsRes.data?.length || 0,
         });

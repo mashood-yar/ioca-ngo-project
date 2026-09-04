@@ -26,8 +26,9 @@ export function AdminQueries() {
   const loadQueries = async () => {
     try {
       const endpoint = filter === 'all' ? '/contacts' : `/contacts?status=${filter}`;
-      const { data } = await fetchApi<Query[]>(endpoint);
-      if (data) setQueries(data);
+      const { data } = await fetchApi<{ contacts: Query[] }>(endpoint);
+      if (data && data.contacts) setQueries(data.contacts);
+      else if (Array.isArray(data)) setQueries(data);
     } catch (err) {
       console.error(err);
     } finally {
