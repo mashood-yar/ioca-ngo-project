@@ -37,15 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) throw error
       
-      const formatted = data.map(c => ({
-        id: c.id,
-        nameEn: c.name_en,
-        nameUr: c.name_ur,
-        slug: c.slug,
-        iconSvg: c.icon_svg,
-        sortOrder: c.sort_order
-      }))
-      return ok(res, formatted)
+      return ok(res, data)
     }
 
     // 2. POST /api/program-categories - Admin: create category

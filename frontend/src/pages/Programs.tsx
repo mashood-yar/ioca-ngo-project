@@ -75,7 +75,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                 >
                   <Link
-                    to={`/programs/${prog.id}`}
+                    to={`/programs/${prog.slug || prog.id}`}
                     className="group block bg-brand-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all h-full flex flex-col"
                   >
                     <div className="relative h-48 md:h-64 overflow-hidden shrink-0 bg-gray-100">

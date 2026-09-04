@@ -13,6 +13,7 @@ export interface ProgramCategory {
 
 export interface Program {
   id: string;
+  slug?: string;
   title_en: string;
   title_ur: string;
   desc_en: string;

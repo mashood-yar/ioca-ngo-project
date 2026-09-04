@@ -61,11 +61,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 2. GET /api/programs/:id — Public: get single program
     if (req.method === 'GET' && id) {
-      const { data: program, error } = await supabase
-        .from('programs')
-        .select('*, category:program_categories(*)')
-        .eq('id', id)
-        .single()
+      let query = supabase.from('programs').select('*, category:program_categories(*)');
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      
+      if (uuidRegex.test(id)) {
+        query = query.eq('id', id);
+      } else {
+        query = query.eq('slug', id);
+      }
+
+      const { data: program, error } = await query.single()
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -104,6 +109,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
           icon_url: iconUrl && iconUrl !== '' ? await processImageField(iconUrl) : null,
           hero_image_url: heroImageUrl && heroImageUrl !== '' ? await processImageField(heroImageUrl) : null,
+          slug: slugify(body.titleEn),
         })
         .select()
         .single()
@@ -120,7 +126,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const body: any = req.body
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
 
-      if (body.titleEn !== undefined) updates.title_en = body.titleEn
+      if (body.titleEn !== undefined) {
+        updates.title_en = body.titleEn
+        if (body.titleEn) updates.slug = slugify(body.titleEn)
+      }
       if (body.titleUr !== undefined) updates.title_ur = body.titleUr
       if (body.descEn !== undefined) updates.desc_en = body.descEn
       if (body.descUr !== undefined) updates.desc_ur = body.descUr
