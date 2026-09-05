@@ -67,7 +67,9 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
   };
 
   const activeLinkClass = (path: string) =>
-    isActive(path) ? 'text-brand-gold font-bold' : 'hover:text-brand-gold';
+    isActive(path) 
+      ? 'bg-[#f0f0f0] text-[#111] font-semibold px-4 py-2 rounded-full' 
+      : 'text-[#444] hover:bg-[#f4f4f4] hover:text-[#111] px-4 py-2 rounded-full font-medium';
 
   /** Keyboard handling for the Programs dropdown */
   const handleProgramsKeyDown = (e: React.KeyboardEvent) => {
@@ -119,13 +121,24 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
         role="navigation"
         aria-label={isUrdu ? 'مرکزی نیویگیشن' : 'Main navigation'}
       >
-        <div className="px-6 py-3 md:px-8 flex items-center justify-between">
-          <Link to="/" className="flex items-center" onClick={closeMenu}>
-            <img src={settings.logo_url} alt="IOCA Logo" className="h-10 md:h-12 w-auto object-contain" />
-          </Link>
+        <div className="px-4 py-2.5 md:px-6 md:py-3 flex items-center">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center" onClick={closeMenu}>
+              <img src={settings.logo_url} alt="IOCA Logo" className="h-10 md:h-11 w-auto object-contain" />
+            </Link>
+            
+            <div className="hidden md:block w-[1.5px] h-8 bg-gray-200 mx-5 flex-shrink-0" />
+            
+            <div className="hidden lg:flex flex-col text-[11.5px] font-medium text-gray-500 leading-[1.4] mr-8">
+              <span>{settings.contact_phone || '+92 300 0000000'}</span>
+              <a href={`mailto:${settings.contact_email || 'info@iocaworld.org'}`} className="hover:text-[#111] transition-colors">
+                {settings.contact_email || 'info@iocaworld.org'}
+              </a>
+            </div>
+          </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6 font-medium text-sm">
+          <div className="hidden xl:flex items-center gap-1 text-[14px] ml-auto">
             <Link to="/" className={`transition-colors ${activeLinkClass('/')}`}>
               {isUrdu ? 'ہوم' : 'Home'}
             </Link>
@@ -141,7 +154,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
               onMouseLeave={handleProgramsMouseLeave}
             >
               <button
-                className={`flex items-center gap-1 transition-colors py-2 ${activeLinkClass('/programs')}`}
+                className={`flex items-center gap-1 transition-colors ${activeLinkClass('/programs')}`}
                 onClick={() => setIsProgramsOpen(prev => !prev)}
                 onKeyDown={handleProgramsKeyDown}
                 aria-expanded={isProgramsOpen}
@@ -161,13 +174,13 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
-                    className="absolute top-full left-0 bg-white shadow-xl border border-brand-navy/5 rounded-xl py-2 w-48 flex flex-col z-50"
+                    className="absolute top-full left-0 bg-white shadow-xl border border-brand-navy/5 rounded-xl py-2 w-48 flex flex-col z-50 mt-2"
                   >
                     <Link
                       to="/programs"
                       onClick={closeMenu}
                       role="menuitem"
-                      className="px-4 py-2 hover:bg-brand-gray transition-colors font-semibold"
+                      className="px-4 py-2 hover:bg-gray-100 transition-colors font-semibold"
                     >
                       {isUrdu ? 'تمام پروگرامز' : 'All Programs'}
                     </Link>
@@ -177,7 +190,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
                         to={link.to}
                         onClick={closeMenu}
                         role="menuitem"
-                        className="px-4 py-2 hover:bg-brand-gray transition-colors"
+                        className="px-4 py-2 hover:bg-gray-100 transition-colors"
                       >
                         {isUrdu ? link.labelUr : link.labelEn}
                       </Link>
@@ -199,28 +212,21 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
             <Link to="/contact" className={`transition-colors ${activeLinkClass('/contact')}`}>
               {isUrdu ? 'رابطہ کریں' : 'Contact'}
             </Link>
-            <Link to="/volunteer" className={`text-brand-teal hover:text-brand-navy font-bold transition-colors ${isActive('/volunteer') ? 'text-brand-navy underline underline-offset-4' : ''}`}>
+            <Link to="/volunteer" className={`ml-2 bg-[#f0f0f0] text-[#111] hover:bg-[#e4e4e4] font-semibold px-5 py-2 rounded-full transition-colors`}>
               {isUrdu ? 'رضاکار' : 'Volunteer'}
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2 lg:ml-4">
             <button
               onClick={() => {
                 setIsUrdu(!isUrdu);
                 closeMenu();
               }}
-              className="text-sm font-semibold min-h-[44px] min-w-[44px] flex items-center justify-center rounded-md hover:bg-brand-navy/5 transition-colors"
+              className="text-sm font-semibold min-h-[40px] min-w-[40px] flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
               aria-label={isUrdu ? 'Switch to English' : 'اردو میں تبدیل کریں'}
             >
               {isUrdu ? 'EN' : 'اردو'}
-            </button>
-
-            <button
-              onClick={onDonateClick}
-              className="hidden md:flex bg-brand-teal text-brand-white px-6 py-2.5 min-h-[48px] items-center justify-center rounded-lg font-semibold hover:opacity-90 transition-all shadow-md shadow-brand-teal/20"
-            >
-              {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
             </button>
 
             {user ? (
@@ -399,17 +405,6 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
                     </button>
                   </>
                 )}
-
-                {/* Mobile Donate - calls onDonateClick instead of navigating */}
-                <button
-                  onClick={() => {
-                    closeMenu();
-                    onDonateClick();
-                  }}
-                  className="py-2 mt-2 bg-brand-teal text-brand-white rounded-xl text-center font-bold min-h-[48px]"
-                >
-                  {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
-                </button>
               </div>
             </motion.div>
           )}

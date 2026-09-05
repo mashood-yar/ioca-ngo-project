@@ -187,17 +187,6 @@ export function AdminSiteSettings() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Eyebrow (English)</label>
-                  <input type="text" value={formData.hero_eyebrow_en || ''} onChange={e => handleChange('hero_eyebrow_en', e.target.value)} className="w-full px-3 py-2 border rounded-md" />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Eyebrow (Urdu)</label>
-                  <input type="text" value={formData.hero_eyebrow_ur || ''} onChange={e => handleChange('hero_eyebrow_ur', e.target.value)} className="w-full px-3 py-2 border rounded-md" dir="rtl" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Headline (English)</label>
                   <input type="text" value={formData.hero_headline_en || ''} onChange={e => handleChange('hero_headline_en', e.target.value)} className="w-full px-3 py-2 border rounded-md" />
                 </div>
@@ -359,24 +348,6 @@ export function AdminSiteSettings() {
                   </div>
               </div>
 
-              <hr />
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Hero Logo Icon (Shown in the Home Page Banner)</label>
-                <div className="flex items-center gap-4">
-                  <div className="p-4 bg-brand-navy rounded-lg border border-gray-200">
-                    {formData.hero_icon_url ? (
-                      <img src={optimizeImage(formData.hero_icon_url, { width: 200 })} alt="Hero Icon" className="h-12 object-contain" />
-                    ) : (
-                      <span className="text-white/50 text-sm">None</span>
-                    )}
-                  </div>
-                  <div>
-                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero_icon_url')} className="text-sm" />
-                    <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: 1:1 Square (e.g. 256x256)</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         )}
