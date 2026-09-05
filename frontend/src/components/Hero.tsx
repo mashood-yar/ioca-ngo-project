@@ -109,22 +109,9 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             
             {/* Left Column: Headline and supporting elements */}
             <div>
-              {/* Logo Icon */}
-              <motion.div className="mb-4" {...fadeUp(0.0)}>
-                <img src={settings.hero_icon_url ? optimizeImage(settings.hero_icon_url, { width: 200 }) : "/assets/logos/logo-icon-white.webp"} alt="" className="h-10 md:h-12 w-auto object-contain drop-shadow-md" aria-hidden="true" fetchPriority="high" decoding="sync" />
-              </motion.div>
-              
-              {/* Eyebrow */}
-              <motion.p
-                className={`text-[12px] font-semibold tracking-wider uppercase text-brand-gold mb-3 drop-shadow-md ${isUrdu ? "font-urduBody" : ""}`}
-                {...fadeUp(0.1)}
-              >
-                ✓ {isUrdu ? settings.hero_eyebrow_ur : settings.hero_eyebrow_en}
-              </motion.p>
-
               {/* Headline */}
               <motion.div className="mb-5" {...fadeUp(0.15)}>
-                <h1 className={`font-extrabold leading-[1.1] text-[40px] md:text-[56px] lg:text-[64px] text-white tracking-tight drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
+                <h1 className={`font-extrabold leading-[1.1] text-[36px] md:text-[46px] text-white tracking-tighter drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
                   {isUrdu ? settings.hero_headline_ur : settings.hero_headline_en}
                 </h1>
               </motion.div>
@@ -169,31 +156,6 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
 
           </div>
         </div>
-
-        {/* Slide Indicator Dots */}
-        {isSlideshow && (
-          <div
-            className={`absolute bottom-5 z-30 flex items-center gap-2.5 ${isUrdu ? 'right-4 md:right-16' : 'left-4 md:left-16'}`}
-            role="tablist"
-            aria-label={isUrdu ? 'سلائیڈ انڈیکیٹر' : 'Slide indicators'}
-          >
-            {slides.map((_: any, idx: number) => (
-              <button
-                key={idx}
-                role="tab"
-                aria-selected={idx === currentSlide}
-                aria-label={isUrdu ? `سلائیڈ ${idx + 1}` : `Slide ${idx + 1}`}
-                onClick={() => setCurrentSlide(idx)}
-                className={`transition-all duration-300 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold ${
-                  idx === currentSlide
-                    ? 'w-6 h-2 bg-brand-gold'
-                    : 'w-2 h-2 bg-brand-white/50 hover:bg-brand-white/80'
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
       </section>
 
       {/* Sticky bottom donation bar for mobile */}
