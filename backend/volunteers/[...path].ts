@@ -36,7 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'POST' && !id) {
       try {
         const validated = volunteerSchema.parse(req.body)
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('volunteers')
           .insert({
             full_name: validated.full_name,
@@ -48,8 +48,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             motivation: validated.motivation || null,
             status: 'pending',
           })
-          .select()
-          .single()
         if (error) throw new Error(error.message)
 
         try {
@@ -61,7 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           console.error('Failed to send volunteer emails:', e)
         }
 
-        return ok(res, data, 201)
+        return ok(res, { success: true }, 201)
       } catch (e: any) {
         return err(res, e.message || 'Server error', 500)
       }
