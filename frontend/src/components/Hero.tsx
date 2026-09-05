@@ -100,62 +100,73 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
         )}
 
         {/* Cinematic Gradient Overlays */}
-        <div className="absolute inset-0 bg-brand-navy/30 z-10 pointer-events-none" aria-hidden="true" />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/40 to-transparent z-10 pointer-events-none" aria-hidden="true" />
+        <div className="absolute inset-0 bg-black/50 z-10 pointer-events-none" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40 z-10 pointer-events-none" aria-hidden="true" />
         
         {/* Content Container */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:px-16 pt-32 pb-16 md:pt-12 md:pb-20 flex flex-col">
-          <div className={`w-full max-w-3xl ${isUrdu ? 'ml-auto text-right' : 'mr-auto text-left'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
+        <div className="relative z-20 w-full h-full max-w-7xl mx-auto px-6 md:px-16 pt-32 pb-16 md:pb-24 flex flex-col justify-end">
+          <div className={`w-full grid grid-cols-1 md:grid-cols-[1fr_minmax(280px,360px)] gap-8 md:gap-16 items-end ${isUrdu ? 'text-right' : 'text-left'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
             
-            {/* Logo Icon */}
-            <motion.div className={`w-full ${isUrdu ? 'flex justify-start' : 'flex justify-start'} mb-3 md:mb-4`} {...fadeUp(0.0)}>
-              <img src={settings.hero_icon_url ? optimizeImage(settings.hero_icon_url, { width: 200 }) : "/assets/logos/logo-icon-white.webp"} alt="" className="h-12 md:h-16 w-auto object-contain drop-shadow-lg" aria-hidden="true" fetchPriority="high" decoding="sync" />
-            </motion.div>
-            
-            {/* Eyebrow */}
-            <motion.p
-              className={`text-[11px] font-semibold tracking-[0.15em] uppercase text-brand-gold mb-3 drop-shadow-md ${isUrdu ? "font-urduBody" : ""}`}
-              {...fadeUp(0.1)}
-            >
-              ✓ {isUrdu ? settings.hero_eyebrow_ur : settings.hero_eyebrow_en}
-            </motion.p>
-
-            {/* Headline */}
-            <motion.div className="mb-2 md:mb-4" {...fadeUp(0.15)}>
-              <h1 className={`font-extrabold leading-[1.1] text-[28px] md:text-[36px] lg:text-[48px] text-brand-white tracking-tight drop-shadow-xl ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? settings.hero_headline_ur : settings.hero_headline_en}
-              </h1>
-              <span className={`block font-normal leading-snug text-[16px] md:text-[20px] lg:text-[26px] text-brand-white/90 mt-1.5 drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
-                {isUrdu ? settings.hero_subheadline_ur : settings.hero_subheadline_en}
-              </span>
-            </motion.div>
-
-            {/* Pills */}
-            <motion.div className={`flex flex-wrap gap-2 my-4 ${isUrdu ? 'justify-start' : 'justify-start'}`} {...fadeUp(0.2)}>
-              <span className={`text-[11px] text-brand-white border border-brand-white/30 bg-brand-white/10 backdrop-blur-md rounded-full px-3 py-1 ${isUrdu ? 'font-urduBody' : ''}`}>
-                ✓ {isUrdu ? 'شریعہ کمپلائنٹ' : 'Shariah Compliant'}
-              </span>
-              <span className={`text-[11px] text-brand-white border border-brand-white/30 bg-brand-white/10 backdrop-blur-md rounded-full px-3 py-1 ${isUrdu ? 'font-urduBody' : ''}`}>
-                ✓ {isUrdu ? 'زکوٰۃ اور صدقہ' : 'Zakat & Sadaqah Eligible'}
-              </span>
-            </motion.div>
-
-            {/* CTAs */}
-            <motion.div className={`flex items-center gap-4 mt-5 md:mt-6`} {...fadeUp(0.2)}>
-              <Link
-                to={settings.hero_cta_primary_url || '/donate'}
-                className="inline-flex items-center justify-center bg-brand-teal text-brand-white font-bold text-[15px] px-6 rounded-lg min-h-[48px] hover:bg-brand-white hover:text-brand-navy transition-all duration-300 whitespace-nowrap shadow-xl shadow-brand-teal/20"
-              >
-                {isUrdu ? settings.hero_cta_primary_text_ur : settings.hero_cta_primary_text_en}
-              </Link>
+            {/* Left Column: Headline and supporting elements */}
+            <div>
+              {/* Logo Icon */}
+              <motion.div className="mb-4" {...fadeUp(0.0)}>
+                <img src={settings.hero_icon_url ? optimizeImage(settings.hero_icon_url, { width: 200 }) : "/assets/logos/logo-icon-white.webp"} alt="" className="h-10 md:h-12 w-auto object-contain drop-shadow-md" aria-hidden="true" fetchPriority="high" decoding="sync" />
+              </motion.div>
               
-              <Link
-                to={settings.hero_cta_secondary_url || '/programs'}
-                className="text-brand-white font-medium text-[15px] hover:text-brand-gold transition-colors whitespace-nowrap drop-shadow-md"
+              {/* Eyebrow */}
+              <motion.p
+                className={`text-[12px] font-semibold tracking-wider uppercase text-brand-gold mb-3 drop-shadow-md ${isUrdu ? "font-urduBody" : ""}`}
+                {...fadeUp(0.1)}
               >
-                {isUrdu ? settings.hero_cta_secondary_text_ur : settings.hero_cta_secondary_text_en}
-              </Link>
+                ✓ {isUrdu ? settings.hero_eyebrow_ur : settings.hero_eyebrow_en}
+              </motion.p>
+
+              {/* Headline */}
+              <motion.div className="mb-5" {...fadeUp(0.15)}>
+                <h1 className={`font-extrabold leading-[1.1] text-[40px] md:text-[56px] lg:text-[64px] text-white tracking-tight drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
+                  {isUrdu ? settings.hero_headline_ur : settings.hero_headline_en}
+                </h1>
+              </motion.div>
+
+              {/* Badge Pills */}
+              <motion.div className="flex flex-wrap gap-2" {...fadeUp(0.2)}>
+                <span className={`text-[12px] font-medium text-white border border-white/20 bg-white/10 backdrop-blur-md rounded-full px-4 py-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
+                  ✓ {isUrdu ? 'شرعی اصولوں کے مطابق' : 'Shariah Compliant'}
+                </span>
+                <span className={`text-[12px] font-medium text-white border border-white/20 bg-white/10 backdrop-blur-md rounded-full px-4 py-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
+                  ✓ {isUrdu ? 'زکوٰۃ اور صدقہ کے اہل' : 'Zakat & Sadaqah Eligible'}
+                </span>
+              </motion.div>
+            </div>
+
+            {/* Right Column: Description and CTAs */}
+            <motion.div className="flex flex-col gap-6 md:pb-2" {...fadeUp(0.25)}>
+              <p className={`font-normal leading-relaxed text-[15px] md:text-[16px] text-white/80 drop-shadow-md ${isUrdu ? 'font-urduHeading' : ''}`}>
+                {isUrdu ? settings.hero_subheadline_ur : settings.hero_subheadline_en}
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  to={settings.hero_cta_primary_url || '/donate'}
+                  className={`inline-flex items-center justify-center bg-white text-brand-navy font-bold text-[14px] px-6 rounded-full min-h-[46px] hover:shadow-[0_8px_26px_rgba(0,0,0,0.26)] hover:-translate-y-[1px] transition-all duration-300 whitespace-nowrap ${isUrdu ? 'pr-2' : 'pl-6 pr-2'}`}
+                >
+                  <span className={isUrdu ? 'ml-3' : 'mr-3'}>{isUrdu ? settings.hero_cta_primary_text_ur : settings.hero_cta_primary_text_en}</span>
+                  <span className="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center flex-shrink-0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                  </span>
+                </Link>
+                
+                <Link
+                  to={settings.hero_cta_secondary_url || '/programs'}
+                  className="text-white font-medium text-[14px] hover:text-brand-gold transition-colors whitespace-nowrap drop-shadow-md"
+                >
+                  {isUrdu ? settings.hero_cta_secondary_text_ur : settings.hero_cta_secondary_text_en}
+                </Link>
+              </div>
             </motion.div>
+
           </div>
         </div>
 

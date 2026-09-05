@@ -115,11 +115,11 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
       </a>
 
       <nav
-        className="sticky top-0 z-50 bg-brand-white md:bg-brand-white/90 backdrop-blur-none md:backdrop-blur-md border-b border-brand-navy/10 will-change-transform"
+        className="fixed top-4 left-4 right-4 md:top-6 md:left-8 md:right-8 lg:left-12 lg:right-12 max-w-7xl xl:mx-auto z-[60] bg-brand-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] will-change-transform transition-all"
         role="navigation"
         aria-label={isUrdu ? 'مرکزی نیویگیشن' : 'Main navigation'}
       >
-        <div className="max-w-7xl mx-auto px-4 py-4 md:px-16 flex items-center justify-between">
+        <div className="px-6 py-3 md:px-8 flex items-center justify-between">
           <Link to="/" className="flex items-center" onClick={closeMenu}>
             <img src={settings.logo_url} alt="IOCA Logo" className="h-10 md:h-12 w-auto object-contain" />
           </Link>
