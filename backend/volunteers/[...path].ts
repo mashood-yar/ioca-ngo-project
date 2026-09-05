@@ -34,33 +34,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === 'POST' && !id) {
-      const validated = volunteerSchema.parse(req.body)
-      const { data, error } = await supabase
-        .from('volunteers')
-        .insert({
-          full_name: validated.full_name,
-          email: validated.email,
-          phone: validated.phone || null,
-          city: validated.city || null,
-          availability: validated.availability || null,
-          skills: validated.skills || null,
-          motivation: validated.motivation || null,
-          status: 'pending',
-        })
-        .select()
-        .single()
-      if (error) throw new Error(error.message)
-
       try {
-        await Promise.all([
-          sendVolunteerNotification(validated.full_name, validated.email, validated.city, validated.skills),
-          sendVolunteerAutoresponder(validated.full_name, validated.email)
-        ])
-      } catch (e) {
-        console.error('Failed to send volunteer emails:', e)
-      }
+        const validated = volunteerSchema.parse(req.body)
+        const { data, error } = await supabase
+          .from('volunteers')
+          .insert({
+            full_name: validated.full_name,
+            email: validated.email,
+            phone: validated.phone || null,
+            city: validated.city || null,
+            availability: validated.availability || null,
+            skills: validated.skills || null,
+            motivation: validated.motivation || null,
+            status: 'pending',
+          })
+          .select()
+          .single()
+        if (error) throw new Error(error.message)
 
-      return ok(res, data, 201)
+        try {
+          await Promise.all([
+            sendVolunteerNotification(validated.full_name, validated.email, validated.city, validated.skills),
+            sendVolunteerAutoresponder(validated.full_name, validated.email)
+          ])
+        } catch (e) {
+          console.error('Failed to send volunteer emails:', e)
+        }
+
+        return ok(res, data, 201)
+      } catch (e: any) {
+        return err(res, e.message || 'Server error', 500)
+      }
     }
 
     if (req.method === 'GET' && !id) {
