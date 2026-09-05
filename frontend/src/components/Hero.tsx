@@ -67,7 +67,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
 
   return (
     <>
-      <section className="relative w-full min-h-[75vh] md:min-h-[calc(100vh-120px)] max-h-[850px] flex flex-col justify-end md:justify-center overflow-hidden bg-brand-navy">
+      <section className="relative w-full h-[100vh] min-h-[560px] max-h-[700px] overflow-hidden bg-[#1a1a1a]">
         
         {/* Background Images */}
         {isSlideshow ? (
@@ -104,8 +104,8 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40 z-10 pointer-events-none" aria-hidden="true" />
         
         {/* Content Container */}
-        <div className="relative z-20 w-full h-full max-w-7xl mx-auto px-6 md:px-16 pt-32 pb-16 md:pb-24 flex flex-col justify-end">
-          <div className={`w-full grid grid-cols-1 md:grid-cols-[1fr_minmax(280px,360px)] gap-8 md:gap-16 items-end ${isUrdu ? 'text-right' : 'text-left'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
+        <div className="relative z-20 w-full h-full max-w-7xl mx-auto px-6 md:px-12 pt-32 pb-12 flex flex-col justify-end">
+          <div className={`w-full grid grid-cols-1 md:grid-cols-[1fr_300px] gap-8 md:gap-14 items-end ${isUrdu ? 'text-right' : 'text-left'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
             
             {/* Left Column: Headline and supporting elements */}
             <div>
@@ -128,8 +128,8 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             </div>
 
             {/* Right Column: Description and CTAs */}
-            <motion.div className="flex flex-col gap-6 md:pb-2" {...fadeUp(0.25)}>
-              <p className={`font-normal leading-relaxed text-[15px] md:text-[16px] text-white/80 drop-shadow-md ${isUrdu ? 'font-urduHeading' : ''}`}>
+            <motion.div className="flex flex-col gap-6" {...fadeUp(0.25)}>
+              <p className={`font-normal leading-relaxed text-[13px] md:text-[14px] text-white/75 drop-shadow-md ${isUrdu ? 'font-urduHeading' : ''}`}>
                 {isUrdu ? settings.hero_subheadline_ur : settings.hero_subheadline_en}
               </p>
 
