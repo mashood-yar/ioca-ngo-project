@@ -84,7 +84,7 @@ export const AdminImpactStories: React.FC = () => {
       if (selectedFile) {
         const uploadResult = await upload(selectedFile, 'impact');
         if (uploadResult) {
-          imageUrl = uploadResult;
+          imageUrl = uploadResult.url;
         } else {
           throw new Error('Image upload failed');
         }
@@ -102,7 +102,7 @@ export const AdminImpactStories: React.FC = () => {
       };
 
       if (selectedStory) {
-        await fetchApi(/impact-stories/ + selectedStory.id, { method: 'PATCH', body: JSON.stringify(payload) });
+        await fetchApi('/impact-stories/' + selectedStory.id, { method: 'PATCH', body: JSON.stringify(payload) });
       } else {
         await fetchApi('/impact-stories', { method: 'POST', body: JSON.stringify(payload) });
       }
@@ -119,7 +119,7 @@ export const AdminImpactStories: React.FC = () => {
   const handleDelete = async () => {
     if (!selectedStory) return;
     try {
-      await fetchApi(/impact-stories/ + selectedStory.id, { method: 'DELETE' });
+      await fetchApi('/impact-stories/' + selectedStory.id, { method: 'DELETE' });
       setIsDeleteOpen(false);
       loadStories();
     } catch (error) {

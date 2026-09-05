@@ -27,17 +27,19 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
   const validateField = (name: string, value: string) => {
     let error = '';
     if (name === 'name' && !value.trim()) {
-      error = isUrdu ? 'نام درکار ہے' : 'Name is required';
+      error = isUrdu ? 'نام درج کرنا ضروری ہے' : 'Name is required';
     } else if (name === 'email') {
       if (!value.trim()) {
-        error = isUrdu ? 'ای میل درکار ہے' : 'Email is required';
+        error = isUrdu ? 'ای میل درج کرنا ضروری ہے' : 'Email is required';
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        error = isUrdu ? 'درست ای میل درج کریں' : 'Please enter a valid email';
+        error = isUrdu ? 'براہ کرم درست ای میل درج کریں' : 'Please enter a valid email';
       }
+    } else if (name === 'phone' && !value.trim()) {
+      error = isUrdu ? 'فون نمبر ضروری ہے' : 'Phone is required';
     } else if (name === 'subject' && !value) {
       error = isUrdu ? 'موضوع منتخب کریں' : 'Please select a subject';
     } else if (name === 'message' && !value.trim()) {
-      error = isUrdu ? 'پیغام درکار ہے' : 'Message is required';
+      error = isUrdu ? 'پیغام درج کریں' : 'Message is required';
     }
     
     setErrors(prev => ({ ...prev, [name]: error }));
@@ -280,12 +282,13 @@ const Contact: React.FC<ContactProps> = ({ isUrdu }) => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="contact-phone" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
-                        {isUrdu ? 'فون نمبر' : 'Phone'}
+                        {isUrdu ? 'فون نمبر' : 'Phone'} *
                       </label>
                       <input
                         id="contact-phone"
                         name="phone"
                         type="tel"
+                        required
                         value={formData.phone}
                         onChange={handleChange}
                         onBlur={handleBlur}
