@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Users, Plus, QrCode, Trash2, Link, Edit, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import { Users, Plus, QrCode, Trash2, Link, Edit, Image as ImageIcon, AlertCircle, Search } from 'lucide-react';
 import { PageLoadingSpinner } from '../../components/PageLoadingSpinner';
 import { optimizeImage } from '../../lib/optimizeImage';
 import { fetchApi } from '../../lib/apiClient';
@@ -15,6 +15,9 @@ export const AdminPersonnel: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
   
   const [formData, setFormData] = useState({
     category: 'employee',
@@ -129,6 +132,16 @@ export const AdminPersonnel: React.FC = () => {
     }
   };
 
+  const filteredPersonnel = personnel.filter(p => {
+    const matchesCategory = filterCategory === 'all' || p.category === filterCategory;
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = 
+      p.full_name?.toLowerCase().includes(searchLower) ||
+      p.phone?.toLowerCase().includes(searchLower) ||
+      p.email?.toLowerCase().includes(searchLower);
+    return matchesCategory && matchesSearch;
+  });
+
   if (loading && personnel.length === 0) return <PageLoadingSpinner />;
 
   return (
@@ -234,6 +247,35 @@ export const AdminPersonnel: React.FC = () => {
         </div>
       )}
 
+      {/* Search and Filters */}
+      <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="flex flex-wrap gap-2">
+          {['all', 'board', 'partner', 'employee', 'volunteer'].map(cat => (
+            <button
+              key={cat}
+              onClick={() => setFilterCategory(cat)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterCategory === cat
+                  ? 'bg-brand-navy text-white'
+                  : 'bg-white text-brand-navy/70 hover:bg-brand-gray border border-gray-200'
+              }`}
+            >
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+            </button>
+          ))}
+        </div>
+        <div className="relative w-full md:w-64">
+          <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search name or phone..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-teal/50"
+          />
+        </div>
+      </div>
+
       <div className="bg-white rounded-xl shadow border overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-brand-gray text-brand-navy/60 border-b text-sm">
@@ -246,7 +288,7 @@ export const AdminPersonnel: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y text-sm">
-            {personnel.map(p => (
+            {filteredPersonnel.map(p => (
               <tr key={p.id} className="hover:bg-brand-gray/50">
                 <td className="p-4 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-brand-navy/10 overflow-hidden flex items-center justify-center text-brand-navy font-bold">
@@ -297,9 +339,9 @@ export const AdminPersonnel: React.FC = () => {
                 </td>
               </tr>
             ))}
-            {personnel.length === 0 && (
+            {filteredPersonnel.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-brand-navy/50">No personnel found. Add someone to generate their ID.</td>
+                <td colSpan={5} className="p-8 text-center text-brand-navy/50">No personnel found matching the criteria.</td>
               </tr>
             )}
           </tbody>
