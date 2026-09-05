@@ -11,10 +11,9 @@ import type { Program } from '../types';
 interface NavbarProps {
   isUrdu: boolean;
   setIsUrdu: React.Dispatch<React.SetStateAction<boolean>>;
-  onDonateClick: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
   const [programSubLinks, setProgramSubLinks] = useState<{to: string, labelEn: string, labelUr: string}[]>([]);
