@@ -67,8 +67,8 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
 
   const activeLinkClass = (path: string) =>
     isActive(path) 
-      ? 'bg-[#f0f0f0] text-[#111] font-semibold px-4 py-2 rounded-full' 
-      : 'text-[#444] hover:bg-[#f4f4f4] hover:text-[#111] px-4 py-2 rounded-full font-medium';
+      ? 'text-[#111] font-bold whitespace-nowrap' 
+      : 'text-[#444] hover:text-[#111] font-medium whitespace-nowrap';
 
   /** Keyboard handling for the Programs dropdown */
   const handleProgramsKeyDown = (e: React.KeyboardEvent) => {
@@ -112,7 +112,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:bg-brand-teal focus:text-brand-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold focus:text-sm focus:shadow-lg"
       >
-        {isUrdu ? 'مواد پر جائیں' : 'Skip to main content'}
+        {isUrdu ? 'مرکزی مواد پر جائیں' : 'Skip to main content'}
       </a>
 
       <nav
@@ -128,7 +128,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
             
             <div className="hidden md:block w-[1.5px] h-8 bg-gray-200 mx-5 flex-shrink-0" />
             
-            <div className="hidden lg:flex flex-col text-[11.5px] font-medium text-gray-500 leading-[1.4] mr-8">
+            <div className="hidden lg:flex flex-col text-[11.5px] font-medium text-gray-500 leading-[1.4] mr-8 whitespace-nowrap">
               <span>{settings.contact_phone || '+92 300 0000000'}</span>
               <a href={`mailto:${settings.contact_email || 'info@iocaworld.org'}`} className="hover:text-[#111] transition-colors">
                 {settings.contact_email || 'info@iocaworld.org'}
@@ -137,7 +137,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden xl:flex items-center gap-1 text-[14px] ml-auto">
+          <div className="hidden xl:flex items-center gap-6 text-[14px] ml-auto">
             <Link to="/" className={`transition-colors ${activeLinkClass('/')}`}>
               {isUrdu ? 'ہوم' : 'Home'}
             </Link>
