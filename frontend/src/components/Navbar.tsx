@@ -121,20 +121,9 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
         aria-label={isUrdu ? 'مرکزی نیویگیشن' : 'Main navigation'}
       >
         <div className="px-4 py-2.5 md:px-6 md:py-3 flex items-center">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center" onClick={closeMenu}>
-              <img src={settings.logo_url} alt="IOCA Logo" className="h-10 md:h-11 w-auto object-contain" />
-            </Link>
-            
-            <div className="hidden md:block w-[1.5px] h-8 bg-gray-200 mx-5 flex-shrink-0" />
-            
-            <div className="hidden lg:flex flex-col text-[11.5px] font-medium text-gray-500 leading-[1.4] mr-8 whitespace-nowrap">
-              <span>{settings.contact_phone || '+92 300 0000000'}</span>
-              <a href={`mailto:${settings.contact_email || 'info@iocaworld.org'}`} className="hover:text-[#111] transition-colors">
-                {settings.contact_email || 'info@iocaworld.org'}
-              </a>
-            </div>
-          </div>
+          <Link to="/" className="flex items-center" onClick={closeMenu}>
+            <img src={settings.logo_url} alt="IOCA Logo" className="h-10 md:h-11 w-auto object-contain" />
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden xl:flex items-center gap-6 text-[14px] ml-auto">
