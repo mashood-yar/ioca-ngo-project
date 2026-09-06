@@ -116,7 +116,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
       </a>
 
       <nav
-        className="fixed top-4 left-4 right-4 md:top-6 md:left-8 md:right-8 lg:left-12 lg:right-12 max-w-7xl xl:mx-auto z-[60] bg-brand-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] will-change-transform transition-all"
+        className="fixed top-4 left-4 right-4 md:top-6 md:left-8 md:right-8 lg:left-12 lg:right-12 max-w-7xl xl:mx-auto z-[60] bg-white/90 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] will-change-transform transition-all"
         role="navigation"
         aria-label={isUrdu ? 'مرکزی نیویگیشن' : 'Main navigation'}
       >
