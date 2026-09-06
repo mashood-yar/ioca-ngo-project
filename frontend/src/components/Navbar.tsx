@@ -120,13 +120,14 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
         role="navigation"
         aria-label={isUrdu ? 'مرکزی نیویگیشن' : 'Main navigation'}
       >
-        <div className="px-4 py-2.5 md:px-6 md:py-3 flex items-center">
-          <Link to="/" className="flex items-center" onClick={closeMenu}>
+        <div className="px-4 py-2.5 md:px-6 md:py-3 flex items-center justify-between w-full">
+          {/* Logo (Left) */}
+          <Link to="/" className="flex items-center flex-shrink-0" onClick={closeMenu}>
             <img src={settings.logo_url} alt="IOCA Logo" className="h-10 md:h-11 w-auto object-contain" />
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden xl:flex items-center gap-6 text-[14px] ml-auto">
+          {/* Desktop Navigation (Center) */}
+          <div className="hidden xl:flex items-center justify-center gap-6 text-[14px] flex-1">
             <Link to="/" className={`transition-colors ${activeLinkClass('/')}`}>
               {isUrdu ? 'ہوم' : 'Home'}
             </Link>
@@ -205,7 +206,8 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 lg:ml-4">
+          {/* Action Buttons (Right) */}
+          <div className="flex items-center justify-end gap-2 lg:gap-4 flex-shrink-0">
             <button
               onClick={() => {
                 setIsUrdu(!isUrdu);
