@@ -26,11 +26,9 @@ const Footer: React.FC<FooterProps> = ({ isUrdu }) => {
               <img
                 src={settings.logo_url_white}
                 alt="IOCA Logo"
-                className="h-32 md:h-40 w-auto object-contain"
+                className="h-14 md:h-16 w-auto object-contain"
                 loading="lazy"
                 decoding="async"
-                width={160}
-                height={160}
               />
             </div>
             <p className={`text-brand-white/70 text-lg max-w-sm leading-relaxed mb-6 mx-auto md:mx-0 ${isUrdu ? 'font-urduBody' : ''}`}>
