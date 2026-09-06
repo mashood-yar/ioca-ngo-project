@@ -111,7 +111,7 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
             <div>
               {/* Headline */}
               <motion.div className="mb-5" {...fadeUp(0.15)}>
-                <h1 className={`font-extrabold leading-[1.1] text-[36px] md:text-[46px] text-white tracking-tighter drop-shadow-lg ${isUrdu ? 'font-urduHeading' : ''}`}>
+                <h1 className={`font-extrabold leading-[1.1] text-[36px] md:text-[46px] text-white tracking-tighter drop-shadow-lg whitespace-pre-line ${isUrdu ? 'font-urduHeading' : ''}`}>
                   {isUrdu ? settings.hero_headline_ur : settings.hero_headline_en}
                 </h1>
               </motion.div>

@@ -188,11 +188,11 @@ export function AdminSiteSettings() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Headline (English)</label>
-                  <input type="text" value={formData.hero_headline_en || ''} onChange={e => handleChange('hero_headline_en', e.target.value)} className="w-full px-3 py-2 border rounded-md" />
+                  <textarea rows={2} value={formData.hero_headline_en || ''} onChange={e => handleChange('hero_headline_en', e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" />
                 </div>
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Headline (Urdu)</label>
-                  <input type="text" value={formData.hero_headline_ur || ''} onChange={e => handleChange('hero_headline_ur', e.target.value)} className="w-full px-3 py-2 border rounded-md" dir="rtl" />
+                  <textarea rows={2} value={formData.hero_headline_ur || ''} onChange={e => handleChange('hero_headline_ur', e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" dir="rtl" />
                 </div>
               </div>
 
