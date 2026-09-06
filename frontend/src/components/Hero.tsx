@@ -140,14 +140,14 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
                   className={`inline-flex items-center justify-center bg-white text-brand-navy font-bold text-[14px] px-6 rounded-full min-h-[46px] hover:shadow-[0_8px_26px_rgba(0,0,0,0.26)] hover:-translate-y-[1px] transition-all duration-300 whitespace-nowrap ${isUrdu ? 'pr-2' : 'pl-6 pr-2'}`}
                 >
                   <span className={isUrdu ? 'ml-3' : 'mr-3'}>{isUrdu ? settings.hero_cta_primary_text_ur : settings.hero_cta_primary_text_en}</span>
-                  <span className="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center flex-shrink-0">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                  <span className="w-8 h-8 rounded-full bg-brand-teal flex items-center justify-center flex-shrink-0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
                   </span>
                 </Link>
                 
                 <Link
                   to={settings.hero_cta_secondary_url || '/programs'}
-                  className="text-white font-medium text-[14px] hover:text-brand-gold transition-colors whitespace-nowrap drop-shadow-md"
+                  className="text-white font-medium text-[14px] hover:text-brand-teal transition-colors whitespace-nowrap drop-shadow-md"
                 >
                   {isUrdu ? settings.hero_cta_secondary_text_ur : settings.hero_cta_secondary_text_en}
                 </Link>
