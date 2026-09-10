@@ -8,10 +8,27 @@ import { generateCustomQR } from '../../_lib/qrGenerator';
 import path from 'path';
 import * as crypto from 'crypto';
 
-function generateUid(category: string): string {
+async function getNextSequentialUid(category: string): Promise<string> {
   const prefix = category.toUpperCase().substring(0, 3);
-  const randomStr = crypto.randomBytes(4).toString('hex').toUpperCase();
-  return `${prefix}-${randomStr}`;
+  const { data } = await supabase
+    .from('personnel')
+    .select('uid')
+    .like('uid', `${prefix}-%`);
+
+  let maxNum = 0;
+  if (data) {
+    for (const row of data) {
+      const parts = row.uid.split('-');
+      if (parts.length === 2) {
+        const num = parseInt(parts[1], 10);
+        if (!isNaN(num) && num > maxNum) {
+          maxNum = num;
+        }
+      }
+    }
+  }
+  
+  return `${prefix}-${String(maxNum + 1).padStart(3, '0')}`;
 }
 
 async function handler(req: VercelRequest, res: VercelResponse) {
@@ -58,7 +75,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // Generate UID with collision retry
-      let uid = generateUid(category);
+      let uid = await getNextSequentialUid(category);
       let retries = 0;
       while (retries < 5) {
         const { data: existing } = await supabase
@@ -67,7 +84,11 @@ async function handler(req: VercelRequest, res: VercelResponse) {
           .eq('uid', uid)
           .maybeSingle();
         if (!existing) break;
-        uid = generateUid(category);
+        
+        // If collision, increment the number and try again
+        const parts = uid.split('-');
+        const currentNum = parseInt(parts[1], 10);
+        uid = `${parts[0]}-${String(currentNum + 1).padStart(3, '0')}`;
         retries++;
       }
 
@@ -99,6 +120,58 @@ async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) return err(res, 500, error.message);
       return ok(res, data);
+    }
+
+    if (req.method === 'POST' && route === 'migrate-uids') {
+      const { data: allPersonnel, error: fetchErr } = await supabase
+        .from('personnel')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (fetchErr) return err(res, 500, 'Error fetching personnel');
+      if (!allPersonnel || allPersonnel.length === 0) return ok(res, { message: 'No personnel to migrate' });
+
+      // Track sequences manually since we're processing all at once
+      const sequenceMap: Record<string, number> = {};
+
+      let migratedCount = 0;
+      const baseUrl = process.env.SITE_URL || 'https://iocaworld.org';
+      const logoPath = `${baseUrl}/assets/logos/logo-icon-white.webp`;
+
+      for (const person of allPersonnel) {
+        // Skip if already sequential (e.g. BOA-001)
+        if (/^[A-Z]{3}-\d{3}$/.test(person.uid)) {
+          const prefix = person.uid.split('-')[0];
+          const num = parseInt(person.uid.split('-')[1], 10);
+          sequenceMap[prefix] = Math.max(sequenceMap[prefix] || 0, num);
+          continue;
+        }
+
+        const prefix = person.category.toUpperCase().substring(0, 3);
+        const nextNum = (sequenceMap[prefix] || 0) + 1;
+        sequenceMap[prefix] = nextNum;
+        
+        const newUid = `${prefix}-${String(nextNum).padStart(3, '0')}`;
+
+        // Generate new QR code
+        const verifyUrl = `${baseUrl}/verify/${newUid}`;
+        const qrDataUrl = await generateCustomQR(verifyUrl, logoPath);
+        const { url: qr_code_url } = await uploadBase64Image(qrDataUrl, 'ioca/qrcodes');
+
+        // Update record
+        const { error: updateErr } = await supabase
+          .from('personnel')
+          .update({ uid: newUid, qr_code_url, updated_at: new Date().toISOString() })
+          .eq('id', person.id);
+
+        if (updateErr) {
+          console.error(`Failed to migrate ${person.id}:`, updateErr);
+        } else {
+          migratedCount++;
+        }
+      }
+
+      return ok(res, { message: `Successfully migrated ${migratedCount} UIDs.` });
     }
 
     if (req.method === 'PUT' && route) {

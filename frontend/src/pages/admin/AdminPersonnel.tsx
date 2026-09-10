@@ -13,6 +13,7 @@ export const AdminPersonnel: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [isMigrating, setIsMigrating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -41,6 +42,20 @@ export const AdminPersonnel: React.FC = () => {
       setPersonnel(data || []);
     }
     setLoading(false);
+  };
+
+  const handleMigrate = async () => {
+    if (!window.confirm('Are you sure you want to migrate all existing UIDs to the short sequential format? This will also regenerate their QR codes.')) return;
+    setIsMigrating(true);
+    setErrorMsg(null);
+    const { data, error } = await fetchApi<{ message: string }>('/admin/personnel/migrate-uids', { method: 'POST' });
+    if (error) {
+      setErrorMsg(error);
+    } else {
+      alert(data?.message || 'Migration complete.');
+      fetchPersonnel();
+    }
+    setIsMigrating(false);
   };
 
   useEffect(() => {
@@ -153,12 +168,21 @@ export const AdminPersonnel: React.FC = () => {
           </h1>
           <p className="text-brand-navy/50 text-sm">Manage Board Members, Partners, Employees, and Volunteers.</p>
         </div>
-        <button
-          onClick={handleAddNewClick}
-          className="bg-brand-teal text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-brand-teal/90"
-        >
-          <Plus className="w-5 h-5" /> Add Personnel
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleMigrate}
+            disabled={isMigrating}
+            className="bg-brand-gold text-brand-navy font-bold px-4 py-2 rounded-lg hover:bg-brand-gold/90 disabled:opacity-50"
+          >
+            {isMigrating ? 'Migrating...' : 'Migrate Old IDs'}
+          </button>
+          <button
+            onClick={handleAddNewClick}
+            className="bg-brand-teal text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-brand-teal/90"
+          >
+            <Plus className="w-4 h-4" /> Add New Personnel
+          </button>
+        </div>
       </div>
 
       {/* H-04: Visible error feedback */}
