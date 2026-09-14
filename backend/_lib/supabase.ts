@@ -15,9 +15,7 @@ function initSupabase() {
       autoRefreshToken: false,
       persistSession: false,
     },
-    realtime: {
-      transport: ws,
-    },
+    
   })
   return _supabase
 }
@@ -27,3 +25,4 @@ export const supabase = new Proxy({} as any, {
     return initSupabase()[prop]
   }
 })
+
