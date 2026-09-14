@@ -4,7 +4,7 @@ import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { optimizeImage } from '../lib/optimizeImage';
 import { fetchApi } from '../lib/apiClient';
-import type { Program, ProgramCategory } from '../types';
+import type { Program } from '../types';
 import { formatCompact } from '../utils/formatters';
 
 interface ProgramsProps {

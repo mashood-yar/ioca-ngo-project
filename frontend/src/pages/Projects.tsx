@@ -42,9 +42,11 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
     { key: 'completed' as const, labelEn: 'Completed', labelUr: 'مکمل' },
   ];
 
-  const filtered = activeFilter === 'all'
-    ? projects
-    : projects.filter(p => p.status === activeFilter);
+  const filtered = useMemo(() => {
+    return activeFilter === 'all'
+      ? projects
+      : projects.filter(p => p.status === activeFilter);
+  }, [activeFilter, projects]);
 
   return (
     <>
