@@ -89,7 +89,7 @@ export async function sendNewApplicationNotification(adminEmail: string, applica
   try {
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL!,
-      to: 'iocaworld.org@gmail.com',
+      to: (process.env.ADMIN_NOTIFICATION_EMAIL || 'iocaworld.org@gmail.com'),
       subject: `New membership application — ${applicantName}`,
       text: `A new membership application has been submitted.\n\nApplicant: ${applicantName}\nZone: ${zoneName}\nTier: ${tierName}\nSubmitted: ${new Date().toLocaleDateString()}\n\nReview it at:\n${process.env.CLIENT_URL}/admin/applications`,
     });
@@ -135,7 +135,7 @@ export async function sendContactNotification(
   try {
     await resend.emails.send({
       from: fromEmail,
-      to: 'iocaworld.org@gmail.com',
+      to: (process.env.ADMIN_NOTIFICATION_EMAIL || 'iocaworld.org@gmail.com'),
       reply_to: email,
       subject: `New Contact Submission: ${subject}`,
       html: `
@@ -198,7 +198,7 @@ export async function sendVolunteerNotification(
   try {
     await resend.emails.send({
       from: fromEmail,
-      to: 'iocaworld.org@gmail.com',
+      to: (process.env.ADMIN_NOTIFICATION_EMAIL || 'iocaworld.org@gmail.com'),
       reply_to: email,
       subject: `New Volunteer Application: ${name}`,
       html: `
@@ -446,7 +446,7 @@ export async function sendAdminDonationNotification(
   try {
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'noreply@iocaworld.org',
-      to: 'iocaworld.org@gmail.com',
+      to: (process.env.ADMIN_NOTIFICATION_EMAIL || 'iocaworld.org@gmail.com'),
       subject: `[IOCA] New Donation Confirmed - PKR ${Number(amount).toLocaleString('en-US')}`,
       html,
     });

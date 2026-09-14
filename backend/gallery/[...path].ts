@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .not('category', 'is', null)
 
       if (error) throw new Error(error.message)
-      const uniqueCategories = Array.from(new Set(data.map((item: any) => item.category)))
+      const uniqueCategories = Array.from(new Set(data.map((item: Record<string, string>) => item.category)))
       return ok(res, uniqueCategories.filter(Boolean))
     }
 

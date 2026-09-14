@@ -3,7 +3,7 @@ import type { VercelResponse } from '@vercel/node'
 export const ok = (res: VercelResponse, data: unknown, status = 200) =>
   res.status(status).json({ success: true, data })
 
-export const err = (res: VercelResponse, arg1: any, arg2?: any) => {
+export const err = (res: VercelResponse, arg1: unknown, arg2?: unknown) => {
   let status = 500;
   let message = 'Internal Server Error';
   

@@ -4,6 +4,7 @@ import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { getUser, requireAuth, requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
+import { applyRateLimit } from '../_lib/rateLimit'
 import { sendDonationThankYouEmail, sendAdminDonationNotification } from '../_lib/email'
 
 const donationSchema = z.object({
@@ -175,13 +176,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const { data, error } = await supabase
+      const page = parseInt(req.query.page as string || '1', 10)
+      const limit = parseInt(req.query.limit as string || '50', 10)
+      const offset = (page - 1) * limit
+
+      const { data, error, count } = await supabase
         .from('donations')
-        .select('*, projects(title)')
+        .select('*, projects(title)', { count: 'exact' })
         .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1)
 
       if (error) throw new Error(error.message)
-      return ok(res, data)
+      
+      return ok(res, {
+        donations: data,
+        meta: {
+          total: count || 0,
+          page,
+          limit,
+          totalPages: count ? Math.ceil(count / limit) : 0
+        }
+      })
     }
 
     // 5. GET /api/donations/:id — Admin: get single donation
@@ -207,6 +222,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 6. POST /api/donations — Public: create donation
     if (req.method === 'POST' && !first) {
+      if (!applyRateLimit(req, res)) return;
       const validatedData = donationSchema.parse(req.body)
 
       let userId = validatedData.userId || validatedData.user_id || null
@@ -225,7 +241,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const projectId = validatedData.project_id || validatedData.projectId || null
       const transactionId = validatedData.transaction_id || validatedData.transactionId || null
       const message = validatedData.message || null
-      const status = validatedData.status || 'pending'
+      const status = 'pending' // C-03: Forced for public submission to prevent auth bypass
 
       const { data, error } = await supabase
         .from('donations')
@@ -357,6 +373,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 8. POST /api/donations/:id/screenshot OR PUT /api/donations/:id — Upload/update screenshot
     if ((req.method === 'POST' && first && segments[1] === 'screenshot') || (req.method === 'PUT' && first)) {
+      const user = await requireAuth(req, res)
+      if (!user) return
+
+      const { data: existingDonation } = await supabase.from('donations').select('user_id').eq('id', first).single()
+      
+      if (existingDonation?.user_id !== user.id) {
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+        if (profile?.role !== 'admin') {
+          return err(res, 'Forbidden', 403)
+        }
+      }
+
       const validatedData = uploadScreenshotSchema.parse(req.body)
 
       const screenshotUrl = validatedData.screenshot_url || validatedData.screenshotUrl

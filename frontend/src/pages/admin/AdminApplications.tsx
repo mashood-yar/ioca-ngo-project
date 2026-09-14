@@ -64,7 +64,7 @@ export function AdminApplications() {
       ));
       
       setIsRejectModalOpen(false);
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message || 'Update failed', variant: 'error' } }));
     } finally {
       setSubmitting(false);

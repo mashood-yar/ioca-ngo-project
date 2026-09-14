@@ -4,6 +4,7 @@ import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
+import { applyRateLimit } from '../_lib/rateLimit'
 import { sendContactNotification, sendContactAutoresponder } from '../_lib/email'
 
 const contactSchema = z.object({
@@ -30,6 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === 'POST' && !id) {
+      if (!applyRateLimit(req, res)) return;
       // Public endpoint: create contact
       const validatedData = contactSchema.parse(req.body)
       const { data, error } = await supabase

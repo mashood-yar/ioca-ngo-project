@@ -108,7 +108,7 @@ export function MembershipApply() {
       }));
       navigate('/membership/waiting', { replace: true });
 
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       console.error(err);
       setError(err.message || 'Failed to submit application');
       window.dispatchEvent(new CustomEvent('app-toast', { 

@@ -1,4 +1,4 @@
-﻿import { fetchApi } from '../lib/apiClient';
+import { fetchApi } from '../lib/apiClient';
 import type { 
   Project, 
   Campaign, 

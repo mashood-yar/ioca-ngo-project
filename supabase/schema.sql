@@ -103,6 +103,7 @@ CREATE TABLE IF NOT EXISTS public.projects (
   status TEXT DEFAULT 'ongoing' CHECK (status IN ('ongoing', 'upcoming', 'completed')),
   -- Media
   image_url TEXT,
+  is_featured BOOLEAN DEFAULT false,
   -- Progress (0-100)
   progress INTEGER DEFAULT 0,
   -- Fundraising
@@ -339,9 +340,9 @@ CREATE TABLE IF NOT EXISTS public.testimonials (
 
 ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access on testimonials" ON public.testimonials FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated to insert testimonials" ON public.testimonials FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "Allow authenticated to update testimonials" ON public.testimonials FOR UPDATE TO authenticated USING (true);
-CREATE POLICY "Allow authenticated to delete testimonials" ON public.testimonials FOR DELETE TO authenticated USING (true);
+CREATE POLICY "Allow authenticated to insert testimonials" ON public.testimonials FOR INSERT TO authenticated WITH CHECK (false); /* M-04 Fixed */
+CREATE POLICY "Allow authenticated to update testimonials" ON public.testimonials FOR UPDATE TO authenticated USING (false); /* M-04 Fixed */
+CREATE POLICY "Allow authenticated to delete testimonials" ON public.testimonials FOR DELETE TO authenticated USING (false); /* M-04 Fixed */
 
 -- ==============================================================================
 -- Impact Stories Table
@@ -363,9 +364,9 @@ CREATE TABLE IF NOT EXISTS public.impact_stories (
 
 ALTER TABLE public.impact_stories ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access on impact_stories" ON public.impact_stories FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated to insert impact_stories" ON public.impact_stories FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "Allow authenticated to update impact_stories" ON public.impact_stories FOR UPDATE TO authenticated USING (true);
-CREATE POLICY "Allow authenticated to delete impact_stories" ON public.impact_stories FOR DELETE TO authenticated USING (true);
+CREATE POLICY "Allow authenticated to insert impact_stories" ON public.impact_stories FOR INSERT TO authenticated WITH CHECK (false); /* M-04 Fixed */
+CREATE POLICY "Allow authenticated to update impact_stories" ON public.impact_stories FOR UPDATE TO authenticated USING (false); /* M-04 Fixed */
+CREATE POLICY "Allow authenticated to delete impact_stories" ON public.impact_stories FOR DELETE TO authenticated USING (false); /* M-04 Fixed */
 
 -- ============================================================
 -- volunteers table — Volunteer applications submitted via /api/volunteers
@@ -395,4 +396,13 @@ CREATE POLICY "Anyone can submit volunteer application" ON public.volunteers FOR
 CREATE INDEX IF NOT EXISTS idx_volunteers_status ON public.volunteers (status);
 CREATE INDEX IF NOT EXISTS idx_volunteers_created_at ON public.volunteers (created_at DESC);
 
+
+
+-- M-05: Missing Indexes
+CREATE INDEX IF NOT EXISTS idx_donations_status ON public.donations (status);
+CREATE INDEX IF NOT EXISTS idx_donations_email ON public.donations (email);
+CREATE INDEX IF NOT EXISTS idx_donations_project_id ON public.donations (project_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_status ON public.contacts (status);
+CREATE INDEX IF NOT EXISTS idx_projects_slug ON public.projects (slug);
+CREATE INDEX IF NOT EXISTS idx_events_slug ON public.events (slug);
 

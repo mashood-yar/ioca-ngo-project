@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
-import ws from 'ws'
 
-let _supabase: any = null
+
+let _supabase: unknown = null
 
 function initSupabase() {
   if (_supabase) return _supabase

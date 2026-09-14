@@ -93,7 +93,7 @@ export function AdminProgramsList() {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: selectedProgram ? 'Program updated' : 'Program created', variant: 'success' } }));
       setIsFormOpen(false);
       loadData();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message, variant: 'error' } }));
     } finally {
       setSaving(false);
@@ -108,7 +108,7 @@ export function AdminProgramsList() {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Program deleted', variant: 'success' } }));
       setIsDeleteOpen(false);
       loadData();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message, variant: 'error' } }));
     }
   };

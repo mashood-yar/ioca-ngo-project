@@ -122,7 +122,7 @@ export function LoginPage() {
         setIsSignUp(false);
         setSuccess(null);
       }, 5000);
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       setError(err.message || 'An error occurred during sign up.');
     } finally {
       setLoading(false);
@@ -151,7 +151,7 @@ export function LoginPage() {
       setTimeout(() => {
         navigate(isAdminMode ? '/admin/dashboard' : redirectUrl);
       }, 1000);
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       setError(err.message || 'Failed to sign in. Please check your credentials.');
     } finally {
       setLoading(false);
@@ -177,7 +177,7 @@ export function LoginPage() {
       await resetPassword(email);
       setSuccess('Password reset link sent to your email. Please check your inbox.');
       e.currentTarget.reset();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       setError(err.message || 'Failed to send password reset email.');
     } finally {
       setLoading(false);
@@ -190,7 +190,7 @@ export function LoginPage() {
     try {
       const targetRedirect = isAdminMode ? '/admin/dashboard' : redirectUrl;
       await signInWithGoogle(targetRedirect);
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       setError(err.message || 'Failed to sign in with Google');
     }
   };

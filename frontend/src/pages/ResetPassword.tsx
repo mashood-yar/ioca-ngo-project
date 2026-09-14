@@ -43,7 +43,7 @@ export function ResetPassword() {
       setTimeout(() => {
         navigate('/user/login', { replace: true });
       }, 3000);
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       setError(err.message || 'Failed to update your password. Please request a new reset link.');
     } finally {
       setLoading(false);

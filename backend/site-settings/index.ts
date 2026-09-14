@@ -2,11 +2,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { requireAdmin } from '../_lib/auth'
-import { cors } from '../_lib/cors'
+import { allowCors } from '../_lib/cors'
 import { processImageField } from '../_lib/upload'
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (cors(req, res)) return
+async function handler(req: VercelRequest, res: VercelResponse) {
+
 
   try {
     // ── GET /api/site-settings ──────────────────────────────────────────────
@@ -40,19 +40,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Handle logo upload if base64 data URI is provided
       if (updates.logo_url && updates.logo_url.startsWith('data:image/')) {
-        const { url } = await processImageField(updates.logo_url, 'logos') as any
+        const url = await processImageField(updates.logo_url, 'logos')
         if (url) updates.logo_url = url
       }
       if (updates.logo_url_white && updates.logo_url_white.startsWith('data:image/')) {
-        const { url } = await processImageField(updates.logo_url_white, 'logos') as any
+        const url = await processImageField(updates.logo_url_white, 'logos')
         if (url) updates.logo_url_white = url
       }
       if (updates.favicon_url && updates.favicon_url.startsWith('data:image/')) {
-        const { url } = await processImageField(updates.favicon_url, 'logos') as any
+        const url = await processImageField(updates.favicon_url, 'logos')
         if (url) updates.favicon_url = url
       }
       if (updates.hero_icon_url && updates.hero_icon_url.startsWith('data:image/')) {
-        const { url } = await processImageField(updates.hero_icon_url, 'logos') as any
+        const url = await processImageField(updates.hero_icon_url, 'logos')
         if (url) updates.hero_icon_url = url
       }
 
@@ -78,3 +78,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return err(res, message)
   }
 }
+
+export default allowCors(handler);

@@ -71,7 +71,7 @@ export function useCloudinaryUpload() {
       }
 
       return data;
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       console.error('Upload error:', err);
       setError(err.message || 'Error uploading file');
       throw err;

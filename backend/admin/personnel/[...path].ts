@@ -5,8 +5,8 @@ import { err, ok } from '../../_lib/response';
 import { requireAdmin } from '../../_lib/auth';
 import { processImageField, uploadBase64Image } from '../../_lib/upload';
 import { generateCustomQR } from '../../_lib/qrGenerator';
-import path from 'path';
-import * as crypto from 'crypto';
+;
+;
 
 async function getNextSequentialUid(category: string): Promise<string> {
   const prefix = category.toUpperCase().substring(0, 3);
@@ -93,7 +93,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // H-03: Use environment variable for base URL instead of hardcoded domain
-      const baseUrl = process.env.SITE_URL || 'https://iocaworld.org';
+      const baseUrl = process.env.CLIENT_URL || 'https://www.iocaworld.org';
       const verifyUrl = `${baseUrl}/verify/${uid}`;
       const logoPath = `${baseUrl}/assets/logos/logo-icon-white.webp`;
       const qrDataUrl = await generateCustomQR(verifyUrl, logoPath);
@@ -135,7 +135,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       const sequenceMap: Record<string, number> = {};
 
       let migratedCount = 0;
-      const baseUrl = process.env.SITE_URL || 'https://iocaworld.org';
+      const baseUrl = process.env.CLIENT_URL || 'https://www.iocaworld.org';
       const logoPath = `${baseUrl}/assets/logos/logo-icon-white.webp`;
 
       for (const person of allPersonnel) {
@@ -193,7 +193,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
         profile_image_url = await processImageField(profile_image, 'ioca/personnel');
       }
 
-      const baseUrl = process.env.SITE_URL || 'https://iocaworld.org';
+      const baseUrl = process.env.CLIENT_URL || 'https://www.iocaworld.org';
       let qr_code_url = existingUser.qr_code_url;
       if (!qr_code_url && existingUser.uid) {
         const verifyUrlInner = `${baseUrl}/verify/${existingUser.uid}`;

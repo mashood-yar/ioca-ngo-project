@@ -14,11 +14,25 @@ const toIsoString = (val: unknown) => {
   return val;
 }
 
-const slugify = (text: string) => {
-  return text
+async function generateUniqueSlug(table: string, title: string, excludeId?: string): Promise<string> {
+  const baseSlug = title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '') + '-' + Math.floor(Math.random() * 1000)
+    .replace(/(^-|-$)/g, '');
+  
+  let slug = baseSlug;
+  let counter = 1;
+  while (true) {
+    let query = supabase.from(table).select('id').eq('slug', slug);
+    if (excludeId) query = query.neq('id', excludeId);
+    
+    const { data } = await query.maybeSingle();
+    if (!data) break; // Unique
+    
+    counter++;
+    slug = `${baseSlug}-${counter}`;
+  }
+  return slug;
 }
 
 const createProjectSchema = z.object({
@@ -142,7 +156,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           start_date: body.start_date || null,
           end_date: body.end_date || null,
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
-          slug: slugify(body.titleEn),
+          slug: await generateUniqueSlug('projects', body.titleEn, id),
         })
         .select()
         .single()
@@ -156,13 +170,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const body: any = req.body
+      const body = req.body as Record<string, unknown>
 
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
       if (body.titleEn !== undefined) {
         updates.title_en = body.titleEn
         updates.title = body.titleEn
-        if (body.titleEn) updates.slug = slugify(body.titleEn)
+        if (body.titleEn) updates.slug = await generateUniqueSlug('projects', body.titleEn, id)
       }
       if (body.titleUr !== undefined) updates.title_ur = body.titleUr
       if (body.descEn !== undefined) {

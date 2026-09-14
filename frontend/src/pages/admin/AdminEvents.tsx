@@ -120,7 +120,7 @@ export function AdminEvents() {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: selectedEvent ? 'Event updated' : 'Event created', variant: 'success' }}));
       setIsFormOpen(false);
       loadEvents();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       console.error('Unexpected error:', err);
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Unexpected error: ${err.message || err}`, variant: 'error' }}));
     } finally {

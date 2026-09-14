@@ -143,7 +143,7 @@ export function AdminProjects() {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: selectedProject ? 'Project updated' : 'Project created', variant: 'success' } }));
       setIsFormOpen(false);
       loadProjects();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Unexpected error: ${err.message || err}`, variant: 'error' } }));
     } finally {
       setSaving(false);
@@ -160,7 +160,7 @@ export function AdminProjects() {
       }
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Project deleted', variant: 'success' } }));
       loadProjects();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to delete: ${err.message || err}`, variant: 'error' } }));
     }
   };

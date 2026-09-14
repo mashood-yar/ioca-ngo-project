@@ -4,6 +4,7 @@ import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
+import { applyRateLimit } from '../_lib/rateLimit'
 import { sendVolunteerNotification, sendVolunteerAutoresponder } from '../_lib/email'
 
 const volunteerSchema = z.object({
@@ -34,6 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === 'POST' && !id) {
+      if (!applyRateLimit(req, res)) return;
       try {
         const validated = volunteerSchema.parse(req.body)
         const { error } = await supabase

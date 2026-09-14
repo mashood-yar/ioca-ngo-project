@@ -66,6 +66,7 @@ class ErrorBoundary extends React.Component<
 > {
   state = { hasError: false };
   static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error: any, errorInfo: any) { console.error('ErrorBoundary caught an error:', error, errorInfo); }
   render() {
     if (this.state.hasError) {
       const { isUrdu } = this.props;
@@ -185,7 +186,7 @@ function App() {
               <Route path="/projects/:id" element={<ProjectDetails isUrdu={isUrdu} />} />
               <Route path="/impact-stories" element={<ImpactStories isUrdu={isUrdu} />} />
               {/* H1-08: pass handleDonateClick with amount so DonatePage can pre-fill the modal */}
-              <Route path="/donate" element={<DonatePage isUrdu={isUrdu} onDonateClick={(amount, isMonthly) => handleDonateClick(null, amount, isMonthly)} />} />
+              <Route path="/donate" element={<DonatePage isUrdu={isUrdu} />} />
               <Route path="/volunteer" element={<Volunteer isUrdu={isUrdu} />} />
               <Route path="/gallery" element={<Gallery isUrdu={isUrdu} />} />
               <Route path="/news" element={<News isUrdu={isUrdu} />} />

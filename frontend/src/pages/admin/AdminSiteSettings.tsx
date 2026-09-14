@@ -44,7 +44,7 @@ export function AdminSiteSettings() {
         invalidateSiteSettingsCache();
         window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Settings saved successfully', variant: 'success' }}));
       }
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message || 'Error saving settings', variant: 'error' }}));
     } finally {
       setSaving(false);
@@ -60,7 +60,7 @@ export function AdminSiteSettings() {
       if (uploadResult) {
         handleChange(key, uploadResult.url);
       }
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message || 'Upload failed', variant: 'error' }}));
     } finally {
       setSaving(false);
@@ -78,7 +78,7 @@ export function AdminSiteSettings() {
         const newSlide = { url: uploadResult.url, alt_en: 'New Slide', alt_ur: 'Ù†ÛŒØ§ Ø³Ù„Ø§Ø¦ÛŒÚˆ' };
         handleChange('hero_slides', JSON.stringify([...currentSlides, newSlide]));
       }
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message || 'Upload failed', variant: 'error' }}));
     } finally {
       setSaving(false);

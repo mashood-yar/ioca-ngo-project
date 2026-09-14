@@ -91,7 +91,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ isUrdu }) => {
       <div className="container mx-auto px-4 max-w-5xl">
         <Link to="/projects" className="inline-flex items-center gap-2 text-brand-teal hover:text-brand-navy font-semibold mb-6 transition-colors">
           <ArrowLeft className={`w-4 h-4 ${isUrdu ? 'rotate-180' : ''}`} />
-          {isUrdu ? '???? ????????' : 'All Projects'}
+          {isUrdu ? '???? ??????' : 'All Projects'}
         </Link>
 
         <motion.div
@@ -123,66 +123,81 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ isUrdu }) => {
 
           <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-8">
-              <section>
+              <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
                 <h2 className="text-2xl font-bold text-brand-navy mb-4 border-b-2 border-brand-teal/20 pb-2 inline-block">
-                  {isUrdu ? '??????? ?? ???????' : 'Project Details'}
+                  {isUrdu ? 'منصوبے کی تفصیلات' : 'Project Details'}
                 </h2>
-                <div className="text-brand-gray-dark leading-relaxed whitespace-pre-wrap">
-                  {description}
-                </div>
-              </section>
+                <div 
+                  className={`prose max-w-none text-gray-700 leading-relaxed ${isUrdu ? 'font-urduBody text-xl text-right leading-loose' : ''}`}
+                  dangerouslySetInnerHTML={{ __html: description }} 
+                />
+              </div>
 
               {project.status !== 'completed' && (
-                <div className="bg-brand-teal/10 rounded-xl p-8 text-center border border-brand-teal/20">
-                  <h3 className="text-xl font-bold text-brand-navy mb-3">
-                    {isUrdu ? '????? ???? ?? ????? ????' : 'Support Our Cause'}
-                  </h3>
-                  <p className="text-brand-gray-dark mb-6">
-                    {isUrdu ? '?? ?? ???? ???????? ??? ????? ?????? ?? ???? ???' : 'Your donation can make a real difference in the communities.'}
-                  </p>
-                  <Link
-                    to="/donate"
-                    className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-brand-teal text-white font-bold rounded-lg shadow-md shadow-brand-teal/20 hover:opacity-90 transition-opacity"
-                  >
-                    <Heart className="w-5 h-5" />
-                    {isUrdu ? '???? ???? ????' : 'Donate Now'}
-                  </Link>
+                <div className="bg-brand-navy rounded-2xl p-8 shadow-lg text-white relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-8 opacity-10">
+                    <Heart className="w-32 h-32" />
+                  </div>
+                  <div className="relative z-10 max-w-lg">
+                    <h3 className="text-xl font-bold text-brand-teal mb-3">
+                      {isUrdu ? 'ہمارے مقصد کی حمایت کریں' : 'Support Our Cause'}
+                    </h3>
+                    <p className="text-gray-300 mb-6">
+                      {isUrdu ? 'آپ کا عطیہ کمیونٹی میں حقیقی تبدیلی لا سکتا ہے۔' : 'Your donation can make a real difference in the communities.'}
+                    </p>
+                    <Link
+                      to="/donate"
+                      className="inline-flex items-center gap-2 bg-brand-gold text-brand-navy px-6 py-3 rounded-xl font-bold hover:bg-white transition-colors"
+                    >
+                      <Heart className="w-5 h-5" />
+                      {isUrdu ? 'ابھی عطیہ کریں' : 'Donate Now'}
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
 
             <div className="space-y-6">
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <h3 className="text-lg font-bold text-brand-navy mb-4 pb-2 border-b border-gray-200">
-                  {isUrdu ? '???????' : 'Information'}
+                  {isUrdu ? 'معلومات' : 'Information'}
                 </h3>
                 
-                <ul className="space-y-4">
+                <div className="space-y-4">
                   {location && (
-                    <li className="flex items-start gap-3 text-brand-gray-dark">
-                      <MapPin className="w-5 h-5 text-brand-teal shrink-0 mt-0.5" />
-                      <span>{location}</span>
-                    </li>
+                    <div className="flex items-start gap-3">
+                      <div className="bg-brand-teal/10 p-2 rounded-lg text-brand-teal mt-1">
+                        <MapPin className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase font-semibold">{isUrdu ? 'مقام' : 'Location'}</div>
+                        <div className={`font-medium text-brand-navy ${isUrdu ? 'font-urduBody' : ''}`}>{location}</div>
+                      </div>
+                    </div>
                   )}
                   {startDate && (
-                    <li className="flex items-start gap-3 text-brand-gray-dark">
-                      <Calendar className="w-5 h-5 text-brand-teal shrink-0 mt-0.5" />
-                      <div>
-                        <div className="text-xs text-gray-500 uppercase font-semibold">{isUrdu ? '????' : 'Start Date'}</div>
-                        <div>{startDate}</div>
+                    <div className="flex items-start gap-3">
+                      <div className="bg-brand-teal/10 p-2 rounded-lg text-brand-teal mt-1">
+                        <Calendar className="w-5 h-5" />
                       </div>
-                    </li>
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase font-semibold">{isUrdu ? 'شروع کی تاریخ' : 'Start Date'}</div>
+                        <div className={`font-medium text-brand-navy ${isUrdu ? 'font-urduBody' : ''}`}>{startDate}</div>
+                      </div>
+                    </div>
                   )}
                   {endDate && (
-                    <li className="flex items-start gap-3 text-brand-gray-dark">
-                      <CheckCircle2 className="w-5 h-5 text-brand-teal shrink-0 mt-0.5" />
-                      <div>
-                        <div className="text-xs text-gray-500 uppercase font-semibold">{isUrdu ? '??????' : 'End Date'}</div>
-                        <div>{endDate}</div>
+                    <div className="flex items-start gap-3">
+                      <div className="bg-brand-gold/20 p-2 rounded-lg text-brand-gold mt-1">
+                        <Calendar className="w-5 h-5" />
                       </div>
-                    </li>
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase font-semibold">{isUrdu ? 'اختتامی تاریخ' : 'End Date'}</div>
+                        <div className={`font-medium text-brand-navy ${isUrdu ? 'font-urduBody' : ''}`}>{endDate}</div>
+                      </div>
+                    </div>
                   )}
-                </ul>
+                </div>
 
                 {project.progress !== undefined && project.progress !== null && project.progress > 0 && (
                   <div className="mt-8 pt-6 border-t border-gray-200">

@@ -12,17 +12,17 @@ interface ProgramsProps {
 }
 
 const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
-  const [programs, setPrograms] = useState<Program[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([
   
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [progRes] = await Promise.all([
-          fetchApi<Program[]>('/programs'),
-          fetchApi<ProgramCategory[]>('/program-categories')
-        ]);
+        const progRes = await 
+          fetchApi<Program[]>('/programs');
+          
+        
         if (progRes.data) setPrograms(progRes.data.filter(p => p.status === 'active'));
         
       } catch (err) {
@@ -32,7 +32,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
       }
     };
     loadData();
-  }, []);
+  }, [
 
   return (
     <>

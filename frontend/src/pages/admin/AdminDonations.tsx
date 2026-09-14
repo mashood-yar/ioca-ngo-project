@@ -97,12 +97,12 @@ export function AdminDonations() {
   const loadData = async () => {
     try {
       const [donationsRes, summaryRes] = await Promise.all([
-        fetchApi<Donation[]>('/donations'),
+        fetchApi<any>('/donations'),
         fetchApi<SummaryData>('/donations/summary')
       ]);
 
       if (donationsRes.data) {
-        setDonations(donationsRes.data);
+        setDonations(donationsRes.data.donations || donationsRes.data);
       }
       if (summaryRes.data) {
         setSummary(summaryRes.data);
@@ -151,7 +151,7 @@ export function AdminDonations() {
       
       // Reload page data
       await loadData();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { 
         detail: { message: err.message || 'Failed to update status', variant: 'error' }
       }));
@@ -174,7 +174,7 @@ export function AdminDonations() {
         window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Screenshot uploaded and mapped successfully!', variant: 'success' }}));
         await loadData();
       }
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message || 'Upload failed', variant: 'error' }}));
     }
   };

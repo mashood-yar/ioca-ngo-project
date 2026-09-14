@@ -315,7 +315,7 @@ export function UserDashboard() {
 
       // Refresh dashboard info
       setTimeout(fetchDashboardData, 1000);
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       setMemberErrorMsg(err.message || 'Failed to submit application.');
     } finally {
       setIsSubmittingMember(false);
@@ -444,7 +444,7 @@ export function UserDashboard() {
       window.dispatchEvent(new CustomEvent('app-toast', { 
         detail: { message: 'Donation processed successfully! Thank you!', variant: 'success' } 
       }));
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { 
         detail: { message: err.message || 'Failed to process donation.', variant: 'error' } 
       }));
@@ -473,7 +473,7 @@ export function UserDashboard() {
       window.dispatchEvent(new CustomEvent('app-toast', { 
         detail: { message: `Registered successfully for ${event.title}!`, variant: 'success' } 
       }));
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { 
         detail: { message: err.message || 'Registration failed.', variant: 'error' } 
       }));

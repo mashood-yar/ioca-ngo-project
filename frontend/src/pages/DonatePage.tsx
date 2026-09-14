@@ -7,7 +7,7 @@ import { fetchApi } from '../lib/apiClient';
 
 interface DonatePageProps {
   isUrdu: boolean;
-  onDonateClick: (amount: number | null, isMonthly?: boolean) => void;
+  ;
 }
 
 const DonatePage: React.FC<DonatePageProps> = ({ isUrdu }) => {

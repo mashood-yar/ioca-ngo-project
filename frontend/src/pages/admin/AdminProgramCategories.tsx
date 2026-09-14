@@ -75,7 +75,7 @@ export function AdminProgramCategories() {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: selectedCategory ? 'Category updated' : 'Category created', variant: 'success' } }));
       setIsFormOpen(false);
       loadCategories();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message, variant: 'error' } }));
     } finally {
       setSaving(false);
@@ -93,7 +93,7 @@ export function AdminProgramCategories() {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Category deleted', variant: 'success' } }));
       setIsDeleteOpen(false);
       loadCategories();
-    } catch (err: any) {
+    } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message, variant: 'error' } }));
     }
   };

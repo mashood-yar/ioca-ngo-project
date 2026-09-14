@@ -6,11 +6,25 @@ import { requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
 import { processImageField } from '../_lib/upload'
 
-const slugify = (text: string) => {
-  return text
+async function generateUniqueSlug(table: string, title: string, excludeId?: string): Promise<string> {
+  const baseSlug = title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '') + '-' + Math.floor(Math.random() * 1000)
+    .replace(/(^-|-$)/g, '');
+  
+  let slug = baseSlug;
+  let counter = 1;
+  while (true) {
+    let query = supabase.from(table).select('id').eq('slug', slug);
+    if (excludeId) query = query.neq('id', excludeId);
+    
+    const { data } = await query.maybeSingle();
+    if (!data) break; // Unique
+    
+    counter++;
+    slug = `${baseSlug}-${counter}`;
+  }
+  return slug;
 }
 
 const createProgramSchema = z.object({
@@ -87,7 +101,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const body: any = req.body
+      const body: any = createProgramSchema.parse(req.body)
       const imageUrl = body.image_url || body.image
       const iconUrl = body.icon_url || body.icon
       const heroImageUrl = body.hero_image_url || body.heroImage
@@ -109,7 +123,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
           icon_url: iconUrl && iconUrl !== '' ? await processImageField(iconUrl) : null,
           hero_image_url: heroImageUrl && heroImageUrl !== '' ? await processImageField(heroImageUrl) : null,
-          slug: slugify(body.titleEn),
+          slug: await generateUniqueSlug('programs', body.titleEn, id),
         })
         .select()
         .single()
@@ -123,12 +137,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const body: any = req.body
+      const body: any = createProgramSchema.parse(req.body)
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
 
       if (body.titleEn !== undefined) {
         updates.title_en = body.titleEn
-        if (body.titleEn) updates.slug = slugify(body.titleEn)
+        if (body.titleEn) updates.slug = await generateUniqueSlug('programs', body.titleEn, id)
       }
       if (body.titleUr !== undefined) updates.title_ur = body.titleUr
       if (body.descEn !== undefined) updates.desc_en = body.descEn

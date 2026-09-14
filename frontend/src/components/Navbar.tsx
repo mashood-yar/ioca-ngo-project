@@ -147,7 +147,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
                 onClick={() => setIsProgramsOpen(prev => !prev)}
                 onKeyDown={handleProgramsKeyDown}
                 aria-expanded={isProgramsOpen}
-                aria-haspopup="true"
+                aria-haspopup="menu"
                 aria-controls="programs-dropdown"
               >
                 {isUrdu ? 'پروگرامز' : 'Programs'}
@@ -225,7 +225,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal focus-visible:ring-offset-2 flex items-center justify-center rounded-full transition-transform hover:scale-105 ml-1 md:ml-2"
                   aria-expanded={isDropdownOpen}
-                  aria-label="User menu"
+                  aria-label="User menu"`n                  aria-haspopup="menu"
                 >
                   {avatarUrl ? (
                     <img src={optimizeImage(avatarUrl, { width: 80 })} alt={fullName} className="w-10 h-10 rounded-full object-cover border-2 border-brand-teal/30" width={40} height={40} loading="lazy" decoding="async" />

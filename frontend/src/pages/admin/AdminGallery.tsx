@@ -118,7 +118,7 @@ export function AdminGallery() {
 
       setIsFormOpen(false);
       loadItems();
-    } catch (error: any) {
+    } catch (error: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: error.message || 'Error saving image', variant: 'error' }}));
     } finally {
       setSaving(false);

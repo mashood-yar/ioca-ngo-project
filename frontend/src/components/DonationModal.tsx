@@ -63,7 +63,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
   // Reset state when opened and fetch projects
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      
       setStep(1);
       // H1-08: use initialAmount if provided, otherwise default to 5000
       setAmount(initialAmount ?? 5000);
