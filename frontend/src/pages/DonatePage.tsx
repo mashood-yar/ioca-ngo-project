@@ -7,7 +7,6 @@ import { fetchApi } from '../lib/apiClient';
 
 interface DonatePageProps {
   isUrdu: boolean;
-  ;
 }
 
 const DonatePage: React.FC<DonatePageProps> = ({ isUrdu }) => {

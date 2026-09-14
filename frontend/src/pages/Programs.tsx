@@ -12,7 +12,7 @@ interface ProgramsProps {
 }
 
 const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
-  const [programs, setPrograms] = useState<Program[]>([
+  const [programs, setPrograms] = useState<Program[]>([]);
   
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +32,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
       }
     };
     loadData();
-  }, [
+  }, []);
 
   return (
     <>
