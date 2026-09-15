@@ -90,7 +90,7 @@ const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
                   <Quote className={`w-6 h-6 md:w-8 md:h-8 mb-4 ${isTeal ? 'text-brand-white/50' : 'text-brand-gold'}`} aria-hidden="true" />
 
                   <blockquote className="relative z-10 flex-grow">
-                    <p className={`text-sm md:text-lg leading-relaxed italic ${isUrdu ? 'font-urduBody' : 'font-serif'}`}>
+                    <p className={`text-sm md:text-lg leading-relaxed ${isUrdu ? 'font-urduBody' : 'font-serif italic'}`}>
                       {isUrdu ? t.quote_ur : t.quote_en}
                     </p>
                   </blockquote>

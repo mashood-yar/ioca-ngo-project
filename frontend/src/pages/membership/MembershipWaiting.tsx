@@ -56,7 +56,7 @@ export function MembershipWaiting() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-brand-teal/20 border-t-brand-teal rounded-full animate-spin" />
       </div>
     );
   }
@@ -69,7 +69,7 @@ export function MembershipWaiting() {
         
         {application.status === 'pending' && (
           <>
-            <Clock className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
+            <Clock className="w-12 h-12 text-brand-teal mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Application submitted</h1>
             <p className="text-gray-500 mb-6">
               Your membership application has been received and is awaiting review by the IOCA admin team. We will notify you by email once a decision has been made.
@@ -145,7 +145,7 @@ export function MembershipWaiting() {
           {(application.status === 'pending' || application.status === 'under_review') && (
             <button 
               onClick={() => navigate('/dashboard')}
-              className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors"
+              className="w-full bg-brand-teal text-white font-medium py-3 rounded-xl hover:bg-brand-teal-dark transition-colors"
             >
               Back to Dashboard
             </button>
@@ -164,7 +164,7 @@ export function MembershipWaiting() {
             <div className="flex gap-3">
               <button 
                 onClick={handleReapply}
-                className="flex-1 bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors"
+                className="flex-1 bg-brand-teal text-white font-medium py-3 rounded-xl hover:bg-brand-teal-dark transition-colors"
               >
                 Apply again
               </button>

@@ -6,6 +6,7 @@
   src: url('/fonts/univers/UniversLTStd-Light.woff') format('woff');
   font-weight: 300;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -13,6 +14,7 @@
   src: url('/fonts/univers/UniversLTStd.woff') format('woff');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -20,6 +22,7 @@
   src: url('/fonts/univers/UniversLTStd-Bold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -27,6 +30,7 @@
   src: url('/fonts/univers/UniversLTStd-Black.woff') format('woff');
   font-weight: 900;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -34,6 +38,7 @@
   src: url('/fonts/urdu/NotoNastaliqUrdu-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -41,6 +46,7 @@
   src: url('/fonts/urdu/NotoNastaliqUrdu-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -48,6 +54,7 @@
   src: url('/fonts/urdu/NotoNastaliqUrdu-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -55,19 +62,29 @@
   src: url('/fonts/urdu/NotoNastaliqUrdu-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @theme {
   --color-brand-teal: #569AD0;
+  --color-brand-teal-light: #E8F4FD;
+  --color-brand-teal-dark: #3F7CA8;
   --color-brand-navy: #1D2D49;
+  --color-brand-navy-light: #2A3F5F;
   --color-brand-gold: #E6A726;
+  --color-brand-gold-light: #FFF7E6;
   --color-brand-white: #FFFFFF;
   --color-brand-gray: #F5F5F5;
-  --color-brand-teal-dark: #3F7CA8;
   --color-brand-gray-dark: #6B7280;
   --color-brand-gray-light: #FAFAFA;
   --color-primary: #569AD0;
   --color-primary-dark: #3F7CA8;
+
+  --shadow-card: 0 4px 20px -2px rgba(29, 45, 73, 0.06), 0 2px 6px -1px rgba(29, 45, 73, 0.04);
+  --shadow-elevated: 0 20px 40px -15px rgba(29, 45, 73, 0.12);
+  --shadow-glow-teal: 0 0 25px rgba(86, 154, 208, 0.35);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   --font-sans: 'Univers', 'Inter', system-ui, sans-serif;
   --font-serif: 'Aleo', Georgia, serif;
@@ -98,9 +115,12 @@
   }
   
   /* Fix Nastaliq overlapping and clipping globally */
-  .font-urduHeading, .font-urduBody {
-    line-height: 2.4 !important;
-    padding-top: 0.1em;
+  .font-urduHeading {
+    line-height: 1.6;
+  }
+  .font-urduBody {
+    line-height: 2.0;
+    padding-top: 0.15em;
     padding-bottom: 0.2em;
   }
 }

@@ -122,7 +122,7 @@ export function MembershipApply() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-brand-teal/20 border-t-brand-teal rounded-full animate-spin" />
       </div>
     );
   }
@@ -136,7 +136,7 @@ export function MembershipApply() {
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 -z-10 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-indigo-600 transition-all duration-300"
+                className="h-full bg-brand-teal transition-all duration-300"
                 style={{ width: `${((step - 1) / 2) * 100}%` }}
               ></div>
             </div>
@@ -148,11 +148,11 @@ export function MembershipApply() {
             ].map(s => (
               <div key={s.num} className="flex flex-col items-center gap-2 bg-gray-50 px-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-                  step >= s.num ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-200 text-gray-500'
+                  step >= s.num ? 'bg-brand-teal text-white shadow-md' : 'bg-gray-200 text-gray-500'
                 }`}>
                   {step > s.num ? '✓' : s.num}
                 </div>
-                <span className={`text-sm font-medium ${step >= s.num ? 'text-indigo-900' : 'text-gray-500'}`}>
+                <span className={`text-sm font-medium ${step >= s.num ? 'text-brand-navy' : 'text-gray-500'}`}>
                   {s.label}
                 </span>
               </div>
@@ -177,8 +177,8 @@ export function MembershipApply() {
                       onClick={() => setFormData(f => ({ ...f, zoneId: zone.id, zoneName: zone.name }))}
                       className={`cursor-pointer rounded-xl p-4 transition-all relative ${
                         formData.zoneId === zone.id 
-                          ? 'border-2 border-indigo-600 bg-indigo-50 shadow-sm' 
-                          : 'border border-gray-200 bg-white hover:border-indigo-300'
+                          ? 'border-2 border-brand-teal bg-brand-teal/5 shadow-sm' 
+                          : 'border border-gray-200 bg-white hover:border-brand-teal/50'
                       }`}
                     >
                       <h4 className="font-medium text-gray-900">{zone.name}</h4>
@@ -202,8 +202,8 @@ export function MembershipApply() {
                       onClick={() => setFormData(f => ({ ...f, tierId: tier.id, tierName: tier.name, tierPrice: tier.price }))}
                       className={`cursor-pointer rounded-xl p-4 transition-all ${
                         formData.tierId === tier.id 
-                          ? 'border-2 border-indigo-600 bg-indigo-50 shadow-sm' 
-                          : 'border border-gray-200 bg-white hover:border-indigo-300'
+                          ? 'border-2 border-brand-teal bg-brand-teal/5 shadow-sm' 
+                          : 'border border-gray-200 bg-white hover:border-brand-teal/50'
                       }`}
                     >
                       <div className="flex justify-between items-start mb-2">
@@ -221,7 +221,7 @@ export function MembershipApply() {
                 <button 
                   onClick={handleNext}
                   disabled={!formData.zoneId || !formData.tierId}
-                  className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                  className="bg-brand-teal text-white px-8 py-3 rounded-xl font-medium hover:bg-brand-teal-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 >
                   Continue
                 </button>
@@ -326,7 +326,7 @@ export function MembershipApply() {
                 <button 
                   onClick={handleNext}
                   disabled={!formData.fullName || !formData.phone || formData.motivation.length < 50}
-                  className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 flex-1 sm:flex-none"
+                  className="bg-brand-teal text-white px-8 py-3 rounded-xl font-medium hover:bg-brand-teal-dark transition-colors disabled:opacity-50 flex-1 sm:flex-none"
                 >
                   Continue to Review
                 </button>
@@ -390,7 +390,7 @@ export function MembershipApply() {
                 <input 
                   type="checkbox" 
                   id="confirm"
-                  className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                  className="w-5 h-5 rounded border-gray-300 text-brand-teal focus:ring-brand-teal"
                   onChange={(e) => {
                     const btn = document.getElementById('submitBtn') as HTMLButtonElement;
                     if (btn) btn.disabled = !e.target.checked || submitting;
@@ -413,7 +413,7 @@ export function MembershipApply() {
                   id="submitBtn"
                   onClick={handleSubmit}
                   disabled={true}
-                  className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none flex items-center justify-center gap-2"
+                  className="bg-brand-teal text-white px-8 py-3 rounded-xl font-medium hover:bg-brand-teal-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none flex items-center justify-center gap-2"
                 >
                   {submitting && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>}
                   {submitting ? 'Submitting...' : 'Submit Application'}
