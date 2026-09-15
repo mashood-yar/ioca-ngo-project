@@ -70,17 +70,23 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       const { isUrdu } = this.props;
+      const isOffline = !navigator.onLine;
+      
       return (
         <div className={`min-h-screen flex items-center justify-center text-center p-8 ${isUrdu ? 'font-urduBody rtl' : 'ltr'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
           <div>
             <h1 className="text-3xl font-bold text-brand-navy mb-4">
-              {isUrdu ? 'کچھ غلط ہو گیا' : 'Something went wrong'}
+              {isOffline 
+                ? (isUrdu ? 'انٹرنیٹ کنکشن منقطع ہے' : 'No Internet Connection')
+                : (isUrdu ? 'کچھ غلط ہو گیا' : 'Something went wrong')}
             </h1>
             <p className="text-brand-navy/70 mb-6">
-              {isUrdu ? 'براہ کرم صفحہ ریفریش کریں یا بعد میں دوبارہ کوشش کریں۔' : 'Please refresh the page or try again later.'}
+              {isOffline
+                ? (isUrdu ? 'براہ کرم اپنا کنکشن چیک کریں اور دوبارہ کوشش کریں۔' : 'Please check your connection and try again.')
+                : (isUrdu ? 'براہ کرم صفحہ ریفریش کریں یا بعد میں دوبارہ کوشش کریں۔' : 'Please refresh the page or try again later.')}
             </p>
-            <button onClick={() => window.location.reload()} className="bg-brand-teal text-brand-white px-6 py-3 rounded-lg font-semibold">
-              {isUrdu ? 'صفحہ ریفریش کریں' : 'Refresh Page'}
+            <button onClick={() => window.location.reload()} className="bg-brand-teal text-brand-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-teal-dark transition-colors">
+              {isUrdu ? 'دوبارہ کوشش کریں' : 'Try Again'}
             </button>
           </div>
         </div>

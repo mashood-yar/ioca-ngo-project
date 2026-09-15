@@ -114,6 +114,10 @@
     @apply bg-brand-gray text-brand-navy font-sans antialiased;
   }
   
+  input[type="checkbox"], input[type="radio"] {
+    @apply accent-brand-teal;
+  }
+  
   /* Fix Nastaliq overlapping and clipping globally */
   .font-urduHeading {
     line-height: 1.6;
