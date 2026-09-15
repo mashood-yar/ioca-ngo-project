@@ -178,7 +178,7 @@ function App() {
         </div>
       )}
 
-      <Navbar isUrdu={isUrdu} setIsUrdu={setIsUrdu} onDonateClick={handleDonateClick} />
+      <Navbar isUrdu={isUrdu} setIsUrdu={setIsUrdu} />
 
       <main id="main-content">
         <ErrorBoundary isUrdu={isUrdu}>

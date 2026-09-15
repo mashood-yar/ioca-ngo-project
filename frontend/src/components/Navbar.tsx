@@ -11,10 +11,9 @@ import type { Program } from '../types';
 interface NavbarProps {
   isUrdu: boolean;
   setIsUrdu: React.Dispatch<React.SetStateAction<boolean>>;
-  onDonateClick?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
   const [programSubLinks, setProgramSubLinks] = useState<{to: string, labelEn: string, labelUr: string}[]>([]);
@@ -225,12 +224,6 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => 
             <Link to="/volunteer" className={`ml-2 bg-brand-gray text-brand-navy hover:bg-brand-navy/5 font-semibold px-5 py-2 rounded-full transition-colors`}>
               {isUrdu ? 'رضاکار' : 'Volunteer'}
             </Link>
-            <button
-              onClick={() => onDonateClick?.()}
-              className="bg-brand-gold text-brand-navy font-bold px-5 py-2 rounded-full shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
-            >
-              {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
-            </button>
           </div>
 
           {/* Action Buttons (Right) */}
