@@ -74,13 +74,13 @@ class ErrorBoundary extends React.Component<
         <div className={`min-h-screen flex items-center justify-center text-center p-8 ${isUrdu ? 'font-urduBody rtl' : 'ltr'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
           <div>
             <h1 className="text-3xl font-bold text-brand-navy mb-4">
-              {isUrdu ? 'ÃšÂ©Ãšâ€ ÃšÂ¾ Ã˜ÂºÃ™â€žÃ˜Â· Ã›ÂÃ™Ë† ÃšÂ¯Ã›Å’Ã˜Â§' : 'Something went wrong'}
+              {isUrdu ? 'کچھ غلط ہو گیا' : 'Something went wrong'}
             </h1>
             <p className="text-brand-navy/70 mb-6">
-              {isUrdu ? 'Ã˜Â¨Ã˜Â±Ã˜Â§Ã›Â ÃšÂ©Ã˜Â±Ã™â€¦ Ã˜ÂµÃ™ÂÃ˜Â­Ã›Â Ã˜Â±Ã›Å’Ã™ÂÃ˜Â±Ã›Å’Ã˜Â´ ÃšÂ©Ã˜Â±Ã›Å’ÃšÂº Ã›Å’Ã˜Â§ Ã˜Â¨Ã˜Â¹Ã˜Â¯ Ã™â€¦Ã›Å’ÃšÂº Ã˜Â¯Ã™Ë†Ã˜Â¨Ã˜Â§Ã˜Â±Ã›Â ÃšÂ©Ã™Ë†Ã˜Â´Ã˜Â´ ÃšÂ©Ã˜Â±Ã›Å’ÃšÂºÃ›â€' : 'Please refresh the page or try again later.'}
+              {isUrdu ? 'براہ کرم صفحہ ریفریش کریں یا بعد میں دوبارہ کوشش کریں۔' : 'Please refresh the page or try again later.'}
             </p>
             <button onClick={() => window.location.reload()} className="bg-brand-teal text-brand-white px-6 py-3 rounded-lg font-semibold">
-              {isUrdu ? 'Ã˜ÂµÃ™ÂÃ˜Â­Ã›Â Ã˜Â±Ã›Å’Ã™ÂÃ˜Â±Ã›Å’Ã˜Â´ ÃšÂ©Ã˜Â±Ã›Å’ÃšÂº' : 'Refresh Page'}
+              {isUrdu ? 'صفحہ ریفریش کریں' : 'Refresh Page'}
             </button>
           </div>
         </div>
@@ -162,7 +162,7 @@ function App() {
   }
 
   return (
-    <div className={`min-h-screen bg-brand-gray text-brand-navy selection:bg-brand-navy selection:text-brand-white pb-[72px] md:pb-0 ${isUrdu ? 'font-urduBody' : 'font-sans'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-brand-gray text-brand-navy selection:bg-brand-navy selection:text-brand-white ${isUrdu ? 'font-urduBody' : 'font-sans'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
       <ToastContainer />
       <ScrollToTop />
       
@@ -172,7 +172,7 @@ function App() {
         </div>
       )}
 
-      <Navbar isUrdu={isUrdu} setIsUrdu={setIsUrdu} />
+      <Navbar isUrdu={isUrdu} setIsUrdu={setIsUrdu} onDonateClick={handleDonateClick} />
 
       <main id="main-content">
         <ErrorBoundary isUrdu={isUrdu}>

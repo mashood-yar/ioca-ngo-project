@@ -272,7 +272,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-brand-navy/10 shrink-0">
           <h2 id="modal-title" className={`text-2xl font-bold text-brand-navy ${isUrdu ? 'font-urduHeading' : ''}`}>
-            {step === 4 ? (isUrdu ? 'شکریہ' : 'Thank You') : (isUrdu ? 'اپنا عطیہ دیں' : 'Make a Donation')}
+            {step === 5 ? (isUrdu ? 'شکریہ' : 'Thank You') : (isUrdu ? 'اپنا عطیہ دیں' : 'Make a Donation')}
           </h2>
           <button 
             onClick={onClose}

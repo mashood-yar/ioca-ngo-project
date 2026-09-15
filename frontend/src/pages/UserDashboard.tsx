@@ -680,7 +680,7 @@ END:VCALENDAR`;
                 onClick={() => setActiveTab(item.id as Tab)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? 'bg-brand-teal/10/80 text-brand-teal shadow-sm border-l-4 border-brand-teal'
+                    ? 'bg-brand-teal/10 text-brand-teal shadow-sm border-l-4 border-brand-teal'
                     : 'text-brand-navy/60 hover:bg-brand-gray hover:text-brand-navy'
                 }`}
               >
@@ -708,7 +708,7 @@ END:VCALENDAR`;
       <main className="flex-1 p-6 md:p-8 max-w-5xl mx-auto w-full overflow-hidden space-y-6">
         
         {/* Prominent Assignment Card */}
-        <div className="bg-white border border-brand-navy/10/80 rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white border border-brand-navy/10 rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-brand-teal/10 text-brand-teal rounded-2xl flex items-center justify-center flex-shrink-0">
               <Globe className="w-6 h-6" />
@@ -820,7 +820,7 @@ END:VCALENDAR`;
                   {/* Info block */}
                   <div className="bg-gradient-to-br from-brand-navy to-brand-navy/80 rounded-xl p-6 text-white shadow-sm flex flex-col justify-between">
                     <div className="space-y-3">
-                      <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
+                      <div className="w-10 h-10 bg-brand-teal/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                         <Info className="w-5 h-5" />
                       </div>
                       <h4 className="font-bold text-lg">Did you know?</h4>
@@ -1108,7 +1108,7 @@ END:VCALENDAR`;
                     {/* Quick helper card */}
                     <div className="bg-brand-navy text-white rounded-xl p-6 flex flex-col justify-between">
                       <div className="space-y-4">
-                        <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
+                        <div className="w-10 h-10 bg-brand-teal/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                           <Award className="w-5 h-5" />
                         </div>
                         <h4 className="font-bold text-lg">Advancement Perks</h4>
@@ -1246,7 +1246,7 @@ END:VCALENDAR`;
                   {/* Summary Stats */}
                   <div className="bg-gradient-to-br from-brand-navy to-brand-navy/80 text-white rounded-xl p-6 flex flex-col justify-between shadow-lg">
                     <div className="space-y-6">
-                      <div className="w-10 h-10 bg-brand-teal/100/20 rounded-xl flex items-center justify-center text-brand-teal/60">
+                      <div className="w-10 h-10 bg-brand-teal/20 rounded-xl flex items-center justify-center text-brand-teal/60">
                         <TrendingUp className="w-5 h-5" />
                       </div>
                       <div>
@@ -1615,7 +1615,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/80 backdrop-blur-sm"
               onClick={() => !isSaving && setIsEditModalOpen(false)}
             />
             <motion.div 
@@ -1738,7 +1738,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/80 backdrop-blur-sm"
               onClick={() => setDonationReceipt(null)}
             />
             <motion.div 
@@ -1806,7 +1806,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/80 backdrop-blur-sm"
               onClick={() => setZoneToSwitch(null)}
             />
             <motion.div 
@@ -1847,7 +1847,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/80 backdrop-blur-sm"
               onClick={() => setIsUpgradeModalOpen(false)}
             />
             <motion.div 
@@ -1895,7 +1895,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/80 backdrop-blur-sm"
               onClick={() => setIsCancelConfirmOpen(false)}
             />
             <motion.div 
@@ -1936,7 +1936,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-navy/90/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-brand-navy/80 backdrop-blur-sm"
               onClick={() => setIsRenewConfirmOpen(false)}
             />
             <motion.div 

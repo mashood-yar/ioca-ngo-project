@@ -63,6 +63,11 @@
   --color-brand-gold: #E6A726;
   --color-brand-white: #FFFFFF;
   --color-brand-gray: #F5F5F5;
+  --color-brand-teal-dark: #3F7CA8;
+  --color-brand-gray-dark: #6B7280;
+  --color-brand-gray-light: #FAFAFA;
+  --color-primary: #569AD0;
+  --color-primary-dark: #3F7CA8;
 
   --font-sans: 'Univers', 'Inter', system-ui, sans-serif;
   --font-serif: 'Aleo', Georgia, serif;
@@ -70,6 +75,12 @@
   --font-urduBody: 'Noto Nastaliq Urdu', serif;
 
   --animate-marquee: marquee 30s linear infinite;
+  --animate-scale-up: scale-up 0.2s ease-out forwards;
+}
+
+@keyframes scale-up {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes marquee {

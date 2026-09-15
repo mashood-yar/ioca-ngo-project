@@ -91,7 +91,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ isUrdu }) => {
       <div className="container mx-auto px-4 max-w-5xl">
         <Link to="/projects" className="inline-flex items-center gap-2 text-brand-teal hover:text-brand-navy font-semibold mb-6 transition-colors">
           <ArrowLeft className={`w-4 h-4 ${isUrdu ? 'rotate-180' : ''}`} />
-          {isUrdu ? '???? ??????' : 'All Projects'}
+          {isUrdu ? 'تمام پروجیکٹس' : 'All Projects'}
         </Link>
 
         <motion.div

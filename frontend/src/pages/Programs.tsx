@@ -61,9 +61,9 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
           </motion.div>
 
           {loading ? (
-            <div className="py-20 text-center text-[#6B7280]">Loading programs...</div>
+            <div className="py-20 text-center text-brand-navy/60">Loading programs...</div>
           ) : programs.length === 0 ? (
-            <div className="py-20 text-center text-[#6B7280]">No programs available at the moment.</div>
+            <div className="py-20 text-center text-brand-navy/60">No programs available at the moment.</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {programs.map((prog, idx) => (
@@ -108,7 +108,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                             {formatCompact(prog.stats_beneficiaries, isUrdu)}+
                           </div>
                           <div className={`text-xs font-semibold text-brand-navy/60 uppercase tracking-wider ${isUrdu ? 'font-urduBody text-right' : ''}`}>
-                            {isUrdu ? '????????' : 'Beneficiaries'}
+                            {isUrdu ? 'مستفیدین' : 'Beneficiaries'}
                           </div>
                         </div>
                         <div>
@@ -116,7 +116,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
                             {formatCompact(prog.stats_projects, isUrdu)}
                           </div>
                           <div className={`text-xs font-semibold text-brand-navy/60 uppercase tracking-wider ${isUrdu ? 'font-urduBody text-right' : ''}`}>
-                            {isUrdu ? '????????' : 'Projects'}
+                            {isUrdu ? 'منصوبے' : 'Projects'}
                           </div>
                         </div>
                       </div>

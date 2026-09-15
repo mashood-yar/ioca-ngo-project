@@ -11,9 +11,10 @@ import type { Program } from '../types';
 interface NavbarProps {
   isUrdu: boolean;
   setIsUrdu: React.Dispatch<React.SetStateAction<boolean>>;
+  onDonateClick?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
+const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu, onDonateClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
   const [programSubLinks, setProgramSubLinks] = useState<{to: string, labelEn: string, labelUr: string}[]>([]);
@@ -38,6 +39,24 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
       if (programsTimerRef.current) clearTimeout(programsTimerRef.current);
     };
   }, []);
+
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMenu = () => {
@@ -67,8 +86,8 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
 
   const activeLinkClass = (path: string) =>
     isActive(path) 
-      ? 'text-[#111] font-bold whitespace-nowrap' 
-      : 'text-[#444] hover:text-[#111] font-medium whitespace-nowrap';
+      ? 'text-brand-navy font-bold whitespace-nowrap' 
+      : 'text-brand-navy/70 hover:text-brand-navy font-medium whitespace-nowrap';
 
   /** Keyboard handling for the Programs dropdown */
   const handleProgramsKeyDown = (e: React.KeyboardEvent) => {
@@ -116,18 +135,20 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
       </a>
 
       <nav
-        className="fixed top-4 left-4 right-4 md:top-6 md:left-8 md:right-8 lg:left-12 lg:right-12 max-w-7xl xl:mx-auto z-[60] bg-white/90 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] will-change-transform transition-all"
+        className={`fixed top-4 left-4 right-4 md:top-6 md:left-8 md:right-8 lg:left-12 lg:right-12 max-w-7xl xl:mx-auto z-[60] backdrop-blur-md rounded-full will-change-transform transition-all duration-300 ${
+          scrolled ? 'bg-white/95 shadow-[0_10px_35px_rgba(29,45,73,0.12)]' : 'bg-white/90 shadow-[0_8px_30px_rgb(0,0,0,0.08)]'
+        }`}
         role="navigation"
         aria-label={isUrdu ? 'مرکزی نیویگیشن' : 'Main navigation'}
       >
-        <div className="px-4 py-2.5 md:px-6 md:py-3 flex items-center justify-between w-full">
+        <div className={`flex items-center justify-between w-full transition-all duration-300 ${scrolled ? 'px-4 py-1.5 md:px-6 md:py-2' : 'px-4 py-2.5 md:px-6 md:py-3'}`}>
           {/* Logo (Left) */}
           <Link to="/" className="flex items-center flex-shrink-0" onClick={closeMenu}>
-            <img src={settings.logo_url} alt="IOCA Logo" className="h-10 md:h-11 w-auto object-contain" />
+            <img src={settings.logo_url} alt="IOCA Logo" className={`w-auto object-contain transition-all duration-300 ${scrolled ? 'h-8 md:h-9' : 'h-10 md:h-11'}`} />
           </Link>
 
           {/* Desktop Navigation (Center) */}
-          <div className="hidden xl:flex items-center justify-center gap-6 text-[14px] flex-1">
+          <div className="hidden lg:flex items-center justify-center gap-4 text-xs xl:text-sm xl:gap-6 flex-1">
             <Link to="/" className={`transition-colors ${activeLinkClass('/')}`}>
               {isUrdu ? 'ہوم' : 'Home'}
             </Link>
@@ -201,9 +222,15 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
             <Link to="/contact" className={`transition-colors ${activeLinkClass('/contact')}`}>
               {isUrdu ? 'رابطہ کریں' : 'Contact'}
             </Link>
-            <Link to="/volunteer" className={`ml-2 bg-[#f0f0f0] text-[#111] hover:bg-[#e4e4e4] font-semibold px-5 py-2 rounded-full transition-colors`}>
+            <Link to="/volunteer" className={`ml-2 bg-brand-gray text-brand-navy hover:bg-brand-navy/5 font-semibold px-5 py-2 rounded-full transition-colors`}>
               {isUrdu ? 'رضاکار' : 'Volunteer'}
             </Link>
+            <button
+              onClick={() => onDonateClick?.()}
+              className="bg-brand-gold text-brand-navy font-bold px-5 py-2 rounded-full shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
+            >
+              {isUrdu ? 'عطیہ کریں' : 'Donate Now'}
+            </button>
           </div>
 
           {/* Action Buttons (Right) */}
@@ -304,7 +331,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25, ease: 'easeInOut' }}
-              className="lg:hidden absolute top-[100%] left-0 w-full bg-brand-white border-b border-brand-navy/10 shadow-lg overflow-hidden"
+              className="lg:hidden absolute top-[100%] left-0 w-full mt-3 rounded-2xl border border-brand-navy/10 shadow-2xl backdrop-blur-xl bg-white/95 overflow-hidden"
             >
               <div className="px-4 py-4 flex flex-col gap-2 font-medium text-lg max-h-[80vh] overflow-y-auto">
                 <Link to="/" onClick={closeMenu} className={`py-2 border-b border-brand-navy/5 ${isActive('/') ? 'text-brand-gold font-bold' : ''}`}>

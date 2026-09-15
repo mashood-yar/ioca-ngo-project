@@ -147,7 +147,7 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
                       {event.description}
                     </p>
 
-                    {user && (
+                    {user ? (
                       <button
                         onClick={() => handleRegister(event.id)}
                         disabled={registeredEventIds.has(event.id) || registeringId === event.id}
@@ -171,6 +171,13 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
                           </>
                         )}
                       </button>
+                    ) : (
+                      <Link 
+                        to="/user/login" 
+                        className="mt-4 w-full block text-center py-2 rounded-xl text-sm font-bold bg-brand-navy/5 text-brand-navy hover:bg-brand-navy/10 transition-colors"
+                      >
+                        {isUrdu ? 'رجسٹر کرنے کے لیے لاگ ان کریں' : 'Sign in to Register'}
+                      </Link>
                     )}
                   </div>
                 </motion.div>

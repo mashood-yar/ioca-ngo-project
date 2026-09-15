@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, Calendar, CheckCircle2, Clock, Heart } from 'lucide-react';
 import { getProjects } from '../services/api';
 import type { Project } from '../types';
@@ -13,6 +13,7 @@ interface ProjectsProps {
 }
 
 const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState<'all' | 'ongoing' | 'upcoming' | 'completed'>('all');
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -125,90 +126,96 @@ const Projects: React.FC<ProjectsProps> = ({ isUrdu }) => {
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
               >
-                <div className="relative h-28 md:h-48 overflow-hidden">
-                  <img
-                    src={optimizeImage(project.image, { width: 400 })}
-                    alt={isUrdu ? project.titleUr : project.titleEn}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
-                    decoding="async"
-                    width={400}
-                    height={192}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                  {/* Status Badge */}
-                  <span className={`absolute top-3 ${isUrdu ? 'left-3' : 'right-3'} text-[10px] md:text-xs font-bold uppercase px-2 md:px-3 py-1 rounded-full flex items-center gap-1 ${
-                    project.status === 'ongoing'
-                      ? 'bg-brand-teal text-brand-white'
-                      : project.status === 'upcoming'
-                      ? 'bg-purple-600 text-brand-white'
-                      : 'bg-brand-gold text-brand-navy'
-                  }`}>
-                    {project.status === 'ongoing'
-                      ? <Clock className="w-3 h-3" />
-                      : project.status === 'upcoming'
-                      ? <Calendar className="w-3 h-3" />
-                      : <CheckCircle2 className="w-3 h-3" />
-                    }
-                    {isUrdu ? project.statusUr : project.statusEn}
-                  </span>
-                </div>
-
-                <div className="p-4 md:p-6">
-                  <h3 className={`text-sm md:text-lg font-bold text-brand-navy mb-2 ${isUrdu ? 'font-urduHeading' : ''}`}>
-                    {isUrdu ? project.titleUr : project.titleEn}
-                  </h3>
-
-                  <div className="flex items-center gap-1.5 text-brand-navy/50 text-[11px] md:text-xs mb-2">
-                    <MapPin className="w-3 h-3 shrink-0" />
-                    <span>{isUrdu ? project.locationUr : project.locationEn}</span>
+                <Link to={`/projects/${project.id}`} className="block h-full cursor-pointer">
+                  <div className="relative h-28 md:h-48 overflow-hidden">
+                    <img
+                      src={optimizeImage(project.image, { width: 400 })}
+                      alt={isUrdu ? project.titleUr : project.titleEn}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                      decoding="async"
+                      width={400}
+                      height={192}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                    {/* Status Badge */}
+                    <span className={`absolute top-3 ${isUrdu ? 'left-3' : 'right-3'} text-[10px] md:text-xs font-bold uppercase px-2 md:px-3 py-1 rounded-full flex items-center gap-1 ${
+                      project.status === 'ongoing'
+                        ? 'bg-brand-teal text-brand-white'
+                        : project.status === 'upcoming'
+                        ? 'bg-brand-navy text-brand-white'
+                        : 'bg-brand-gold text-brand-navy'
+                    }`}>
+                      {project.status === 'ongoing'
+                        ? <Clock className="w-3 h-3" />
+                        : project.status === 'upcoming'
+                        ? <Calendar className="w-3 h-3" />
+                        : <CheckCircle2 className="w-3 h-3" />
+                      }
+                      {isUrdu ? project.statusUr : project.statusEn}
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-brand-navy/50 text-[11px] md:text-xs mb-4">
-                    <Calendar className="w-3 h-3 shrink-0" />
-                    <span>{project.date}</span>
-                  </div>
+                  <div className="p-4 md:p-6">
+                    <h3 className={`text-sm md:text-lg font-bold text-brand-navy mb-2 ${isUrdu ? 'font-urduHeading' : ''}`}>
+                      {isUrdu ? project.titleUr : project.titleEn}
+                    </h3>
 
-                  <p className={`text-xs md:text-sm text-brand-navy/60 leading-relaxed mb-4 ${isUrdu ? 'font-urduBody' : ''}`}>
-                    {isUrdu ? project.descUr : project.descEn}
-                  </p>
-
-                  {/* Progress Bar */}
-                  <div>
-                    <div className="flex justify-between text-[10px] md:text-xs text-brand-navy/50 mb-1.5">
-                      <span>{isUrdu ? 'پیشرفت' : 'Progress'}</span>
-                      <span className="font-bold text-brand-navy">
-                        {isUrdu ? `${toUrduNumerals(project.progress)}٪` : `${project.progress}%`}
-                      </span>
+                    <div className="flex items-center gap-1.5 text-brand-navy/50 text-[11px] md:text-xs mb-2">
+                      <MapPin className="w-3 h-3 shrink-0" />
+                      <span>{isUrdu ? project.locationUr : project.locationEn}</span>
                     </div>
-                    <div
-                      className="w-full h-2 bg-brand-gray rounded-full overflow-hidden"
-                      role="progressbar"
-                      aria-valuenow={project.progress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    >
+
+                    <div className="flex items-center gap-1.5 text-brand-navy/50 text-[11px] md:text-xs mb-4">
+                      <Calendar className="w-3 h-3 shrink-0" />
+                      <span>{project.date}</span>
+                    </div>
+
+                    <p className={`text-xs md:text-sm text-brand-navy/60 leading-relaxed mb-4 ${isUrdu ? 'font-urduBody' : ''}`}>
+                      {isUrdu ? project.descUr : project.descEn}
+                    </p>
+
+                    {/* Progress Bar */}
+                    <div>
+                      <div className="flex justify-between text-[10px] md:text-xs text-brand-navy/50 mb-1.5">
+                        <span>{isUrdu ? 'پیشرفت' : 'Progress'}</span>
+                        <span className="font-bold text-brand-navy">
+                          {isUrdu ? `${toUrduNumerals(project.progress)}٪` : `${project.progress}%`}
+                        </span>
+                      </div>
                       <div
-                        className={`h-full rounded-full transition-all duration-1000 ${
-                          project.progress === 100 ? 'bg-brand-gold' : 'bg-brand-teal'
-                        }`}
-                        style={{ width: `${project.progress}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {project.status === 'ongoing' && (
-                    <div className="mt-6">
-                      <Link
-                        to="/donate"
-                        className="w-full bg-brand-teal text-brand-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-md shadow-brand-teal/20"
+                        className="w-full h-2 bg-brand-gray rounded-full overflow-hidden"
+                        role="progressbar"
+                        aria-valuenow={project.progress}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
                       >
-                        <Heart className="w-4 h-4" />
-                        {isUrdu ? 'ابھی عطیہ کریں' : 'Donate Now'}
-                      </Link>
+                        <div
+                          className={`h-full rounded-full transition-all duration-1000 ${
+                            project.progress === 100 ? 'bg-brand-gold' : 'bg-brand-teal'
+                          }`}
+                          style={{ width: `${project.progress}%` }}
+                        />
+                      </div>
                     </div>
-                  )}
-                </div>
+
+                    {project.status === 'ongoing' && (
+                      <div className="mt-6">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate('/donate');
+                          }}
+                          className="w-full bg-brand-teal text-brand-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-md shadow-brand-teal/20"
+                        >
+                          <Heart className="w-4 h-4" />
+                          {isUrdu ? 'ابھی عطیہ کریں' : 'Donate Now'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </div>
