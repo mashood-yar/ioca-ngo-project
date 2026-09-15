@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Users, Plus, QrCode, Trash2, Link, Edit, Image as ImageIcon, AlertCircle, Search } from 'lucide-react';
 import { PageLoadingSpinner } from '../../components/PageLoadingSpinner';
 import { optimizeImage } from '../../lib/optimizeImage';
@@ -237,7 +237,7 @@ export const AdminPersonnel: React.FC = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-brand-navy/70">Profile Image</p>
-                <p className="text-xs text-brand-navy/50 mb-2">Click the avatar to upload a photo (max {MAX_IMAGE_SIZE_MB}MB).<br/>ℹ️ Recommended: 1:1 Square (e.g. 500x500)</p>
+                <p className="text-xs text-brand-navy/50 mb-2">Click the avatar to upload a photo (max {MAX_IMAGE_SIZE_MB}MB).<br/>â„¹ï¸ Recommended: 1:1 Square (e.g. 500x500)</p>
                 <input 
                   type="file" 
                   accept="image/jpeg,image/png,image/webp" 
@@ -326,7 +326,7 @@ export const AdminPersonnel: React.FC = () => {
         
         {filterCategory === 'all' && searchTerm.trim() === '' && (
           <p className="text-xs text-brand-navy/60 mt-2 mb-4">
-            ?? Drag and drop rows to reorder personnel. Changes are saved automatically. {isReordering && <span className="text-brand-teal animate-pulse">Saving order...</span>}
+            💡 Drag and drop rows to reorder personnel. Changes are saved automatically. {isReordering && <span className="text-brand-teal animate-pulse">Saving order...</span>}
           </p>
         )}
         
@@ -344,7 +344,7 @@ export const AdminPersonnel: React.FC = () => {
           <tbody className="divide-y text-sm">              {filteredPersonnel.map((p, index) => (
                 <tr 
                   key={p.id} 
-                  className={hover:bg-brand-gray/50  + (filterCategory === 'all' && searchTerm.trim() === '' ? 'cursor-move' : '')}
+                  className={`hover:bg-brand-gray/50 ${filterCategory === 'all' && searchTerm.trim() === '' ? 'cursor-move' : ''}`}
                   draggable={filterCategory === 'all' && searchTerm.trim() === ''}
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragOver={(e) => handleDragOver(e, index)}
