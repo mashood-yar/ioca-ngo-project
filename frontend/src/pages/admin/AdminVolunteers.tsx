@@ -161,7 +161,10 @@ export function AdminVolunteers() {
               </button>
             ))}
             {volunteers.length === 0 && (
-              <div className="p-8 text-center text-gray-500">No applications found.</div>
+              <div className="p-12 text-center text-gray-500 flex flex-col items-center justify-center">
+                <HeartHandshake className="w-10 h-10 mb-3 opacity-20" />
+                <p>No applications found.</p>
+              </div>
             )}
           </div>
         </div>

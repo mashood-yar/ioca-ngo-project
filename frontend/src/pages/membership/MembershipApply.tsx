@@ -25,6 +25,7 @@ export function MembershipApply() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
   const [zones, setZones] = useState<Zone[]>([]);
   const [tiers, setTiers] = useState<Tier[]>([]);
@@ -391,10 +392,8 @@ export function MembershipApply() {
                   type="checkbox" 
                   id="confirm"
                   className="w-5 h-5 rounded border-gray-300 text-brand-teal focus:ring-brand-teal"
-                  onChange={(e) => {
-                    const btn = document.getElementById('submitBtn') as HTMLButtonElement;
-                    if (btn) btn.disabled = !e.target.checked || submitting;
-                  }}
+                  checked={isTermsAccepted}
+                  onChange={(e) => setIsTermsAccepted(e.target.checked)}
                 />
                 <label htmlFor="confirm" className="text-sm text-gray-700">
                   I confirm that all information provided is accurate and complete.
@@ -410,9 +409,8 @@ export function MembershipApply() {
                   Back
                 </button>
                 <button 
-                  id="submitBtn"
                   onClick={handleSubmit}
-                  disabled={true}
+                  disabled={!isTermsAccepted || submitting}
                   className="bg-brand-teal text-white px-8 py-3 rounded-xl font-medium hover:bg-brand-teal-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none flex items-center justify-center gap-2"
                 >
                   {submitting && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>}

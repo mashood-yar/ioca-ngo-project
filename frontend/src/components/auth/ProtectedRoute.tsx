@@ -14,7 +14,7 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
   useEffect(() => {
     if (!loading && !user) {
       window.dispatchEvent(new CustomEvent('app-toast', { 
-        detail: { message: 'Please sign in to continue.', variant: 'error' } 
+        detail: { message: 'Please sign in to continue.', variant: 'info' } 
       }));
     } else if (!loading && adminOnly && !isAdmin) {
       window.dispatchEvent(new CustomEvent('app-toast', { 
