@@ -82,7 +82,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ isUrdu }) => {
   const endDate = formatDate(project.end_date || project.endDate);
 
   return (
-    <div className={`min-h-screen bg-brand-gray-light pt-24 pb-16 ${isUrdu ? 'font-urdu text-right' : 'text-left'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-brand-gray-light pt-32 pb-16 md:pt-40 md:pb-24 ${isUrdu ? 'font-urdu text-right' : 'text-left'}`} dir={isUrdu ? 'rtl' : 'ltr'}>
       <SEO 
         title={`${title} - IOCA`}
         description={description?.substring(0, 150) || ''}

@@ -77,7 +77,7 @@ const Events: React.FC<EventsProps> = ({ isUrdu }) => {
         <meta name="description" content="Upcoming and past events from IOCA's community programs across Pakistan." />
       </Helmet>
 
-      <div className="py-16 md:py-24">
+      <div className="pt-32 pb-16 md:pt-40 md:pb-24">
         <div className="max-w-7xl mx-auto px-4 md:px-16">
           <motion.div
             className="mb-10"

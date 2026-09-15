@@ -42,7 +42,7 @@ const Programs: React.FC<ProgramsProps> = ({ isUrdu }) => {
         isUrdu={isUrdu}
       />
 
-      <div className="py-16 md:py-24">
+      <div className="pt-32 pb-16 md:pt-40 md:pb-24">
         <div className="max-w-7xl mx-auto px-4 md:px-16">
           <motion.div
             className="mb-12"

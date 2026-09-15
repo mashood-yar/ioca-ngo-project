@@ -72,7 +72,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
 
       <div className="bg-brand-gray min-h-screen pb-24">
         {/* Hero Section */}
-        <section className="relative h-[40vh] md:h-[50vh] flex items-center justify-center bg-brand-navy overflow-hidden">
+        <section className="relative h-[40vh] md:h-[50vh] flex items-center justify-center bg-brand-navy overflow-hidden pt-20 md:pt-32">
           <div className="absolute inset-0 bg-brand-navy/60 z-10" />
           <img
             src="/assets/hero-community.webp"
