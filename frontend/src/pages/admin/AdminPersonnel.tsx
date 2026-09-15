@@ -12,6 +12,9 @@ export const AdminPersonnel: React.FC = () => {
   const [personnel, setPersonnel] = useState<Personnel[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [isReordering, setIsReordering] = useState(false);
+
   const [isAdding, setIsAdding] = useState(false);
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -81,6 +84,47 @@ export const AdminPersonnel: React.FC = () => {
     });
     setErrorMsg(null);
     setIsAdding(true);
+  };
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (filterCategory !== 'all' || searchTerm.trim() !== '') {
+      e.preventDefault();
+      return;
+    }
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    if (filterCategory !== 'all' || searchTerm.trim() !== '') return;
+    
+    const items = [...personnel];
+    const draggedItem = items[draggedIndex];
+    items.splice(draggedIndex, 1);
+    items.splice(index, 0, draggedItem);
+    
+    setPersonnel(items);
+    setDraggedIndex(index);
+  };
+
+  const handleDragEnd = async () => {
+    setDraggedIndex(null);
+    if (filterCategory !== 'all' || searchTerm.trim() !== '') return;
+    
+    setIsReordering(true);
+    const updates = personnel.map((p, idx) => ({ id: p.id, display_order: idx }));
+    try {
+      await fetchApi('/admin/personnel/reorder', {
+        method: 'POST',
+        body: JSON.stringify({ items: updates })
+      });
+    } catch (err: any /* fixed M-01 */) {
+      setErrorMsg('Failed to save order.');
+    } finally {
+      setIsReordering(false);
+    }
   };
 
   const handleAddNewClick = () => {
@@ -278,10 +322,15 @@ export const AdminPersonnel: React.FC = () => {
             onChange={e => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-teal/50"
           />
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl shadow border overflow-hidden">
+        </div>        </div>
+        
+        {filterCategory === 'all' && searchTerm.trim() === '' && (
+          <p className="text-xs text-brand-navy/60 mt-2 mb-4">
+            ?? Drag and drop rows to reorder personnel. Changes are saved automatically. {isReordering && <span className="text-brand-teal animate-pulse">Saving order...</span>}
+          </p>
+        )}
+        
+        <div className="bg-white rounded-xl shadow border overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-brand-gray text-brand-navy/60 border-b text-sm">
             <tr>
@@ -292,9 +341,17 @@ export const AdminPersonnel: React.FC = () => {
               <th className="p-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y text-sm">
-            {filteredPersonnel.map(p => (
-              <tr key={p.id} className="hover:bg-brand-gray/50">
+          <tbody className="divide-y text-sm">              {filteredPersonnel.map((p, index) => (
+                <tr 
+                  key={p.id} 
+                  className={hover:bg-brand-gray/50  + (filterCategory === 'all' && searchTerm.trim() === '' ? 'cursor-move' : '')}
+                  draggable={filterCategory === 'all' && searchTerm.trim() === ''}
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragEnd={handleDragEnd}
+                  style={{ opacity: draggedIndex === index ? 0.5 : 1 }}
+                >
+
                 <td className="p-4 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-brand-navy/10 overflow-hidden flex items-center justify-center text-brand-navy font-bold">
                     {p.profile_image_url ? (
@@ -355,3 +412,7 @@ export const AdminPersonnel: React.FC = () => {
     </div>
   );
 };
+
+
+
+

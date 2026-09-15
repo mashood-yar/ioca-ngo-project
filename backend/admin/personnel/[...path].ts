@@ -44,6 +44,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await supabase
         .from('personnel')
         .select('*')
+        .order('display_order', { ascending: true })
         .order('created_at', { ascending: false });
 
       if (error) return err(res, 500, 'Error fetching personnel');
@@ -126,6 +127,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       const { data: allPersonnel, error: fetchErr } = await supabase
         .from('personnel')
         .select('*')
+        .order('display_order', { ascending: true })
         .order('created_at', { ascending: true });
 
       if (fetchErr) return err(res, 500, 'Error fetching personnel');
@@ -172,6 +174,17 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       return ok(res, { message: `Successfully migrated ${migratedCount} UIDs.` });
+    }
+
+    if (req.method === 'POST' && route === 'reorder') {
+      const { items } = req.body; // Expects array of { id, display_order }
+      if (!Array.isArray(items)) return err(res, 400, 'Invalid payload');
+      
+      const promises = items.map(i => supabase.from('personnel').update({ display_order: i.display_order }).eq('id', i.id));
+      const results = await Promise.all(promises);
+      const error = results.find(r => r.error)?.error;
+      if (error) return err(res, 500, error.message);
+      return ok(res, { message: 'Reordered successfully' });
     }
 
     if (req.method === 'PUT' && route) {
@@ -247,5 +260,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
 }
 
 export default allowCors(handler);
+
+
 
 

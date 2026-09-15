@@ -234,7 +234,7 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
                     <p className="text-sm text-brand-teal font-medium mb-3">
                       {member.title}
                     </p>
-                      <p className="text-sm text-brand-navy/70 line-clamp-3">
+                      <p className="text-sm text-brand-navy/70 line-clamp-3 whitespace-pre-line">
                         {member.bio}
                       </p>
                   </div>

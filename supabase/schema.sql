@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS public.donations (
 CREATE TABLE IF NOT EXISTS public.news (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
   content TEXT NOT NULL,
   image_url TEXT,
   published_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -63,6 +64,7 @@ CREATE TABLE IF NOT EXISTS public.news (
 CREATE TABLE IF NOT EXISTS public.events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
   description TEXT,
   location TEXT,
   -- Event timing
@@ -280,6 +282,7 @@ CREATE TABLE IF NOT EXISTS public.personnel (
   qr_code_url TEXT,
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'suspended', 'former')),
   title TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
   bio TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

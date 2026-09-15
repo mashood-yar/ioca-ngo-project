@@ -14,6 +14,7 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       .select('id, full_name, category, title, profile_image_url, bio')
       .in('category', ['board', 'partner'])
       .eq('status', 'active')
+      .order('display_order', { ascending: true })
       .order('created_at', { ascending: true });
 
     if (error) {
