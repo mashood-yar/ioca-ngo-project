@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Target, Eye, Users, ShieldCheck, Heart, Lightbulb, UsersRound, ArrowRight, Mail } from 'lucide-react';
 import { optimizeImage } from '../lib/optimizeImage';
 import { fetchApi } from '../lib/apiClient';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 import type { Personnel } from '../types';
 
 interface AboutProps {
@@ -12,6 +13,7 @@ interface AboutProps {
 }
 
 const About: React.FC<AboutProps> = ({ isUrdu }) => {
+  const { settings } = useSiteSettings();
   const [team, setTeam] = React.useState<Personnel[]>([]);
   const [teamLoading, setTeamLoading] = React.useState(true);
   const [teamError, setTeamError] = React.useState(false);
@@ -70,12 +72,12 @@ const About: React.FC<AboutProps> = ({ isUrdu }) => {
         isUrdu={isUrdu}
       />
 
-      <div className="bg-brand-gray min-h-screen pb-24">
+    <div className="bg-brand-gray min-h-screen pb-24">
         {/* Hero Section */}
         <section className="relative h-[40vh] md:h-[50vh] flex items-center justify-center bg-brand-navy overflow-hidden pt-20 md:pt-32">
           <div className="absolute inset-0 bg-brand-navy/60 z-10" />
           <img
-            src="/assets/hero-community.webp"
+            src={optimizeImage(settings.about_hero_image_url || '/assets/hero-community.webp', { width: 1200 })}
             alt={isUrdu ? 'ہمارے بارے میں' : 'About IOCA'}
             className="absolute inset-0 w-full h-full object-cover"
             width={1200}

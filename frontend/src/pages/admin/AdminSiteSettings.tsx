@@ -7,7 +7,7 @@ import { optimizeImage } from '../../lib/optimizeImage';
 
 export function AdminSiteSettings() {
   const { settings: initialSettings, loading: initialLoading } = useSiteSettings();
-  const [activeTab, setActiveTab] = useState<'general' | 'logo' | 'contact' | 'social' | 'hero'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'logo' | 'contact' | 'social' | 'hero' | 'pages'>('general');
   
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
@@ -123,6 +123,7 @@ export function AdminSiteSettings() {
           {[
             { id: 'general', label: 'General / Status' },
             { id: 'hero', label: 'Hero Section' },
+            { id: 'pages', label: 'Page Banners' },
           { id: 'logo', label: 'Logos & Branding' },
           { id: 'contact', label: 'Contact Info' },
           { id: 'social', label: 'Social Links' },
@@ -294,6 +295,24 @@ export function AdminSiteSettings() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* PAGES TAB */}
+        {activeTab === 'pages' && (
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">About Us Page Banner</h3>
+              <div className="flex gap-4 items-end">
+                {formData.about_hero_image_url && (
+                  <img src={optimizeImage(formData.about_hero_image_url, { width: 300 })} alt="About Us Banner" className="h-32 rounded-lg object-cover" />
+                )}
+                <div className="flex-1">
+                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'about_hero_image_url')} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-teal/10 file:text-brand-teal hover:file:bg-brand-teal/20" disabled={uploading} />
+                  <p className="text-[11px] text-[#6B7280] mt-1.5 flex items-center gap-1">ℹ️ Recommended: Panoramic Landscape (e.g. 1920x800)</p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

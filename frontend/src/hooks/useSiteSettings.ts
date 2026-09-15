@@ -39,6 +39,7 @@ const DEFAULTS: SiteSettings = {
   hero_static_image_url: '/assets/hero-slider/service-to-humanity.webp',
   hero_slides: '[{"url":"/assets/hero-slider/service-to-humanity.webp","alt_en":"Volunteers serving the community","alt_ur":"رضاکار کمیونٹی کی خدمت کر رہے ہیں"},{"url":"/assets/hero-slider/a-ray-of-hope.webp","alt_en":"A ray of hope","alt_ur":"امید کی کرن"},{"url":"/assets/hero-slider/a-healthy-society.webp","alt_en":"Building a healthy society","alt_ur":"صحت مند معاشرے کی تعمیر"}]',
   maintenance_mode: 'false',
+  about_hero_image_url: '/assets/hero-community.webp',
 };
 
 // Module-level cache so we only fetch once per page load
