@@ -658,6 +658,51 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return ok(res, { success: true })
         }
       }
+
+      if (adminSub === 'payment-methods') {
+        if (req.method === 'GET') {
+          const user = await requireAdmin(req, res)
+          if (!user) return
+          const { data, error } = await supabase.from('payment_methods').select('*').order('created_at', { ascending: false })
+          if (error) throw error
+          return ok(res, data)
+        }
+        if (req.method === 'POST') {
+          const user = await requireAdmin(req, res)
+          if (!user) return
+          const schema = z.object({
+            type: z.string(), provider_name: z.string(), account_title: z.string(), account_number: z.string(), iban: z.string().optional(), is_active: z.boolean().default(true)
+          })
+          const val = schema.parse(req.body)
+          const { data, error } = await supabase.from('payment_methods').insert(val).select().single()
+          if (error) throw error
+          return ok(res, data, 201)
+        }
+        if (req.method === 'PATCH' && adminId) {
+          const user = await requireAdmin(req, res)
+          if (!user) return
+          const schema = z.object({
+            type: z.string().optional(), provider_name: z.string().optional(), account_title: z.string().optional(), account_number: z.string().optional(), iban: z.string().optional(), is_active: z.boolean().optional()
+          })
+          const val = schema.parse(req.body)
+          const { data, error } = await supabase.from('payment_methods').update(val).eq('id', adminId).select().single()
+          if (error) throw error
+          return ok(res, data)
+        }
+        if (req.method === 'DELETE' && adminId) {
+          const user = await requireAdmin(req, res)
+          if (!user) return
+          const { error } = await supabase.from('payment_methods').delete().eq('id', adminId)
+          if (error) throw error
+          return ok(res, { success: true })
+        }
+      }
+    }
+
+    if (resource === 'payment-methods' && req.method === 'GET') {
+      const { data, error } = await supabase.from('payment_methods').select('*').eq('is_active', true)
+      if (error) throw error
+      return ok(res, data)
     }
 
 

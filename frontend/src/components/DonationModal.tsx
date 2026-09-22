@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, ArrowRight, ArrowLeft, CheckCircle2, CreditCard, Building2, Lock, Loader2 } from 'lucide-react';
 import { toUrduNumerals } from '../utils/formatters';
 import { saveDonation } from '../lib/saveDonation';
-import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
 import { fetchApi } from '../lib/apiClient';
 import { useAuth } from '../hooks/useAuth';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -35,6 +35,10 @@ const STEP_LABELS_EN = ['Amount', 'Your Info', 'Payment', 'Confirm'];
 const STEP_LABELS_UR = ['رقم', 'معلومات', 'ادائیگی', 'تصدیق'];
 
 const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, initialCampaign, initialAmount, initialIsMonthly }) => {
+  const { settings } = useSiteSettings();
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const donationsEnabled = settings?.donations_enabled === 'true';
+
   const [step, setStep] = useState<number>(1); // 1 to 5
   const [isProcessing, setIsProcessing] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
@@ -50,15 +54,12 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
   const [isAnon, setIsAnon] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [donationId, setDonationId] = useState<string | null>(null);
-  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [transactionId, setTransactionId] = useState<string>('');
   const [isMonthly, setIsMonthly] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
-
-  const { upload, uploading } = useCloudinaryUpload();
 
   // Reset state when opened and fetch projects
   useEffect(() => {
@@ -79,11 +80,19 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
       setSelectedProjectId('');
 
       const loadProjects = async () => {
-        const { data, error } = await fetchApi<{ id: string; title: string }[]>('/projects');
-        if (!error && data) {
-          setProjects(data);
+        const [projectsRes, methodsRes] = await Promise.all([
+          fetchApi<{ id: string; title: string }[]>('/projects'),
+          fetchApi<any[]>('/payment-methods')
+        ]);
+        
+        if (!methodsRes.error && methodsRes.data) {
+          setPaymentMethods(methodsRes.data.filter((m: any) => m.is_active));
+        }
+
+        if (!projectsRes.error && projectsRes.data) {
+          setProjects(projectsRes.data);
           if (initialCampaign) {
-            const matched = data.find(p => p.title.toLowerCase() === initialCampaign.toLowerCase());
+            const matched = projectsRes.data.find(p => p.title.toLowerCase() === initialCampaign.toLowerCase());
             if (matched) {
               setSelectedProjectId(matched.id);
               setCampaign(matched.title);
@@ -196,22 +205,9 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
     if (!donationId) return;
     setIsProcessing(true);
     try {
-      let screenshotUrl = '';
-      let screenshotPublicId = '';
-      if (screenshotFile) {
-        const result = await upload(screenshotFile, 'ioca/donations');
-        if (result) {
-          screenshotUrl = result.url;
-          screenshotPublicId = result.publicId;
-        }
-      }
-      
-      // Update screenshot and/or transactionId
       await fetchApi(`/donations/${donationId}`, {
         method: 'PUT',
         body: JSON.stringify({ 
-          screenshotUrl: screenshotUrl || undefined, 
-          screenshotPublicId: screenshotPublicId || undefined,
           transactionId: transactionId || undefined
         }),
       });
@@ -272,7 +268,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-brand-navy/10 shrink-0">
           <h2 id="modal-title" className={`text-2xl font-bold text-brand-navy ${isUrdu ? 'font-urduHeading' : ''}`}>
-            {step === 5 ? (isUrdu ? 'شکریہ' : 'Thank You') : (isUrdu ? 'اپنا عطیہ دیں' : 'Make a Donation')}
+            {!donationsEnabled ? (isUrdu ? 'عطیات روکے گئے ہیں' : 'Donations Paused') : step === 5 ? (isUrdu ? 'شکریہ' : 'Thank You') : (isUrdu ? 'اپنا عطیہ دیں' : 'Make a Donation')}
           </h2>
           <button 
             onClick={onClose}
@@ -283,8 +279,24 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
           </button>
         </div>
 
-        {/* H1-06: Branded Step Progress Bar — replaces the plain bar */}
-        {step < 5 && (
+        {!donationsEnabled ? (
+          <div className="p-8 text-center flex-1 overflow-y-auto">
+            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-amber-600" />
+            </div>
+            <h3 className={`text-xl font-bold text-brand-navy mb-2 ${isUrdu ? 'font-urduHeading' : ''}`}>
+              {isUrdu ? 'آن لائن عطیات فی الحال معطل ہیں' : 'Online Donations are Currently Paused'}
+            </h3>
+            <p className="text-brand-navy/70 text-sm">
+              {isUrdu 
+                ? 'ہم اس وقت آن لائن عطیات وصول نہیں کر رہے ہیں۔ آپ کی حمایت کا شکریہ۔' 
+                : 'We are not accepting online donations at this time. Thank you for your continued support.'}
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* H1-06: Branded Step Progress Bar — replaces the plain bar */}
+            {step < 5 && (
           <div className="px-6 pt-4 pb-3 shrink-0" aria-label={isUrdu ? `مرحلہ ${step} از 4` : `Step ${step} of 4`}>
             <div className="flex items-center justify-between gap-1">
               {(isUrdu ? STEP_LABELS_UR : STEP_LABELS_EN).map((label, idx) => {
@@ -599,27 +611,17 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                   <div className="bg-brand-gold/10 p-4 rounded-lg border border-brand-gold/20 mb-6">
                     <p className={`text-brand-navy/80 font-medium text-sm mb-4 ${isUrdu ? 'text-right' : ''}`}>
                       {isUrdu 
-                        ? 'براہ کرم مندرجہ ذیل میں سے کسی بھی اکاؤنٹ میں رقم منتقل کریں اور پھر رسید کی تصویر (screenshot) نیچے اپلوڈ کریں۔' 
-                        : 'Please transfer the amount to any of the following accounts and upload the payment screenshot below to confirm your donation.'}
+                        ? 'براہ کرم مندرجہ ذیل میں سے کسی بھی اکاؤنٹ میں رقم منتقل کریں اور پھر ٹرانزیکشن آئی ڈی (TID) نیچے درج کریں۔ اسکرین شاٹ ہمارے واٹس ایپ پر بھیجیں۔' 
+                        : 'Please transfer the amount to any of the following accounts and enter the Transaction ID (TID) below. Send your screenshot proof to our WhatsApp.'}
                     </p>
-                    <div className="bg-white rounded-lg p-4 border border-brand-gold/20">
-                      <label className="block text-sm font-bold text-brand-navy mb-2">
-                        {isUrdu ? 'ادائیگی کا ثبوت (اسکرین شاٹ)' : 'Payment Proof (Screenshot)'}
-                      </label>
-                      <input 
-                        type="file" 
-                        accept="image/*"
-                        onChange={e => setScreenshotFile(e.target.files?.[0] || null)}
-                        className="w-full text-sm text-brand-navy/70 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-teal/10 file:text-brand-teal hover:file:bg-brand-teal/20"
-                      />
-                    </div>
                     <div className="bg-white rounded-lg p-4 border border-brand-gold/20 mt-4">
                       <label htmlFor="transaction-id" className="block text-sm font-bold text-brand-navy mb-2">
-                        {isUrdu ? 'ٹرانزیکشن آئی ڈی / حوالہ نمبر (اختیاری)' : 'Transaction ID / Reference Number (Optional)'}
+                        {isUrdu ? 'ٹرانزیکشن آئی ڈی / حوالہ نمبر (لازمی)' : 'Transaction ID / Reference Number *'}
                       </label>
                       <input 
                         id="transaction-id"
                         type="text"
+                        required
                         placeholder="e.g. TRX-12345678"
                         value={transactionId}
                         onChange={e => setTransactionId(e.target.value)}
@@ -627,19 +629,17 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
                       />
                     </div>
                   </div>
-                  <div className="bg-brand-navy/5 p-4 rounded-lg space-y-4">
-                    <div>
-                      <p className="text-xs font-bold text-brand-navy/50 uppercase">Bank Transfer</p>
-                      <p className="font-bold text-brand-navy">Meezan Bank: 1234 5678 9012 3456</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-brand-navy/50 uppercase">EasyPaisa</p>
-                      <p className="font-bold text-brand-navy">0300 0000000 <span className="font-normal text-sm text-brand-navy/70">(IOCA Org)</span></p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-brand-navy/50 uppercase">JazzCash</p>
-                      <p className="font-bold text-brand-navy">0300 0000000 <span className="font-normal text-sm text-brand-navy/70">(IOCA Org)</span></p>
-                    </div>
+                  <div className="bg-brand-navy/5 p-4 rounded-lg space-y-4 max-h-[300px] overflow-y-auto">
+                    {paymentMethods.length > 0 ? paymentMethods.map(m => (
+                      <div key={m.id} className="border-b border-brand-navy/10 pb-4 last:border-0 last:pb-0">
+                        <p className="text-xs font-bold text-brand-navy/50 uppercase">{m.type}</p>
+                        <p className="font-bold text-brand-navy">{m.provider_name}</p>
+                        <p className="font-mono text-sm">{m.account_number} <span className="font-normal text-brand-navy/70 text-xs">({m.account_title})</span></p>
+                        {m.iban && <p className="font-mono text-xs text-brand-navy/50">{m.iban}</p>}
+                      </div>
+                    )) : (
+                      <p className="text-center text-brand-navy/50 text-sm">No active payment methods found. Please contact support.</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -700,10 +700,10 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
             ) : (
               <button 
                 onClick={step === 4 && paymentMethod === 'manual' ? handleManualComplete : handleNext}
-                disabled={isProcessing || uploading || (step === 1 && !amount && !customAmount) || (step === 2 && (!donorName || !donorEmail)) || (step === 3 && !paymentMethod)}
+                disabled={isProcessing || (step === 1 && !amount && !customAmount) || (step === 2 && (!donorName || !donorEmail)) || (step === 3 && !paymentMethod) || (step === 4 && paymentMethod === 'manual' && !transactionId)}
                 className="flex-1 bg-brand-teal text-brand-white py-4 rounded-lg font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-teal/20"
               >
-                {isProcessing || uploading ? (
+                {isProcessing ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : null}
                 {step === 4 && paymentMethod === 'manual' ? (isUrdu ? 'ادائیگی مکمل کریں' : 'Complete Donation') : (isUrdu ? 'آگے بڑھیں' : 'Continue')}
@@ -722,6 +722,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
               {isUrdu ? 'مرکزی صفحہ پر واپس جائیں' : 'Return to Home'}
             </button>
           </div>
+        )}
+        </>
         )}
 
       </div>

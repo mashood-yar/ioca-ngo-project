@@ -156,11 +156,14 @@ export function UserDashboard() {
   const [isRenewConfirmOpen, setIsRenewConfirmOpen] = useState(false);
 
   // 3. Donation Form State
+  const [donationsEnabled, setDonationsEnabled] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [donationAmount, setDonationAmount] = useState<string>('5000');
   const [isCustomAmount, setIsCustomAmount] = useState(false);
   const [customAmountVal, setCustomAmountVal] = useState('');
   const [donationDedication, setDonationDedication] = useState('');
-  const [donationPaymentMethod, setDonationPaymentMethod] = useState('Credit Card');
+  const [donationPaymentMethod, setDonationPaymentMethod] = useState('');
+  const [donationTransactionId, setDonationTransactionId] = useState('');
   const [isSubmittingDonation, setIsSubmittingDonation] = useState(false);
   const [donationReceipt, setDonationReceipt] = useState<any | null>(null);
 
@@ -194,7 +197,9 @@ export function UserDashboard() {
         { data: zonesData },
         { data: tiersData },
         { data: allEventsData },
-        { data: applicationData }
+        { data: applicationData },
+        { data: paymentMethodsData },
+        { data: settingsData }
       ] = await Promise.all([
         fetchApi<ProfileData>('/profile/me'),
         fetchApi<MembershipData>('/memberships/me').catch(() => ({ data: null, error: null })),
@@ -204,7 +209,9 @@ export function UserDashboard() {
         fetchApi<Zone[]>('/zones').catch(() => ({ data: [] as Zone[], error: null })),
         fetchApi<Tier[]>('/tiers').catch(() => ({ data: [] as Tier[], error: null })),
         fetchApi<EventData[]>('/events').catch(() => ({ data: [] as EventData[], error: null })),
-        fetchApi<ApplicationData>('/misc/applications/me').catch(() => ({ data: null, error: null }))
+        fetchApi<ApplicationData>('/misc/applications/me').catch(() => ({ data: null, error: null })),
+        fetchApi<any[]>('/payment-methods').catch(() => ({ data: [], error: null })),
+        fetchApi<Record<string, string>>('/site-settings').catch(() => ({ data: {}, error: null }))
       ]);
 
       setProfile(profileData);
@@ -215,6 +222,8 @@ export function UserDashboard() {
       setZones(Array.isArray(zonesData) ? zonesData : []);
       setTiers(Array.isArray(tiersData) ? tiersData : []);
       setAvailableEvents(Array.isArray(allEventsData) ? allEventsData : []);
+      setPaymentMethods(Array.isArray(paymentMethodsData) ? paymentMethodsData : []);
+      setDonationsEnabled(settingsData?.donations_enabled === 'true');
       // Only show pending application banner if no active membership exists
       if (applicationData && (applicationData.status === 'pending' || applicationData.status === 'under_review')) {
         setPendingApplication(applicationData);
@@ -415,6 +424,20 @@ export function UserDashboard() {
       return;
     }
 
+    if (!donationTransactionId.trim()) {
+      window.dispatchEvent(new CustomEvent('app-toast', { 
+        detail: { message: 'Please provide the Transaction ID (TID) from your bank/wallet.', variant: 'error' } 
+      }));
+      return;
+    }
+
+    if (!donationPaymentMethod) {
+      window.dispatchEvent(new CustomEvent('app-toast', { 
+        detail: { message: 'Please select a payment method.', variant: 'error' } 
+      }));
+      return;
+    }
+
     setIsSubmittingDonation(true);
     try {
       const donorName = profile?.name || user?.user_metadata?.full_name || 'Anonymous Donor';
@@ -427,43 +450,35 @@ export function UserDashboard() {
           email,
           amount: finalAmount,
           paymentMethod: donationPaymentMethod,
+          transactionId: donationTransactionId,
           message: donationDedication,
-          status: 'confirmed'
+          status: 'pending'
         })
       });
 
       if (error) throw new Error(error);
 
-      const txnId = data?.id || `TXN-${Math.floor(10000000 + Math.random() * 90000000)}`;
-      const receiptData = {
-        transactionId: txnId,
-        amount: finalAmount,
-        dedication: donationDedication,
-        paymentMethod: donationPaymentMethod,
-        date: new Date().toISOString()
-      };
-
-      setDonationReceipt(receiptData);
-      
-      // Update local donation list
+      // Add to list as pending
       const newDonationRecord: DonationData = data || {
-        id: txnId,
+        id: `TXN-${Math.floor(10000000 + Math.random() * 90000000)}`,
         created_at: new Date().toISOString(),
         amount: finalAmount,
         payment_method: donationPaymentMethod,
-        status: 'confirmed',
+        transaction_id: donationTransactionId,
+        status: 'pending',
         message: donationDedication
       };
       setDonations(prev => [newDonationRecord, ...prev]);
 
       // Reset form
       setDonationDedication('');
+      setDonationTransactionId('');
       setCustomAmountVal('');
       setIsCustomAmount(false);
       setDonationAmount('5000');
 
       window.dispatchEvent(new CustomEvent('app-toast', { 
-        detail: { message: 'Donation processed successfully! Thank you!', variant: 'success' } 
+        detail: { message: 'Donation submitted successfully! Pending verification.', variant: 'success' } 
       }));
     } catch (err: any /* fixed M-01 */) {
       window.dispatchEvent(new CustomEvent('app-toast', { 
@@ -1186,99 +1201,146 @@ END:VCALENDAR`;
                     <h2 className="text-lg font-bold text-brand-navy/80 mb-2">Process Donation Contribution</h2>
                     <p className="text-sm text-brand-navy/50 mb-6">Process a custom or preset donation to directly support active community programs.</p>
 
-                    <form onSubmit={handleDonate} className="space-y-6">
-                      {/* Presets */}
-                      <div className="space-y-2">
-                        <label className="block text-brand-navy/70 font-semibold text-sm">Choose Amount (PKR)</label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                          {['1000', '5000', '10000', '25000'].map(val => {
-                            const isSelected = donationAmount === val && !isCustomAmount;
-                            return (
-                              <button
-                                key={val}
-                                type="button"
-                                onClick={() => { setDonationAmount(val); setIsCustomAmount(false); }}
-                                className={`py-3 px-4 rounded-xl font-bold border transition text-sm text-center ${
-                                  isSelected
-                                    ? 'bg-brand-teal border-brand-teal text-white shadow-md shadow-brand-teal/10'
-                                    : 'border-brand-navy/10 text-brand-navy/70 bg-white hover:bg-brand-gray'
-                                }`}
-                              >
-                                {Number(val).toLocaleString('en-PK')}
-                              </button>
-                            );
-                          })}
-                          <button
-                            type="button"
-                            onClick={() => setIsCustomAmount(true)}
-                            className={`py-3 px-4 rounded-xl font-bold border transition text-sm text-center ${
-                              isCustomAmount
-                                ? 'bg-brand-teal border-brand-teal text-white shadow-md shadow-brand-teal/10'
-                                : 'border-brand-navy/10 text-brand-navy/70 bg-white hover:bg-brand-gray'
-                            }`}
-                          >
-                            Custom
-                          </button>
+                    {!donationsEnabled ? (
+                      <div className="bg-amber-50 text-amber-800 border border-amber-200 rounded-xl p-6 text-center">
+                        <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <CheckCircle className="w-6 h-6 text-amber-600" />
                         </div>
+                        <h3 className="font-bold text-lg mb-1">Donations are currently paused</h3>
+                        <p className="text-sm opacity-80">We are not accepting public donations at this time. Thank you for your support.</p>
                       </div>
-
-                      {/* Custom Input */}
-                      {isCustomAmount && (
-                        <div className="space-y-1">
-                          <label className="block text-brand-navy/70 font-semibold text-sm">Custom Amount (PKR)</label>
-                          <input
-                            type="number"
-                            required
-                            placeholder="Enter amount"
-                            className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition text-sm"
-                            value={customAmountVal}
-                            onChange={e => setCustomAmountVal(e.target.value)}
-                          />
+                    ) : (
+                      <form onSubmit={handleDonate} className="space-y-6">
+                        {/* Presets */}
+                        <div className="space-y-2">
+                          <label className="block text-brand-navy/70 font-semibold text-sm">Choose Amount (PKR)</label>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            {['1000', '5000', '10000', '25000'].map(val => {
+                              const isSelected = donationAmount === val && !isCustomAmount;
+                              return (
+                                <button
+                                  key={val}
+                                  type="button"
+                                  onClick={() => { setDonationAmount(val); setIsCustomAmount(false); }}
+                                  className={`py-3 px-4 rounded-xl font-bold border transition text-sm text-center ${
+                                    isSelected
+                                      ? 'bg-brand-teal border-brand-teal text-white shadow-md shadow-brand-teal/10'
+                                      : 'border-brand-navy/10 text-brand-navy/70 bg-white hover:bg-brand-gray'
+                                  }`}
+                                >
+                                  {Number(val).toLocaleString('en-PK')}
+                                </button>
+                              );
+                            })}
+                            <button
+                              type="button"
+                              onClick={() => setIsCustomAmount(true)}
+                              className={`py-3 px-4 rounded-xl font-bold border transition text-sm text-center ${
+                                isCustomAmount
+                                  ? 'bg-brand-teal border-brand-teal text-white shadow-md shadow-brand-teal/10'
+                                  : 'border-brand-navy/10 text-brand-navy/70 bg-white hover:bg-brand-gray'
+                              }`}
+                            >
+                              Custom
+                            </button>
+                          </div>
                         </div>
-                      )}
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <label className="block text-brand-navy/70 font-semibold mb-1.5">Payment Method</label>
-                          <select
-                            className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition bg-white"
-                            value={donationPaymentMethod}
-                            onChange={e => setDonationPaymentMethod(e.target.value)}
-                          >
-                            <option value="Credit Card">Credit / Debit Card</option>
-                            <option value="JazzCash">JazzCash Mobile Wallet</option>
-                            <option value="EasyPaisa">EasyPaisa Mobile Wallet</option>
-                            <option value="Bank Transfer">Direct Bank Transfer</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-brand-navy/70 font-semibold mb-1.5">Dedication / Message (Optional)</label>
-                          <input
-                            type="text"
-                            placeholder="In honor of / general support"
-                            className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
-                            value={donationDedication}
-                            onChange={e => setDonationDedication(e.target.value)}
-                          />
-                        </div>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={isSubmittingDonation}
-                        className="w-full bg-brand-teal hover:bg-brand-teal text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-teal/10 hover:shadow-emerald-200 transition disabled:opacity-50 flex items-center justify-center gap-2"
-                      >
-                        {isSubmittingDonation ? (
-                          <>
-                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                            Processing...
-                          </>
-                        ) : (
-                          'Complete Donation Contribution'
+                        {/* Custom Input */}
+                        {isCustomAmount && (
+                          <div className="space-y-1">
+                            <label className="block text-brand-navy/70 font-semibold text-sm">Custom Amount (PKR)</label>
+                            <input
+                              type="number"
+                              required
+                              placeholder="Enter amount"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition text-sm"
+                              value={customAmountVal}
+                              onChange={e => setCustomAmountVal(e.target.value)}
+                            />
+                          </div>
                         )}
-                      </button>
-                    </form>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Payment Method</label>
+                            <select
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition bg-white"
+                              value={donationPaymentMethod}
+                              onChange={e => setDonationPaymentMethod(e.target.value)}
+                              required
+                            >
+                              <option value="" disabled>Select an account</option>
+                              {paymentMethods.map((m: any) => (
+                                <option key={m.id} value={m.provider_name}>{m.provider_name} ({m.type})</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Transaction ID (TID) *</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="From your bank/app receipt"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
+                              value={donationTransactionId}
+                              onChange={e => setDonationTransactionId(e.target.value)}
+                            />
+                          </div>
+                          
+                          <div className="sm:col-span-2">
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Dedication / Message (Optional)</label>
+                            <input
+                              type="text"
+                              placeholder="In honor of / general support"
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
+                              value={donationDedication}
+                              onChange={e => setDonationDedication(e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+                        {donationPaymentMethod && (
+                          <div className="bg-brand-gray/50 border border-brand-navy/10 rounded-xl p-4 text-sm">
+                            <p className="font-bold text-brand-navy/90 mb-2">Please transfer funds to:</p>
+                            {(() => {
+                              const method = paymentMethods.find((m: any) => m.provider_name === donationPaymentMethod);
+                              if (!method) return null;
+                              return (
+                                <div className="space-y-1">
+                                  <p><strong>Bank/Provider:</strong> {method.provider_name}</p>
+                                  <p><strong>Account Title:</strong> {method.account_title}</p>
+                                  <p><strong>Account Number:</strong> {method.account_number}</p>
+                                  {method.iban && <p><strong>IBAN:</strong> {method.iban}</p>}
+                                  <div className="mt-4 pt-3 border-t border-brand-navy/10">
+                                    <p className="text-brand-teal font-medium flex items-center gap-2">
+                                      <CheckCircle className="w-4 h-4" />
+                                      After transferring, please enter the Transaction ID (TID) above. Send your screenshot proof to our WhatsApp at +92 3XX XXXXXXX.
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        )}
+
+                        <button
+                          type="submit"
+                          disabled={isSubmittingDonation}
+                          className="w-full bg-brand-teal hover:bg-brand-teal text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-teal/10 hover:shadow-emerald-200 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                          {isSubmittingDonation ? (
+                            <>
+                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              Processing...
+                            </>
+                          ) : (
+                            'Submit Donation for Verification'
+                          )}
+                        </button>
+                      </form>
+                    )}
                   </div>
 
                   {/* Summary Stats */}

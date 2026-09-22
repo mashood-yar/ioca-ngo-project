@@ -12,13 +12,15 @@ import {
   X, 
   ChevronRight, 
   Loader2, 
-  UserCheck
+  UserCheck,
+  Settings
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchApi } from '../../lib/apiClient';
 import { useCloudinaryUpload } from '../../hooks/useCloudinaryUpload';
 import { optimizeImage } from '../../lib/optimizeImage';
 import { AdminButton } from './AdminButton';
+import { AdminDonationSettings } from './AdminDonationSettings';
 
 interface Donation {
   id: string;
@@ -72,7 +74,7 @@ export function AdminDonations() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'all' | 'donors'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'all' | 'donors' | 'settings'>('overview');
 
   // Search & Filter state
   const [searchTerm, setSearchTerm] = useState('');
@@ -311,11 +313,12 @@ export function AdminDonations() {
       </div>
 
       {/* Modern Segmented Navigation Tabs */}
-      <div className="flex bg-slate-100 p-1.5 rounded-2xl max-w-lg border border-slate-200/50 shadow-inner">
+      <div className="flex bg-slate-100 p-1.5 rounded-2xl w-max max-w-full overflow-x-auto border border-slate-200/50 shadow-inner">
         {[
           { id: 'overview', label: 'Overview Metrics', icon: TrendingUp },
           { id: 'all', label: 'All Contributions', icon: DollarSign },
           { id: 'donors', label: 'Donor Directory', icon: Users },
+          { id: 'settings', label: 'Settings', icon: Settings },
         ].map(tab => {
           const Icon = tab.icon;
           return (
@@ -646,44 +649,31 @@ export function AdminDonations() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search directory by donor name or email..."
+              placeholder="Search by name or email..."
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-[#E5E7EB] outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] font-medium text-sm bg-white text-[#111827]"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-shadow text-sm"
             />
           </div>
 
-          {/* Grid Layout for Donor Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDonors.map((dp, idx) => {
-              const nameParts = dp.name.trim().split(' ');
-              const initials = nameParts.length > 1 
-                ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
-                : (nameParts[0]?.[0] || 'D').toUpperCase();
-
+            {filteredDonors.map(dp => {
+              const initials = dp.name.substring(0, 2).toUpperCase();
               return (
-                <div key={idx} className="bg-white border border-slate-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-indigo-50 text-indigo-700 rounded-2xl flex items-center justify-center font-bold text-sm shrink-0">
-                      {initials}
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="font-extrabold text-slate-800 text-sm truncate">{dp.name}</h4>
-                      <p className="text-xs text-slate-400 truncate mt-0.5">{dp.email}</p>
-                      {dp.phone && <p className="text-[10px] text-slate-400 truncate mt-0.5">{dp.phone}</p>}
+                <div key={dp.email + dp.name} className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow group flex items-start gap-4 cursor-pointer" onClick={() => loadDonorHistory(dp.email, dp.name)}>
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-teal/20 to-brand-teal/5 flex items-center justify-center text-brand-teal font-black text-lg shrink-0 border border-brand-teal/10">
+                    {initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-slate-900 truncate">{dp.name}</h3>
+                    <p className="text-xs text-slate-500 truncate mt-0.5">{dp.email !== 'N/A' ? dp.email : dp.phone || 'Anonymous'}</p>
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="text-sm font-black text-brand-teal">PKR {dp.total.toLocaleString('en-PK')}</div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{dp.count} Gifts</div>
                     </div>
                   </div>
-
-                  <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Approved</span>
-                      <span className="text-sm font-extrabold text-slate-800 mt-1 block">PKR {dp.total.toLocaleString('en-PK')}</span>
-                    </div>
-                    <button
-                      onClick={() => loadDonorHistory(dp.email, dp.name)}
-                      className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
-                    >
-                      Audit History
+                  <div className="shrink-0 flex items-center h-12 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-brand-teal hover:bg-brand-teal/5">
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -696,6 +686,11 @@ export function AdminDonations() {
             )}
           </div>
         </div>
+      )}
+
+      {/* --- TAB 4: SETTINGS & GATEWAYS --- */}
+      {activeTab === 'settings' && (
+        <AdminDonationSettings />
       )}
 
       {/* --- CONFIRMATION ACTION DIALOG MODAL --- */}
@@ -746,6 +741,13 @@ export function AdminDonations() {
                     </>
                   )}
                 </p>
+
+                {selectedDonation.transaction_id && (
+                  <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-sm">
+                    <p className="text-slate-500 font-semibold mb-1 text-xs uppercase tracking-wider">Transaction ID</p>
+                    <p className="font-mono text-slate-800 font-bold">{selectedDonation.transaction_id}</p>
+                  </div>
+                )}
 
                 {actionType === 'confirm' && selectedDonation.verification_notes && (
                   <div className="bg-yellow-50 text-yellow-800 p-3 rounded-lg border border-yellow-100 text-[11px] leading-relaxed">
