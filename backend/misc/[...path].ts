@@ -467,7 +467,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const { status } = req.query
           let query = supabase
             .from('applications')
-            .select('*, zones(name, city), tiers(name, price), profiles(name, email)')
+            .select('*, zones(name, city), tiers(name, price)')
             .order('submitted_at', { ascending: false })
           if (status && typeof status === 'string') {
             query = query.eq('status', status)

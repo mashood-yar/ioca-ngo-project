@@ -665,7 +665,7 @@ END:VCALENDAR`;
   const activeZone = member?.zone;
 
   return (
-    <div className="min-h-screen bg-brand-gray flex flex-col md:flex-row">
+    <div className="min-h-screen bg-brand-gray flex flex-col md:flex-row pt-[72px] md:pt-[88px] lg:pt-[104px]">
       {/* --- Sidebar Navigation --- */}
       <aside className="w-full md:w-64 bg-white border-r border-brand-navy/10 flex-shrink-0 flex flex-col">
         {/* User Card */}
