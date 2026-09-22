@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, ArrowRight, X, Shield } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Shield } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
@@ -350,7 +350,7 @@ export function AdminTiers() {
             >
               Cancel
             </button>
-            <AdminButton type="submit" loading={saving}>
+            <AdminButton type="submit" isLoading={saving}>
               {selectedTier ? 'Save Changes' : 'Create Tier'}
             </AdminButton>
           </div>
@@ -364,8 +364,7 @@ export function AdminTiers() {
         confirmLabel="Delete Tier"
         isDestructive={true}
         onConfirm={handleDelete}
-        onCancel={() => setIsDeleteOpen(false)}
-        loading={saving}
+        onClose={() => setIsDeleteOpen(false)}
       />
     </div>
   );
