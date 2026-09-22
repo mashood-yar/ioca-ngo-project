@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Heart, CheckCircle2, Briefcase, Clock, Users } from 'lucide-react';
+import { Heart, CheckCircle2, Briefcase, Clock, Users, Shield, AlertCircle } from 'lucide-react';
 import { fetchApi } from '../lib/apiClient';
 
 interface VolunteerProps {
@@ -24,7 +24,7 @@ interface InputFieldProps {
 const InputField: React.FC<InputFieldProps> = ({ id, name, label, type = 'text', required = false, placeholder, value, error, isUrdu, onChange }) => (
   <div>
     <label htmlFor={id} className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
-      {label} {required && '*'}
+      {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
       id={id}
@@ -36,21 +36,35 @@ const InputField: React.FC<InputFieldProps> = ({ id, name, label, type = 'text',
       placeholder={placeholder}
       className={`w-full px-4 py-3 rounded-xl border ${error ? 'border-red-400 bg-red-50' : 'border-brand-navy/10 bg-brand-gray'} focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 transition-all text-sm`}
     />
-    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    {error && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>}
   </div>
 );
 
+// Section divider with label
+const SectionHeader: React.FC<{ label: string; isUrdu: boolean }> = ({ label, isUrdu }) => (
+  <div className="flex items-center gap-3 pt-2">
+    <div className="h-px flex-1 bg-brand-navy/10" />
+    <span className={`text-xs font-bold text-brand-navy/40 uppercase tracking-wider whitespace-nowrap ${isUrdu ? 'font-urduBody' : ''}`}>{label}</span>
+    <div className="h-px flex-1 bg-brand-navy/10" />
+  </div>
+);
 
 const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
+    cnic: '',
+    date_of_birth: '',
     city: '',
+    education: '',
     program: '',
     availability: '',
+    skills_detail: '',
     heardFrom: '',
     message: '',
+    emergency_contact_name: '',
+    emergency_contact_phone: '',
     agreeTerms: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -67,12 +81,23 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = isUrdu ? 'نام ضروری ہے' : 'Name is required';
+    if (!formData.name.trim()) newErrors.name = isUrdu ? 'نام ضروری ہے' : 'Full name is required';
     if (!formData.email.trim()) newErrors.email = isUrdu ? 'ای میل ضروری ہے' : 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = isUrdu ? 'درست ای میل درج کریں' : 'Please enter a valid email';
     if (!formData.phone.trim()) newErrors.phone = isUrdu ? 'فون نمبر ضروری ہے' : 'Phone is required';
+    if (!formData.cnic.trim()) newErrors.cnic = isUrdu ? 'شناختی کارڈ نمبر ضروری ہے' : 'CNIC is required';
+    else if (!/^\d{5}-?\d{7}-?\d{1}$/.test(formData.cnic.replace(/\s/g, ''))) newErrors.cnic = isUrdu ? '13 ہندسوں کا درست شناختی کارڈ نمبر درج کریں' : 'Enter a valid 13-digit CNIC (e.g. 12345-1234567-1)';
+    if (!formData.date_of_birth) newErrors.date_of_birth = isUrdu ? 'تاریخ پیدائش ضروری ہے' : 'Date of birth is required';
+    else {
+      const dob = new Date(formData.date_of_birth);
+      const age = (Date.now() - dob.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+      if (age < 16) newErrors.date_of_birth = isUrdu ? 'کم از کم عمر 16 سال ہونی چاہیے' : 'You must be at least 16 years old';
+    }
     if (!formData.city.trim()) newErrors.city = isUrdu ? 'شہر ضروری ہے' : 'City is required';
+    if (!formData.education) newErrors.education = isUrdu ? 'تعلیمی سطح منتخب کریں' : 'Please select your education level';
     if (!formData.program) newErrors.program = isUrdu ? 'پروگرام منتخب کریں' : 'Please select a program';
+    if (!formData.emergency_contact_name.trim()) newErrors.emergency_contact_name = isUrdu ? 'ہنگامی رابطہ کا نام ضروری ہے' : 'Emergency contact name is required';
+    if (!formData.emergency_contact_phone.trim()) newErrors.emergency_contact_phone = isUrdu ? 'ہنگامی رابطہ کا فون ضروری ہے' : 'Emergency contact phone is required';
     if (!formData.agreeTerms) newErrors.agreeTerms = isUrdu ? 'شرائط سے اتفاق ضروری ہے' : 'You must agree to the terms';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -89,10 +114,17 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
         full_name: formData.name,
         email: formData.email,
         phone: formData.phone,
+        cnic: formData.cnic,
+        date_of_birth: formData.date_of_birth,
         city: formData.city,
+        education: formData.education,
         availability: formData.availability,
         skills: formData.program,
+        skills_detail: formData.skills_detail,
         motivation: formData.message,
+        heard_from: formData.heardFrom,
+        emergency_contact_name: formData.emergency_contact_name,
+        emergency_contact_phone: formData.emergency_contact_phone,
       }),
     });
     setIsSubmitting(false);
@@ -103,15 +135,12 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
     }
   };
 
-
   const benefits = [
     { icon: Heart, titleEn: 'Make a Difference', titleUr: 'فرق ڈالیں', descEn: 'Directly impact the lives of those in need.', descUr: 'ضرورت مندوں کی زندگیوں پر براہ راست اثر ڈالیں۔' },
     { icon: Users, titleEn: 'Build Community', titleUr: 'کمیونٹی بنائیں', descEn: 'Connect with like-minded changemakers.', descUr: 'ہم خیال تبدیلی پسندوں سے جڑیں۔' },
     { icon: Briefcase, titleEn: 'Gain Experience', titleUr: 'تجربہ حاصل کریں', descEn: 'Develop professional skills while serving.', descUr: 'خدمت کرتے ہوئے پیشہ ورانہ مہارتیں حاصل کریں۔' },
     { icon: Clock, titleEn: 'Flexible Hours', titleUr: 'لچکدار اوقات', descEn: 'Volunteer on your own schedule.', descUr: 'اپنے شیڈول کے مطابق رضاکارانہ خدمات۔' },
   ];
-
-
 
   return (
     <>
@@ -186,7 +215,15 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                     : 'Our team will reach out to you shortly. Thank you for joining the IOCA family!'}
                 </p>
                 <button
-                  onClick={() => { setIsSubmitted(false); setFormData({ name: '', email: '', phone: '', city: '', program: '', availability: '', heardFrom: '', message: '', agreeTerms: false }); }}
+                  onClick={() => {
+                    setIsSubmitted(false);
+                    setFormData({
+                      name: '', email: '', phone: '', cnic: '', date_of_birth: '', city: '',
+                      education: '', program: '', availability: '', skills_detail: '',
+                      heardFrom: '', message: '', emergency_contact_name: '',
+                      emergency_contact_phone: '', agreeTerms: false
+                    });
+                  }}
                   className="text-brand-teal font-medium hover:underline text-sm"
                 >
                   {isUrdu ? 'ایک اور درخواست بھیجیں' : 'Submit another application'}
@@ -198,20 +235,56 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                   {isUrdu ? 'رضاکارانہ فارم' : 'Volunteer Registration'}
                 </h2>
 
+                {/* ─── Section 1: Personal Information ─────────────────────── */}
+                <SectionHeader label={isUrdu ? 'ذاتی معلومات' : 'Personal Information'} isUrdu={isUrdu} />
+
                 <div className="grid grid-cols-2 gap-4">
-                  <InputField id="vol-name" name="name" label={isUrdu ? 'پورا نام' : 'Full Name'} required placeholder={isUrdu ? 'آپ کا نام' : 'Your name'} value={formData.name} error={errors.name} isUrdu={isUrdu} onChange={handleChange} />
+                  <InputField id="vol-name" name="name" label={isUrdu ? 'پورا نام' : 'Full Name'} required placeholder={isUrdu ? 'آپ کا نام' : 'Your full name'} value={formData.name} error={errors.name} isUrdu={isUrdu} onChange={handleChange} />
                   <InputField id="vol-email" name="email" label={isUrdu ? 'ای میل' : 'Email'} type="email" required placeholder={isUrdu ? 'آپ کا ای میل' : 'Your email'} value={formData.email} error={errors.email} isUrdu={isUrdu} onChange={handleChange} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <InputField id="vol-phone" name="phone" label={isUrdu ? 'فون نمبر' : 'Phone'} type="tel" required placeholder={isUrdu ? 'فون نمبر' : 'Phone number'} value={formData.phone} error={errors.phone} isUrdu={isUrdu} onChange={handleChange} />
+                  <InputField id="vol-phone" name="phone" label={isUrdu ? 'فون نمبر' : 'Phone'} type="tel" required placeholder={isUrdu ? 'مثلاً 03001234567' : 'e.g. 03001234567'} value={formData.phone} error={errors.phone} isUrdu={isUrdu} onChange={handleChange} />
                   <InputField id="vol-city" name="city" label={isUrdu ? 'شہر' : 'City'} required placeholder={isUrdu ? 'آپ کا شہر' : 'Your city'} value={formData.city} error={errors.city} isUrdu={isUrdu} onChange={handleChange} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
+                  <InputField id="vol-cnic" name="cnic" label={isUrdu ? 'شناختی کارڈ نمبر' : 'CNIC Number'} required placeholder={isUrdu ? 'مثلاً 12345-1234567-1' : 'e.g. 12345-1234567-1'} value={formData.cnic} error={errors.cnic} isUrdu={isUrdu} onChange={handleChange} />
+                  <InputField id="vol-dob" name="date_of_birth" label={isUrdu ? 'تاریخ پیدائش' : 'Date of Birth'} type="date" required placeholder="" value={formData.date_of_birth} error={errors.date_of_birth} isUrdu={isUrdu} onChange={handleChange} />
+                </div>
+
+                {/* ─── Section 2: Volunteer Preferences ────────────────────── */}
+                <SectionHeader label={isUrdu ? 'رضاکارانہ ترجیحات' : 'Volunteer Preferences'} isUrdu={isUrdu} />
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Education */}
+                  <div>
+                    <label htmlFor="vol-education" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
+                      {isUrdu ? 'تعلیمی سطح' : 'Education Level'} <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="vol-education"
+                      name="education"
+                      required
+                      value={formData.education}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 rounded-xl border ${errors.education ? 'border-red-400 bg-red-50' : 'border-brand-navy/10 bg-brand-gray'} focus:outline-none focus:border-brand-teal transition-all text-sm`}
+                    >
+                      <option value="">{isUrdu ? 'تعلیمی سطح منتخب کریں' : 'Select education level'}</option>
+                      <option value="matric">{isUrdu ? 'میٹرک' : 'Matric / O-Level'}</option>
+                      <option value="intermediate">{isUrdu ? 'انٹرمیڈیٹ' : 'Intermediate / A-Level'}</option>
+                      <option value="bachelors">{isUrdu ? 'بیچلرز' : 'Bachelors'}</option>
+                      <option value="masters">{isUrdu ? 'ماسٹرز' : 'Masters'}</option>
+                      <option value="phd">{isUrdu ? 'پی ایچ ڈی' : 'PhD'}</option>
+                      <option value="other">{isUrdu ? 'دیگر' : 'Other'}</option>
+                    </select>
+                    {errors.education && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.education}</p>}
+                  </div>
+
+                  {/* Program */}
                   <div>
                     <label htmlFor="vol-program" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
-                      {isUrdu ? 'پروگرام' : 'Interested Program'} *
+                      {isUrdu ? 'پروگرام' : 'Interested Program'} <span className="text-red-500">*</span>
                     </label>
                     <select
                       id="vol-program"
@@ -228,31 +301,72 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                       <option value="community">{isUrdu ? 'کمیونٹی ہم آہنگی' : 'Community Bonding'}</option>
                       <option value="any">{isUrdu ? 'کوئی بھی' : 'Any / All'}</option>
                     </select>
-                    {errors.program && <p className="text-red-500 text-xs mt-1">{errors.program}</p>}
-                  </div>
-                  <div>
-                    <label htmlFor="vol-availability" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
-                      {isUrdu ? 'دستیابی' : 'Availability'}
-                    </label>
-                    <select
-                      id="vol-availability"
-                      name="availability"
-                      value={formData.availability}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal transition-all text-sm"
-                    >
-                      <option value="">{isUrdu ? 'دستیابی منتخب کریں' : 'Select availability'}</option>
-                      <option value="weekdays">{isUrdu ? 'ورکنگ ڈیز' : 'Weekdays'}</option>
-                      <option value="weekends">{isUrdu ? 'ویک اینڈ' : 'Weekends'}</option>
-                      <option value="both">{isUrdu ? 'دونوں' : 'Both'}</option>
-                      <option value="remote">{isUrdu ? 'ریموٹ/آن لائن' : 'Remote / Online'}</option>
-                    </select>
+                    {errors.program && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.program}</p>}
                   </div>
                 </div>
 
+                {/* Availability */}
+                <div>
+                  <label htmlFor="vol-availability" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
+                    {isUrdu ? 'دستیابی' : 'Availability'}
+                  </label>
+                  <select
+                    id="vol-availability"
+                    name="availability"
+                    value={formData.availability}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal transition-all text-sm"
+                  >
+                    <option value="">{isUrdu ? 'دستیابی منتخب کریں' : 'Select availability'}</option>
+                    <option value="weekdays">{isUrdu ? 'ورکنگ ڈیز' : 'Weekdays'}</option>
+                    <option value="weekends">{isUrdu ? 'ویک اینڈ' : 'Weekends'}</option>
+                    <option value="both">{isUrdu ? 'دونوں' : 'Both'}</option>
+                    <option value="remote">{isUrdu ? 'ریموٹ/آن لائن' : 'Remote / Online'}</option>
+                  </select>
+                </div>
+
+                {/* ─── Section 3: Skills & Experience ──────────────────────── */}
+                <SectionHeader label={isUrdu ? 'مہارتیں اور تجربہ' : 'Skills & Experience'} isUrdu={isUrdu} />
+
+                <div>
+                  <label htmlFor="vol-skills" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
+                    {isUrdu ? 'آپ کی مہارتیں اور تجربہ (اختیاری)' : 'Your Skills & Experience (Optional)'}
+                  </label>
+                  <textarea
+                    id="vol-skills"
+                    name="skills_detail"
+                    rows={3}
+                    value={formData.skills_detail}
+                    onChange={handleChange}
+                    placeholder={isUrdu ? 'مثلاً: طبی علم، تدریس، ڈیزائن، کمیونٹی آرگنائزنگ...' : 'e.g. Medical knowledge, teaching, graphic design, community organizing...'}
+                    className="w-full px-4 py-3 rounded-xl border border-brand-navy/10 bg-brand-gray focus:outline-none focus:border-brand-teal transition-all text-sm resize-none"
+                  />
+                </div>
+
+                {/* ─── Section 4: Emergency Contact ─────────────────────────── */}
+                <SectionHeader label={isUrdu ? 'ہنگامی رابطہ' : 'Emergency Contact'} isUrdu={isUrdu} />
+
+                <div className="bg-amber-50 border border-amber-200/60 rounded-xl p-4">
+                  <div className="flex items-start gap-2 mb-4">
+                    <Shield className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                    <p className={`text-xs text-amber-700 ${isUrdu ? 'font-urduBody' : ''}`}>
+                      {isUrdu
+                        ? 'فیلڈ ورک کی حفاظت کے لیے ہنگامی رابطہ کی معلومات ضروری ہے۔'
+                        : 'Emergency contact is required for volunteer fieldwork safety.'}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <InputField id="vol-ec-name" name="emergency_contact_name" label={isUrdu ? 'ہنگامی رابطے کا نام' : 'Contact Name'} required placeholder={isUrdu ? 'مثلاً والدین/قریبی رشتہ دار' : 'e.g. Parent / Relative'} value={formData.emergency_contact_name} error={errors.emergency_contact_name} isUrdu={isUrdu} onChange={handleChange} />
+                    <InputField id="vol-ec-phone" name="emergency_contact_phone" label={isUrdu ? 'ہنگامی رابطے کا فون' : 'Contact Phone'} type="tel" required placeholder={isUrdu ? 'فون نمبر' : 'Phone number'} value={formData.emergency_contact_phone} error={errors.emergency_contact_phone} isUrdu={isUrdu} onChange={handleChange} />
+                  </div>
+                </div>
+
+                {/* ─── Section 5: Additional ────────────────────────────────── */}
+                <SectionHeader label={isUrdu ? 'اضافی معلومات' : 'Additional'} isUrdu={isUrdu} />
+
                 <div>
                   <label htmlFor="vol-heard" className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
-                    {isUrdu ? 'آپ نے IOCA کے بارے میں کیسے سنا?' : 'How did you hear about IOCA?'}
+                    {isUrdu ? 'آپ نے IOCA کے بارے میں کیسے سنا؟' : 'How did you hear about IOCA?'}
                   </label>
                   <select
                     id="vol-heard"
@@ -297,10 +411,10 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                   <label htmlFor="vol-terms" className={`text-sm text-brand-navy/60 ${isUrdu ? 'font-urduBody' : ''}`}>
                     {isUrdu
                       ? 'میں IOCA کی رضاکارانہ شرائط و ضوابط سے اتفاق کرتا/کرتی ہوں۔'
-                      : 'I agree to IOCA\'s volunteer terms and code of conduct.'}
+                      : "I agree to IOCA's volunteer terms and code of conduct."}
                   </label>
                 </div>
-                {errors.agreeTerms && <p className="text-red-500 text-xs">{errors.agreeTerms}</p>}
+                {errors.agreeTerms && <p className="text-red-500 text-xs flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.agreeTerms}</p>}
 
                 {submitError && (
                   <p className="text-red-500 text-sm text-center bg-red-50 border border-red-200 rounded-lg py-2 px-3">{submitError}</p>

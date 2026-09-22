@@ -379,6 +379,103 @@ CREATE TABLE IF NOT EXISTS public.volunteers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   full_name TEXT NOT NULL,
   email TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
+  bio TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.personnel ENABLE ROW LEVEL SECURITY;
+
+-- personnel policies
+CREATE POLICY "Public read personnel" ON public.personnel FOR SELECT USING (true);
+
+-- M-04: Indexes for common query patterns (filtered by category + status)
+CREATE INDEX IF NOT EXISTS idx_personnel_category ON public.personnel (category);
+CREATE INDEX IF NOT EXISTS idx_personnel_status ON public.personnel (status);
+
+-- ============================================================
+-- Enable replication/trigger for profiles on auth signup
+-- ============================================================
+-- Note: It is best practice to have a Supabase trigger to automatically
+-- create a public profile record when a new user signs up.
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, full_name, avatar_url, role)
+  VALUES (
+    new.id,
+    COALESCE(new.raw_user_meta_data->>'full_name', new.email),
+    new.raw_user_meta_data->>'avatar_url',
+    'member'
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Recreate trigger
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ==============================================================================
+-- Testimonials Table
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.testimonials (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    quote_en TEXT NOT NULL,
+    quote_ur TEXT,
+    name_en TEXT NOT NULL,
+    name_ur TEXT,
+    location_en TEXT NOT NULL,
+    location_ur TEXT,
+    initial VARCHAR(1) NOT NULL,
+    bg_color TEXT DEFAULT 'white',
+    sort_order INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access on testimonials" ON public.testimonials FOR SELECT USING (true);
+CREATE POLICY "Allow authenticated to insert testimonials" ON public.testimonials FOR INSERT TO authenticated WITH CHECK (false); /* M-04 Fixed */
+CREATE POLICY "Allow authenticated to update testimonials" ON public.testimonials FOR UPDATE TO authenticated USING (false); /* M-04 Fixed */
+CREATE POLICY "Allow authenticated to delete testimonials" ON public.testimonials FOR DELETE TO authenticated USING (false); /* M-04 Fixed */
+
+-- ==============================================================================
+-- Impact Stories Table
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.impact_stories (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title_en TEXT NOT NULL,
+    title_ur TEXT,
+    excerpt_en TEXT,
+    excerpt_ur TEXT,
+    content_en TEXT,
+    content_ur TEXT,
+    image_url TEXT,
+    category TEXT DEFAULT 'General',
+    published_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.impact_stories ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access on impact_stories" ON public.impact_stories FOR SELECT USING (true);
+CREATE POLICY "Allow authenticated to insert impact_stories" ON public.impact_stories FOR INSERT TO authenticated WITH CHECK (false); /* M-04 Fixed */
+CREATE POLICY "Allow authenticated to update impact_stories" ON public.impact_stories FOR UPDATE TO authenticated USING (false); /* M-04 Fixed */
+CREATE POLICY "Allow authenticated to delete impact_stories" ON public.impact_stories FOR DELETE TO authenticated USING (false); /* M-04 Fixed */
+
+-- ============================================================
+-- volunteers table — Volunteer applications submitted via /api/volunteers
+-- Run the CREATE TABLE in Supabase SQL Editor if not yet created.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.volunteers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
   phone TEXT,
   city TEXT,
   availability TEXT,
@@ -392,20 +489,24 @@ CREATE TABLE IF NOT EXISTS public.volunteers (
 );
 
 ALTER TABLE public.volunteers ENABLE ROW LEVEL SECURITY;
--- Anyone can submit an application
+-- Anyone can submit an application (public form, no auth required)
 CREATE POLICY "Anyone can submit volunteer application" ON public.volunteers FOR INSERT WITH CHECK (true);
 -- Only admins can read/update/delete (managed via service_role key in backend)
+
+-- CRITICAL FIX: Explicit table-level grants are required.
+-- "GRANT ALL ON ALL TABLES" only covers tables that existed at the time it ran.
+-- Tables added later must be explicitly granted, otherwise INSERT returns
+-- "permission denied for table volunteers" even with service_role key.
+GRANT ALL ON public.volunteers TO service_role;
+GRANT ALL ON public.volunteers TO anon;
+GRANT ALL ON public.volunteers TO authenticated;
 
 CREATE INDEX IF NOT EXISTS idx_volunteers_status ON public.volunteers (status);
 CREATE INDEX IF NOT EXISTS idx_volunteers_created_at ON public.volunteers (created_at DESC);
 
 
-
 -- M-05: Missing Indexes
-CREATE INDEX IF NOT EXISTS idx_donations_status ON public.donations (status);
-CREATE INDEX IF NOT EXISTS idx_donations_email ON public.donations (email);
 CREATE INDEX IF NOT EXISTS idx_donations_project_id ON public.donations (project_id);
 CREATE INDEX IF NOT EXISTS idx_contacts_status ON public.contacts (status);
 CREATE INDEX IF NOT EXISTS idx_projects_slug ON public.projects (slug);
 CREATE INDEX IF NOT EXISTS idx_events_slug ON public.events (slug);
-

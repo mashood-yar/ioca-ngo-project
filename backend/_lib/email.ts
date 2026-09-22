@@ -454,3 +454,52 @@ export async function sendAdminDonationNotification(
     console.error('Admin notification email failed:', error);
   }
 }
+
+/**
+ * Sent to a volunteer when an admin converts their accepted application into
+ * an active personnel record. Includes their assigned IOCA volunteer ID.
+ */
+export async function sendVolunteerAcceptedEmail(
+  name: string,
+  email: string,
+  uid: string
+): Promise<void> {
+  const baseUrl = process.env.CLIENT_URL || 'https://www.iocaworld.org'
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@iocaworld.org'
+  try {
+    await resend.emails.send({
+      from: fromEmail,
+      to: email,
+      subject: 'Welcome to the IOCA Volunteer Team! 🎉',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #eaeaea; border-radius: 8px; background-color: #ffffff;">
+          <div style="background: linear-gradient(135deg, #1D2D49 0%, #569AD0 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; margin: -30px -30px 30px -30px;">
+            <h1 style="margin: 0; font-size: 24px;">Welcome to IOCA! 🎉</h1>
+            <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 15px;">You are now an official IOCA Volunteer</p>
+          </div>
+          <p style="font-size: 16px; color: #333;">Dear <strong>${name}</strong>,</p>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            We are thrilled to officially welcome you to the IOCA volunteer team! Your application has been reviewed and accepted by our team.
+          </p>
+          <div style="background: #f0f8ff; border-left: 4px solid #569AD0; padding: 20px; border-radius: 4px; margin: 20px 0;">
+            <p style="margin: 0 0 8px 0; font-size: 14px; color: #666; font-weight: 600;">YOUR VOLUNTEER ID</p>
+            <p style="margin: 0; font-size: 28px; font-family: monospace; font-weight: bold; color: #1D2D49; letter-spacing: 2px;">${uid}</p>
+          </div>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            Your volunteer ID card with QR verification is being prepared. You can verify your status anytime at:
+            <br><a href="${baseUrl}/verify/${uid}" style="color: #569AD0; font-weight: 600;">${baseUrl}/verify/${uid}</a>
+          </p>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            Our team will be in touch shortly with your first assignment and onboarding details. Thank you for joining our mission to empower communities across Pakistan.
+          </p>
+          <br>
+          <p style="font-size: 15px; color: #333; font-weight: bold; margin-bottom: 0;">Warm regards,</p>
+          <p style="font-size: 15px; color: #569AD0; margin-top: 5px;">The IOCA Team</p>
+        </div>
+      `,
+    })
+  } catch (error) {
+    console.error('Failed to send volunteer accepted email:', error)
+  }
+}
+

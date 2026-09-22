@@ -26,7 +26,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 // --- Interfaces ---
 interface ProfileData {
   id: string;
-  name: string;
+  full_name: string;
+  name?: string; // legacy fallback
   role: string;
   created_at: string;
   phone?: string;
@@ -34,6 +35,14 @@ interface ProfileData {
   cnic?: string;
   occupation?: string;
   avatar_url?: string;
+}
+
+interface ApplicationData {
+  id: string;
+  status: 'pending' | 'under_review' | 'approved' | 'rejected';
+  submitted_at: string;
+  zones?: { name: string; city: string };
+  tiers?: { name: string; price: number };
 }
 
 interface Tier {
@@ -109,6 +118,7 @@ export function UserDashboard() {
   const [donations, setDonations] = useState<DonationData[]>([]);
   const [eventRegistrations, setEventRegistrations] = useState<RegistrationData[]>([]);
   const [member, setMember] = useState<MemberData | null>(null);
+  const [pendingApplication, setPendingApplication] = useState<ApplicationData | null>(null);
 
   // Lists for forms
   const [zones, setZones] = useState<Zone[]>([]);
@@ -184,7 +194,8 @@ export function UserDashboard() {
         { data: memberData },
         { data: zonesData },
         { data: tiersData },
-        { data: allEventsData }
+        { data: allEventsData },
+        { data: applicationData }
       ] = await Promise.all([
         fetchApi<ProfileData>('/profile/me'),
         fetchApi<MembershipData>('/memberships/me').catch(() => ({ data: null, error: null })),
@@ -193,7 +204,8 @@ export function UserDashboard() {
         fetchApi<MemberData>('/members/me').catch(() => ({ data: null, error: null })),
         fetchApi<Zone[]>('/zones').catch(() => ({ data: [] as Zone[], error: null })),
         fetchApi<Tier[]>('/tiers').catch(() => ({ data: [] as Tier[], error: null })),
-        fetchApi<EventData[]>('/events').catch(() => ({ data: [] as EventData[], error: null }))
+        fetchApi<EventData[]>('/events').catch(() => ({ data: [] as EventData[], error: null })),
+        fetchApi<ApplicationData>('/misc/applications/me').catch(() => ({ data: null, error: null }))
       ]);
 
       setProfile(profileData);
@@ -204,12 +216,19 @@ export function UserDashboard() {
       setZones(Array.isArray(zonesData) ? zonesData : []);
       setTiers(Array.isArray(tiersData) ? tiersData : []);
       setAvailableEvents(Array.isArray(allEventsData) ? allEventsData : []);
+      // Only show pending application banner if no active membership exists
+      if (applicationData && (applicationData.status === 'pending' || applicationData.status === 'under_review')) {
+        setPendingApplication(applicationData);
+      } else {
+        setPendingApplication(null);
+      }
+
 
       // Pre-fill membership form with profile info
       if (profileData) {
         setMemberForm(prev => ({
           ...prev,
-          fullName: profileData.name || user?.user_metadata?.full_name || '',
+          fullName: profileData.full_name || profileData.name || user?.user_metadata?.full_name || '',
           phone: profileData.phone || '',
           address: profileData.address || '',
           cnic: profileData.cnic || '',
@@ -237,7 +256,8 @@ export function UserDashboard() {
       const { error } = await fetchApi('/profile/me', {
         method: 'PATCH',
         body: JSON.stringify({
-          name: editName,
+          full_name: editName,
+          name: editName, // legacy fallback
           phone: editPhone,
           address: editAddress,
           cnic: editCnic,
@@ -249,6 +269,7 @@ export function UserDashboard() {
 
       setProfile(prev => prev ? {
         ...prev,
+        full_name: editName,
         name: editName,
         phone: editPhone,
         address: editAddress,
@@ -256,6 +277,7 @@ export function UserDashboard() {
         occupation: editOccupation,
         avatar_url: editAvatarUrl
       } : null);
+
 
       setIsEditModalOpen(false);
       window.dispatchEvent(new CustomEvent('app-toast', { 
@@ -269,7 +291,7 @@ export function UserDashboard() {
   };
 
   const openEditModal = () => {
-    setEditName(profile?.name || user?.user_metadata?.full_name || '');
+    setEditName(profile?.full_name || profile?.name || user?.user_metadata?.full_name || '');
     setEditPhone(profile?.phone || '');
     setEditAddress(profile?.address || '');
     setEditCnic(profile?.cnic || '');
@@ -626,7 +648,7 @@ END:VCALENDAR`;
 
   // Init variables for rendering
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
-  const fullName = profile?.name || user?.user_metadata?.full_name || 'User';
+  const fullName = profile?.full_name || profile?.name || user?.user_metadata?.full_name || 'User';
   const email = user?.email;
   const joinedAt = profile?.created_at ? memberSince(profile.created_at) : '';
   const parts = fullName.trim().split(' ').filter(Boolean);
@@ -904,15 +926,44 @@ END:VCALENDAR`;
             {/* ============================================================== */}
             {activeTab === 'membership' && (
               <>
-                {/* NOT a member -> Application Form */}
+                {/* NOT a member -> Application Form or Pending Banner */}
                 {membershipStatus === 'none' && (
                   <div className="bg-white border border-brand-navy/10 rounded-xl p-6 md:p-8 shadow-sm">
                     <div className="pb-6 border-b border-brand-navy/5 mb-6">
-                      <h2 className="text-lg font-bold text-brand-navy/80">Apply for Membership</h2>
-                      <p className="text-sm text-brand-navy/50 mt-1">Fill in the fields below to submit your official membership request to our admin panel.</p>
+                      <h2 className="text-lg font-bold text-brand-navy/80">
+                        {pendingApplication ? 'Membership Application Status' : 'Apply for Membership'}
+                      </h2>
+                      <p className="text-sm text-brand-navy/50 mt-1">
+                        {pendingApplication
+                          ? 'Your application is currently being reviewed by our admin team.'
+                          : 'Fill in the fields below to submit your official membership request to our admin panel.'}
+                      </p>
                     </div>
 
-                    {memberSuccessMsg ? (
+                    {/* Pending Application Banner */}
+                    {pendingApplication && (
+                      <div className="text-center py-8 max-w-sm mx-auto space-y-4">
+                        <div className="w-16 h-16 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-brand-navy/80">Application Under Review</h3>
+                        <p className="text-sm text-brand-navy/50">Your membership application was submitted and is currently pending admin review. You will receive an email once a decision has been made.</p>
+                        <div className="bg-brand-navy/5 border border-brand-navy/10 py-3 px-4 rounded-xl text-left space-y-2">
+                          {pendingApplication.zones && (
+                            <p className="text-xs text-brand-navy/60"><span className="font-bold text-brand-navy/70">Zone:</span> {pendingApplication.zones.name} ({pendingApplication.zones.city})</p>
+                          )}
+                          {pendingApplication.tiers && (
+                            <p className="text-xs text-brand-navy/60"><span className="font-bold text-brand-navy/70">Tier:</span> {pendingApplication.tiers.name} — PKR {pendingApplication.tiers.price?.toLocaleString('en-PK')}</p>
+                          )}
+                          <p className="text-xs text-brand-navy/40 pt-1 border-t border-brand-navy/5 mt-2">Submitted on {new Date(pendingApplication.submitted_at).toLocaleDateString('en-PK')}</p>
+                        </div>
+                        <p className="text-xs text-brand-navy/40">Review usually takes 2–3 business days. Contact <a href="mailto:info@iocaworld.org" className="text-brand-teal hover:underline">info@iocaworld.org</a> for updates.</p>
+                      </div>
+                    )}
+
+                    {/* Apply form — only show if no pending application */}
+                    {!pendingApplication && (
+
                       <div className="text-center py-8 max-w-sm mx-auto space-y-4">
                         <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
                           <Check className="w-8 h-8" />
@@ -1045,8 +1096,11 @@ END:VCALENDAR`;
                         </button>
                       </form>
                     )}
+                    {/* End !pendingApplication block */}
+                    )}
                   </div>
                 )}
+
 
                 {/* IS a member -> Management view */}
                 {membershipStatus !== 'none' && membership && (
@@ -1083,26 +1137,11 @@ END:VCALENDAR`;
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8">
-                        <button
-                          onClick={() => setIsRenewConfirmOpen(true)}
-                          className="bg-brand-teal hover:bg-brand-teal text-white font-bold py-3 rounded-xl transition text-sm text-center shadow-sm"
-                        >
-                          Renew Now
-                        </button>
-                        <button
-                          onClick={() => setIsUpgradeModalOpen(true)}
-                          className="bg-brand-teal/10 hover:bg-indigo-100 text-brand-teal font-bold py-3 rounded-xl transition text-sm text-center"
-                        >
-                          Upgrade Tier
-                        </button>
-                        <button
-                          onClick={() => setIsCancelConfirmOpen(true)}
-                          className="border border-red-200 hover:bg-red-50 text-red-600 font-bold py-3 rounded-xl transition text-sm text-center"
-                        >
-                          Cancel Plan
-                        </button>
+                      <div className="mt-8 bg-brand-gray/60 border border-brand-navy/10 rounded-xl p-4 text-sm text-brand-navy/60">
+                        <p className="font-semibold text-brand-navy/70 mb-1">Need changes to your membership?</p>
+                        <p>To renew, upgrade, or cancel your membership plan, please contact our team at <a href="mailto:info@iocaworld.org" className="text-brand-teal font-medium hover:underline">info@iocaworld.org</a> or visit the IOCA office. Our admin team will process your request within 2–3 business days.</p>
                       </div>
+
                     </div>
 
                     {/* Quick helper card */}
@@ -1582,16 +1621,16 @@ END:VCALENDAR`;
 
                         <div className="flex justify-between items-center border-t border-brand-navy/5/60 pt-4 mt-4 text-xs font-semibold text-brand-navy/50">
                           <span>{count.toLocaleString()} members</span>
-                          {!isCurrent && member && (
-                            <button
-                              onClick={() => setZoneToSwitch(zn)}
-                              className="text-brand-teal hover:text-indigo-800 font-bold flex items-center gap-1 transition"
-                            >
-                              Switch Zone
-                              <ChevronRight className="w-4 h-4" />
-                            </button>
+                          {isCurrent && (
+                            <span className="text-brand-teal font-bold flex items-center gap-1">
+                              <Check className="w-3.5 h-3.5" /> Current Zone
+                            </span>
+                          )}
+                          {!isCurrent && (
+                            <span className="text-brand-navy/30 text-xs">Contact admin to switch</span>
                           )}
                         </div>
+
                       </div>
                     );
                   })}

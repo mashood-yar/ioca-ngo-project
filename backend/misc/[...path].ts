@@ -396,16 +396,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (req.method === 'PATCH' && subPath === 'me') {
         const user = await requireAuth(req, res)
         if (!user) return
-        const { name, phone } = req.body
+        const { name, full_name, phone, address, cnic, occupation, avatar_url } = req.body
+        // Accept both 'name' (legacy) and 'full_name' (correct column name)
+        const resolvedName = full_name || name
         const { data, error } = await supabase
           .from('profiles')
-          .upsert({ id: user.id, name, phone })
+          .upsert({
+            id: user.id,
+            full_name: resolvedName,
+            phone: phone || null,
+            address: address || null,
+            cnic: cnic || null,
+            occupation: occupation || null,
+            avatar_url: avatar_url || null,
+            updated_at: new Date().toISOString(),
+          })
           .select()
           .single()
         if (error) throw error
         return ok(res, data)
       }
     }
+
 
     // === Memberships Resource ===
     if (resource === 'memberships') {

@@ -5,16 +5,26 @@ import { ok, err } from '../_lib/response'
 import { requireAdmin } from '../_lib/auth'
 import { cors } from '../_lib/cors'
 import { applyRateLimit } from '../_lib/rateLimit'
-import { sendVolunteerNotification, sendVolunteerAutoresponder } from '../_lib/email'
+import { sendVolunteerNotification, sendVolunteerAutoresponder, sendVolunteerAcceptedEmail } from '../_lib/email'
+import { createPersonnelRecord } from '../_lib/personnelUtils'
+
+// --- Validation Schemas ---
 
 const volunteerSchema = z.object({
   full_name: z.string().min(2, 'Full name is required'),
   email: z.string().email('Valid email is required'),
-  phone: z.string().optional().nullable(),
-  city: z.string().optional().nullable(),
+  phone: z.string().min(1, 'Phone is required'),
+  city: z.string().min(1, 'City is required'),
+  cnic: z.string().regex(/^\d{5}-?\d{7}-?\d{1}$/, 'Valid 13-digit CNIC is required'),
+  date_of_birth: z.string().min(1, 'Date of birth is required'),
+  education: z.string().min(1, 'Education level is required'),
   availability: z.string().optional().nullable(),
   skills: z.string().optional().nullable(),
+  skills_detail: z.string().optional().nullable(),
   motivation: z.string().optional().nullable(),
+  heard_from: z.string().optional().nullable(),
+  emergency_contact_name: z.string().min(1, 'Emergency contact name is required'),
+  emergency_contact_phone: z.string().min(1, 'Emergency contact phone is required'),
 })
 
 const updateStatusSchema = z.object({
@@ -31,11 +41,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     : typeof pathVal === 'string'
       ? pathVal.split('/').filter(Boolean)
       : []
+  // segments[0] = id or 'index', segments[1] = sub-action e.g. 'convert'
   const id = segments[0] === 'index' ? undefined : segments[0]
+  const subAction = segments[1]
 
   try {
+
+    // ── POST /volunteers — Public application submission ──────────────────────
     if (req.method === 'POST' && !id) {
-      if (!applyRateLimit(req, res)) return;
+      if (!applyRateLimit(req, res)) return
       try {
         const validated = volunteerSchema.parse(req.body)
         const { error } = await supabase
@@ -43,11 +57,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           .insert({
             full_name: validated.full_name,
             email: validated.email,
-            phone: validated.phone || null,
-            city: validated.city || null,
+            phone: validated.phone,
+            city: validated.city,
+            cnic: validated.cnic,
+            date_of_birth: validated.date_of_birth,
+            education: validated.education,
             availability: validated.availability || null,
             skills: validated.skills || null,
+            skills_detail: validated.skills_detail || null,
             motivation: validated.motivation || null,
+            heard_from: validated.heard_from || null,
+            emergency_contact_name: validated.emergency_contact_name,
+            emergency_contact_phone: validated.emergency_contact_phone,
             status: 'pending',
           })
         if (error) throw new Error(error.message)
@@ -63,10 +84,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         return ok(res, { success: true }, 201)
       } catch (e: any) {
+        if (e instanceof z.ZodError) {
+          return err(res, e.errors[0]?.message || 'Validation error', 400)
+        }
         return err(res, e.message || 'Server error', 500)
       }
     }
 
+    // ── GET /volunteers — List (admin) ────────────────────────────────────────
     if (req.method === 'GET' && !id) {
       const user = await requireAdmin(req, res)
       if (!user) return
@@ -86,6 +111,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       })
     }
 
+    // ── GET /volunteers/:id — Single (admin) ──────────────────────────────────
     if (req.method === 'GET' && id) {
       const user = await requireAdmin(req, res)
       if (!user) return
@@ -97,7 +123,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, data)
     }
 
-    if (req.method === 'PATCH' && id) {
+    // ── PATCH /volunteers/:id — Update status (admin) ─────────────────────────
+    if (req.method === 'PATCH' && id && !subAction) {
       const user = await requireAdmin(req, res)
       if (!user) return
       const { status, admin_notes } = updateStatusSchema.parse(req.body)
@@ -109,6 +136,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, data)
     }
 
+    // ── POST /volunteers/:id/convert — Convert accepted volunteer to personnel ──
+    if (req.method === 'POST' && id && subAction === 'convert') {
+      const user = await requireAdmin(req, res)
+      if (!user) return
+
+      // 1. Fetch the volunteer record
+      const { data: volunteer, error: fetchErr } = await supabase
+        .from('volunteers')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (fetchErr || !volunteer) return err(res, 'Volunteer not found', 404)
+      if (volunteer.status !== 'accepted') {
+        return err(res, 'Only accepted volunteers can be converted to personnel', 400)
+      }
+
+      // 2. Prevent duplicate conversion: check if a personnel record already exists
+      //    matching by email under the 'volunteer' category.
+      if (volunteer.email) {
+        const { data: existing } = await supabase
+          .from('personnel')
+          .select('id, uid')
+          .eq('category', 'volunteer')
+          .eq('email', volunteer.email)
+          .maybeSingle()
+
+        if (existing) {
+          return err(res, `This volunteer has already been converted to personnel (${existing.uid})`, 409)
+        }
+      }
+
+      // 3. Create the personnel record (generates UID + QR code)
+      const personnelRecord = await createPersonnelRecord({
+        category: 'volunteer',
+        full_name: volunteer.full_name,
+        email: volunteer.email || null,
+        phone: volunteer.phone || null,
+        title: 'Volunteer',
+        bio: volunteer.motivation || null,
+        status: 'active',
+      })
+
+      // 4. Send acceptance email with the assigned UID
+      if (volunteer.email) {
+        try {
+          await sendVolunteerAcceptedEmail(volunteer.full_name, volunteer.email, personnelRecord.uid)
+        } catch (e) {
+          console.error('Failed to send volunteer accepted email:', e)
+        }
+      }
+
+      return ok(res, { personnel: personnelRecord }, 201)
+    }
+
+    // ── DELETE /volunteers/:id — Delete application (admin) ───────────────────
     if (req.method === 'DELETE' && id) {
       const user = await requireAdmin(req, res)
       if (!user) return
