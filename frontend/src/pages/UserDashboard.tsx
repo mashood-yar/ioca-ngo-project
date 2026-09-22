@@ -18,7 +18,8 @@ import {
   Search,
   Download,
   ShieldCheck,
-  Edit2
+  Edit2,
+  CheckCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -160,10 +161,10 @@ export function UserDashboard() {
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [donationAmount, setDonationAmount] = useState<string>('5000');
   const [isCustomAmount, setIsCustomAmount] = useState(false);
-  const [customAmountVal, setCustomAmountVal] = useState('');
-  const [donationDedication, setDonationDedication] = useState('');
-  const [donationPaymentMethod, setDonationPaymentMethod] = useState('');
-  const [donationTransactionId, setDonationTransactionId] = useState('');
+  const [customAmountVal, setCustomAmountVal] = useState<string>('');
+  const [donationPaymentMethod, setDonationPaymentMethod] = useState<string>('');
+  const [donationTransactionId, setDonationTransactionId] = useState<string>('');
+  const [donationDedication, setDonationDedication] = useState<string>('');
   const [isSubmittingDonation, setIsSubmittingDonation] = useState(false);
   const [donationReceipt, setDonationReceipt] = useState<any | null>(null);
 
@@ -223,7 +224,7 @@ export function UserDashboard() {
       setTiers(Array.isArray(tiersData) ? tiersData : []);
       setAvailableEvents(Array.isArray(allEventsData) ? allEventsData : []);
       setPaymentMethods(Array.isArray(paymentMethodsData) ? paymentMethodsData : []);
-      setDonationsEnabled(settingsData?.donations_enabled === 'true');
+      setDonationsEnabled((settingsData as any)?.donations_enabled === 'true');
       // Only show pending application banner if no active membership exists
       if (applicationData && (applicationData.status === 'pending' || applicationData.status === 'under_review')) {
         setPendingApplication(applicationData);

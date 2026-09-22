@@ -33,13 +33,13 @@ export function AdminDonationSettings() {
     try {
       setLoading(true);
       // Load global toggle from site-settings
-      const { data: settingsData, error: settingsError } = await fetchApi<Record<string, string>>('/site-settings');
+      const { data: settingsData } = await fetchApi<Record<string, string>>('/site-settings');
       if (settingsData && settingsData.donations_enabled === 'true') {
         setDonationsEnabled(true);
       }
 
       // Load payment methods
-      const { data: methodsData, error: methodsError } = await fetchApi<PaymentMethod[]>('/payment-methods');
+      const { data: methodsData } = await fetchApi<PaymentMethod[]>('/payment-methods');
       if (methodsData) {
         setPaymentMethods(methodsData);
       }
