@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { fetchApi } from '../lib/apiClient';
 import { formatDate, memberSince } from '../lib/formatDate';
 import { optimizeImage } from '../lib/optimizeImage';
+import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
+import { generateIdCard } from '../lib/idCardGenerator';
 import {
   Calendar,
   MapPin,
@@ -19,7 +22,8 @@ import {
   Download,
   ShieldCheck,
   Edit2,
-  CheckCircle
+  CheckCircle,
+  Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -35,6 +39,8 @@ interface ProfileData {
   cnic?: string;
   occupation?: string;
   avatar_url?: string;
+  onboarding_completed?: boolean;
+  is_volunteer?: boolean;
 }
 
 interface ApplicationData {
@@ -103,10 +109,12 @@ interface MemberData {
   zone?: Zone;
 }
 
-type Tab = 'overview' | 'profile' | 'membership' | 'donations' | 'events' | 'zones';
+type Tab = 'overview' | 'profile' | 'membership' | 'donations' | 'events' | 'zones' | 'volunteer_hub';
 
 export function UserDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { uploadImage, isUploading } = useCloudinaryUpload();
   
   // Navigation
   const [activeTab, setActiveTab] = useState<Tab>('overview');
@@ -139,13 +147,15 @@ export function UserDashboard() {
   // 2. Membership Form & Renewal State
   const [memberForm, setMemberForm] = useState({
     fullName: '',
+    fatherName: '',
     phone: '',
     cnic: '',
     address: '',
     occupation: '',
     zoneId: '',
     tierId: '',
-    motivation: ''
+    motivation: '',
+    profileImageUrl: ''
   });
   const [isSubmittingMember, setIsSubmittingMember] = useState(false);
   const [memberSuccessMsg, setMemberSuccessMsg] = useState('');
@@ -316,7 +326,7 @@ export function UserDashboard() {
     setMemberErrorMsg('');
     setMemberSuccessMsg('');
 
-    if (!memberForm.fullName.trim() || !memberForm.phone.trim() || !memberForm.cnic.trim() || !memberForm.zoneId || !memberForm.tierId) {
+    if (!memberForm.fullName.trim() || !memberForm.phone.trim() || !memberForm.cnic.trim() || !memberForm.zoneId || !memberForm.tierId || !memberForm.fatherName.trim() || !memberForm.profileImageUrl) {
       setMemberErrorMsg('Please fill in all required fields.');
       return;
     }
@@ -327,6 +337,8 @@ export function UserDashboard() {
         method: 'POST',
         body: JSON.stringify({
           fullName: memberForm.fullName,
+          fatherName: memberForm.fatherName,
+          profileImageUrl: memberForm.profileImageUrl,
           phone: memberForm.phone,
           cnic: memberForm.cnic,
           address: memberForm.address,
@@ -680,6 +692,51 @@ END:VCALENDAR`;
   const membershipStatus = membership?.status || 'none';
   const activeZone = member?.zone;
 
+  if (!loading && profile && !profile.onboarding_completed) {
+    return (
+      <div className="min-h-screen bg-brand-gray flex items-center justify-center p-6 pt-[104px]">
+        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-2xl w-full text-center space-y-6 border border-brand-navy/10">
+          <h1 className="text-3xl font-extrabold text-brand-navy">Welcome to IOCA!</h1>
+          <p className="text-brand-navy/60 text-lg">Thank you for joining our community. How would you like to get started?</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+            <button
+              onClick={() => navigate('/volunteer')}
+              className="p-6 bg-brand-gray border border-brand-navy/10 rounded-xl hover:border-brand-teal hover:shadow-md transition group text-left"
+            >
+              <Users className="w-8 h-8 text-brand-teal mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="font-bold text-brand-navy">Become a Volunteer</h3>
+              <p className="text-xs text-brand-navy/50 mt-1">Join our active ground teams.</p>
+            </button>
+            <button
+              onClick={async () => {
+                await fetchApi('/profile/me', { method: 'PATCH', body: JSON.stringify({ onboarding_completed: true }) });
+                setProfile(prev => prev ? { ...prev, onboarding_completed: true } : null);
+                setActiveTab('membership');
+              }}
+              className="p-6 bg-brand-teal/5 border border-brand-teal/20 rounded-xl hover:bg-brand-teal/10 hover:shadow-md transition group text-left"
+            >
+              <ShieldCheck className="w-8 h-8 text-brand-teal mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="font-bold text-brand-navy">Apply for Membership</h3>
+              <p className="text-xs text-brand-navy/50 mt-1">Become an official voting member.</p>
+            </button>
+            <button
+              onClick={async () => {
+                await fetchApi('/profile/me', { method: 'PATCH', body: JSON.stringify({ onboarding_completed: true }) });
+                setProfile(prev => prev ? { ...prev, onboarding_completed: true } : null);
+                setActiveTab('donations');
+              }}
+              className="p-6 bg-brand-gray border border-brand-navy/10 rounded-xl hover:border-brand-teal hover:shadow-md transition group text-left"
+            >
+              <Heart className="w-8 h-8 text-rose-500 mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="font-bold text-brand-navy">Track Donations</h3>
+              <p className="text-xs text-brand-navy/50 mt-1">Just explore the portal for now.</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-brand-gray flex flex-col md:flex-row pt-[72px] md:pt-[88px] lg:pt-[104px]">
       {/* --- Sidebar Navigation --- */}
@@ -702,13 +759,15 @@ END:VCALENDAR`;
         {/* Tab links */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {[
-            { id: 'overview', label: 'Overview', icon: Globe },
-            { id: 'profile', label: 'Profile info', icon: User },
-            { id: 'membership', label: 'Membership', icon: ShieldCheck },
-            { id: 'donations', label: 'Donations', icon: Heart },
-            { id: 'events', label: 'Events', icon: Calendar },
-            { id: 'zones', label: 'Projects & Zones', icon: MapPin },
+            { id: 'overview', label: 'Overview', icon: Globe, show: true },
+            { id: 'profile', label: 'Profile info', icon: User, show: true },
+            { id: 'membership', label: 'Membership', icon: ShieldCheck, show: true },
+            { id: 'donations', label: 'Donations', icon: Heart, show: true },
+            { id: 'events', label: 'Events', icon: Calendar, show: true },
+            { id: 'zones', label: 'Projects & Zones', icon: MapPin, show: profile?.role === 'member' },
+            { id: 'volunteer_hub', label: 'Volunteer Hub', icon: Users, show: profile?.is_volunteer === true },
           ].map(item => {
+            if (!item.show) return null;
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
@@ -888,13 +947,29 @@ END:VCALENDAR`;
                     <h2 className="text-lg font-bold text-brand-navy/80">Profile Information</h2>
                     <p className="text-sm text-brand-navy/50 mt-1">Manage your personal and contact details linked to your account.</p>
                   </div>
-                  <button
-                    onClick={openEditModal}
-                    className="flex items-center gap-2 bg-brand-teal/10 hover:bg-indigo-100 text-brand-teal font-semibold px-5 py-2.5 rounded-xl text-sm transition"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                    Modify Details
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => generateIdCard({
+                        id: profile?.id,
+                        name: fullName,
+                        fatherName: memberForm.fatherName || 'N/A',
+                        profileImageUrl: avatarUrl,
+                        issueDate: new Date().toLocaleDateString(),
+                        validUntil: membership?.end_date ? new Date(membership.end_date).toLocaleDateString() : 'N/A'
+                      }, false)}
+                      className="flex items-center gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-md shadow-brand-navy/20"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download Digital ID Card
+                    </button>
+                    <button
+                      onClick={openEditModal}
+                      className="flex items-center gap-2 bg-brand-teal/10 hover:bg-indigo-100 text-brand-teal font-semibold px-5 py-2.5 rounded-xl text-sm transition"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                      Modify Details
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -1010,6 +1085,55 @@ END:VCALENDAR`;
                               value={memberForm.fullName}
                               onChange={e => setMemberForm(prev => ({ ...prev, fullName: e.target.value }))}
                             />
+                          </div>
+
+                          <div>
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Father Name *</label>
+                            <input
+                              type="text"
+                              required
+                              className="w-full px-4 py-3 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent transition"
+                              value={memberForm.fatherName}
+                              onChange={e => setMemberForm(prev => ({ ...prev, fatherName: e.target.value }))}
+                            />
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-brand-navy/70 font-semibold mb-1.5">Profile Image *</label>
+                            <div className="flex items-center gap-4">
+                              {memberForm.profileImageUrl ? (
+                                <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-brand-navy/10">
+                                  <img src={memberForm.profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                                  <button type="button" onClick={() => setMemberForm(prev => ({ ...prev, profileImageUrl: '' }))} className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity text-xs">Remove</button>
+                                </div>
+                              ) : (
+                                <div className="w-16 h-16 rounded-xl border border-dashed border-brand-navy/20 bg-brand-gray flex items-center justify-center text-brand-navy/40">
+                                  <User className="w-6 h-6" />
+                                </div>
+                              )}
+                              <div>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  id="member-profile-image"
+                                  className="hidden"
+                                  onChange={async (e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      try {
+                                        const url = await uploadImage(file);
+                                        setMemberForm(prev => ({ ...prev, profileImageUrl: url }));
+                                      } catch (err) {
+                                        console.error("Upload failed", err);
+                                      }
+                                    }
+                                  }}
+                                />
+                                <label htmlFor="member-profile-image" className="inline-block px-4 py-2 bg-brand-navy/5 hover:bg-brand-navy/10 text-brand-navy text-sm font-medium rounded-lg cursor-pointer transition-colors">
+                                  {isUploading ? 'Uploading...' : 'Choose Image'}
+                                </label>
+                              </div>
+                            </div>
                           </div>
 
                           <div>
@@ -1696,6 +1820,40 @@ END:VCALENDAR`;
                       </div>
                     );
                   })}
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
+            {/* TABS 7: VOLUNTEER HUB */}
+            {/* ============================================================== */}
+            {activeTab === 'volunteer_hub' && (
+              <div className="bg-white border border-brand-navy/10 rounded-xl p-6 md:p-8 shadow-sm space-y-6">
+                <div className="flex justify-between items-center pb-6 border-b border-brand-navy/5 mb-6">
+                  <div>
+                    <h2 className="text-lg font-bold text-brand-navy/80">Volunteer Hub</h2>
+                    <p className="text-sm text-brand-navy/50 mt-1">Manage your volunteer assignments and track your impact.</p>
+                  </div>
+                  <button
+                    onClick={() => generateIdCard({
+                      id: profile?.id,
+                      name: fullName,
+                      fatherName: memberForm.fatherName || 'N/A',
+                      profileImageUrl: avatarUrl,
+                      issueDate: new Date().toLocaleDateString(),
+                      validUntil: 'N/A'
+                    }, true)}
+                    className="flex items-center gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-md shadow-brand-navy/20"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download Digital ID Card
+                  </button>
+                </div>
+                
+                <div className="p-5 rounded-2xl border border-brand-navy/5 bg-brand-gray/50 shadow-sm text-center">
+                  <Users className="w-8 h-8 text-brand-navy/20 mx-auto mb-3" />
+                  <h3 className="font-bold text-brand-navy/80 text-base">Your Assigned Projects</h3>
+                  <p className="text-sm text-brand-navy/50 mt-2">No active project assignments currently. Please check back later or contact your zone administrator.</p>
                 </div>
               </div>
             )}

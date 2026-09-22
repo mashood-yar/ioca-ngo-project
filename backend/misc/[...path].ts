@@ -15,6 +15,7 @@ import {
 
 const createApplicationSchema = z.object({
   fullName: z.string().min(2),
+  fatherName: z.string().min(2),
   phone: z.string(),
   cnic: z.string(),
   address: z.string(),
@@ -22,6 +23,8 @@ const createApplicationSchema = z.object({
   zoneId: z.string().uuid(),
   tierId: z.string().uuid(),
   motivation: z.string().optional(),
+  profileImageUrl: z.string().url(),
+  profileImagePublicId: z.string().optional().nullable(),
 })
 
 const uploadSchema = z.object({
@@ -125,11 +128,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             zone_id: validatedData.zoneId,
             tier_id: validatedData.tierId,
             full_name: validatedData.fullName,
+            father_name: validatedData.fatherName,
             phone: validatedData.phone,
             cnic: validatedData.cnic,
             address: validatedData.address,
             occupation: validatedData.occupation,
             motivation: validatedData.motivation,
+            profile_image_url: validatedData.profileImageUrl,
+            profile_image_public_id: validatedData.profileImagePublicId || null,
           })
           .select()
           .single()
@@ -396,21 +402,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (req.method === 'PATCH' && subPath === 'me') {
         const user = await requireAuth(req, res)
         if (!user) return
-        const { name, full_name, phone, address, cnic, occupation, avatar_url } = req.body
+        const { name, full_name, phone, address, cnic, occupation, avatar_url, onboarding_completed, father_name } = req.body
         // Accept both 'name' (legacy) and 'full_name' (correct column name)
         const resolvedName = full_name || name
+        const updatePayload: any = {
+          id: user.id,
+          full_name: resolvedName,
+          phone: phone || null,
+          address: address || null,
+          cnic: cnic || null,
+          occupation: occupation || null,
+          avatar_url: avatar_url || null,
+          updated_at: new Date().toISOString(),
+        }
+        if (onboarding_completed !== undefined) updatePayload.onboarding_completed = onboarding_completed
+        if (father_name !== undefined) updatePayload.father_name = father_name
+
         const { data, error } = await supabase
           .from('profiles')
-          .upsert({
-            id: user.id,
-            full_name: resolvedName,
-            phone: phone || null,
-            address: address || null,
-            cnic: cnic || null,
-            occupation: occupation || null,
-            avatar_url: avatar_url || null,
-            updated_at: new Date().toISOString(),
-          })
+          .upsert(updatePayload)
           .select()
           .single()
         if (error) throw error

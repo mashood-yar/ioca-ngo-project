@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Heart, CheckCircle2, Briefcase, Clock, Users, Shield, AlertCircle } from 'lucide-react';
+import { Heart, CheckCircle2, Briefcase, Clock, Users, Shield, AlertCircle, Upload } from 'lucide-react';
 import { fetchApi } from '../lib/apiClient';
+import { useAuth } from '../hooks/useAuth';
+import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
 
 interface VolunteerProps {
   isUrdu: boolean;
@@ -50,8 +52,13 @@ const SectionHeader: React.FC<{ label: string; isUrdu: boolean }> = ({ label, is
 );
 
 const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
+  const { user } = useAuth();
+  const { uploadImage, isUploading } = useCloudinaryUpload();
+
   const [formData, setFormData] = useState({
     name: '',
+    father_name: '',
+    profile_image_url: '',
     email: '',
     phone: '',
     cnic: '',
@@ -82,6 +89,8 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = isUrdu ? 'نام ضروری ہے' : 'Full name is required';
+    if (!formData.father_name.trim()) newErrors.father_name = isUrdu ? 'والد کا نام ضروری ہے' : 'Father name is required';
+    if (!formData.profile_image_url) newErrors.profile_image_url = isUrdu ? 'پروفائل تصویر ضروری ہے' : 'Profile image is required';
     if (!formData.email.trim()) newErrors.email = isUrdu ? 'ای میل ضروری ہے' : 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = isUrdu ? 'درست ای میل درج کریں' : 'Please enter a valid email';
     if (!formData.phone.trim()) newErrors.phone = isUrdu ? 'فون نمبر ضروری ہے' : 'Phone is required';
@@ -111,7 +120,10 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
     const { error } = await fetchApi('/volunteers', {
       method: 'POST',
       body: JSON.stringify({
+        user_id: user?.id,
         full_name: formData.name,
+        father_name: formData.father_name,
+        profile_image_url: formData.profile_image_url,
         email: formData.email,
         phone: formData.phone,
         cnic: formData.cnic,
@@ -240,11 +252,57 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <InputField id="vol-name" name="name" label={isUrdu ? 'پورا نام' : 'Full Name'} required placeholder={isUrdu ? 'آپ کا نام' : 'Your full name'} value={formData.name} error={errors.name} isUrdu={isUrdu} onChange={handleChange} />
-                  <InputField id="vol-email" name="email" label={isUrdu ? 'ای میل' : 'Email'} type="email" required placeholder={isUrdu ? 'آپ کا ای میل' : 'Your email'} value={formData.email} error={errors.email} isUrdu={isUrdu} onChange={handleChange} />
+                  <InputField id="vol-father-name" name="father_name" label={isUrdu ? 'والد کا نام' : 'Father Name'} required placeholder={isUrdu ? 'والد کا نام' : 'Father name'} value={formData.father_name} error={errors.father_name} isUrdu={isUrdu} onChange={handleChange} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
+                  <InputField id="vol-email" name="email" label={isUrdu ? 'ای میل' : 'Email'} type="email" required placeholder={isUrdu ? 'آپ کا ای میل' : 'Your email'} value={formData.email} error={errors.email} isUrdu={isUrdu} onChange={handleChange} />
                   <InputField id="vol-phone" name="phone" label={isUrdu ? 'فون نمبر' : 'Phone'} type="tel" required placeholder={isUrdu ? 'مثلاً 03001234567' : 'e.g. 03001234567'} value={formData.phone} error={errors.phone} isUrdu={isUrdu} onChange={handleChange} />
+                </div>
+
+                <div className="mb-4">
+                  <label className={`block text-sm font-medium text-brand-navy mb-1.5 ${isUrdu ? 'font-urduBody' : ''}`}>
+                    {isUrdu ? 'پروفائل تصویر' : 'Profile Image'} <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex items-center gap-4">
+                    {formData.profile_image_url ? (
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-brand-navy/10">
+                        <img src={formData.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => setFormData(prev => ({ ...prev, profile_image_url: '' }))} className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity text-xs">Remove</button>
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl border border-dashed border-brand-navy/20 bg-brand-gray flex items-center justify-center text-brand-navy/40">
+                        <Upload className="w-6 h-6" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        id="vol-profile-image"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            try {
+                              const url = await uploadImage(file);
+                              setFormData(prev => ({ ...prev, profile_image_url: url }));
+                              if (errors.profile_image_url) setErrors(prev => ({ ...prev, profile_image_url: '' }));
+                            } catch (err) {
+                              console.error("Upload failed", err);
+                            }
+                          }
+                        }}
+                      />
+                      <label htmlFor="vol-profile-image" className="inline-block px-4 py-2 bg-brand-navy/5 hover:bg-brand-navy/10 text-brand-navy text-sm font-medium rounded-lg cursor-pointer transition-colors">
+                        {isUploading ? (isUrdu ? 'اپ لوڈ ہو رہا ہے...' : 'Uploading...') : (isUrdu ? 'تصویر منتخب کریں' : 'Choose Image')}
+                      </label>
+                      {errors.profile_image_url && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.profile_image_url}</p>}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <InputField id="vol-city" name="city" label={isUrdu ? 'شہر' : 'City'} required placeholder={isUrdu ? 'آپ کا شہر' : 'Your city'} value={formData.city} error={errors.city} isUrdu={isUrdu} onChange={handleChange} />
                 </div>
 

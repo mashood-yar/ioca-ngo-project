@@ -11,6 +11,10 @@ import { createPersonnelRecord } from '../_lib/personnelUtils'
 // --- Validation Schemas ---
 
 const volunteerSchema = z.object({
+  user_id: z.string().uuid().optional().nullable(),
+  father_name: z.string().min(2, 'Father name is required'),
+  profile_image_url: z.string().url('Profile image is required'),
+  profile_image_public_id: z.string().optional().nullable(),
   full_name: z.string().min(2, 'Full name is required'),
   email: z.string().email('Valid email is required'),
   phone: z.string().min(1, 'Phone is required'),
@@ -55,6 +59,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const { error } = await supabase
           .from('volunteers')
           .insert({
+            user_id: validated.user_id || null,
+            father_name: validated.father_name,
+            profile_image_url: validated.profile_image_url,
+            profile_image_public_id: validated.profile_image_public_id || null,
             full_name: validated.full_name,
             email: validated.email,
             phone: validated.phone,
