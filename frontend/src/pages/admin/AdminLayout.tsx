@@ -4,7 +4,6 @@ import { useAuth } from '../../hooks/useAuth';
 import { optimizeImage } from '../../lib/optimizeImage';
 import { 
   LayoutDashboard, 
-   
   Calendar, 
   MapPin, 
   DollarSign, 
@@ -23,10 +22,102 @@ import {
   Shield,
 } from 'lucide-react';
 
+const navItems = [
+  { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/admin/site-settings', label: 'Hero Section & Settings', icon: Settings },
+  { to: '/admin/projects', label: 'Active Appeals & Projects', icon: Heart },
+  { to: '/admin/programs', label: 'Programs', icon: Target },
+  { to: '/admin/personnel', label: 'Team & Personnel', icon: Users },
+  { to: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
+  { to: '/admin/impact-stories', label: 'Impact Stories', icon: Megaphone },
+  { to: '/admin/impact-stats', label: 'Impact Stats', icon: TrendingUp },
+  { to: '/admin/gallery', label: 'Gallery', icon: Image },
+  { to: '/admin/posts', label: 'News & Updates', icon: Megaphone },
+  { to: '/admin/events', label: 'Events', icon: Calendar },
+  { to: '/admin/donations', label: 'Donations & Financials', icon: DollarSign },
+  { to: '/admin/queries', label: 'Client Queries', icon: MessageSquare },
+  { to: '/admin/applications', label: 'Applications', icon: ClipboardList },
+  { to: '/admin/volunteers', label: 'Volunteers', icon: HeartHandshake },
+  { to: '/admin/tiers', label: 'Membership Tiers', icon: Shield },
+  { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
+];
+
+const SidebarContent = ({ user, setIsMobileMenuOpen, handleSignOut, initials }: any) => (
+  <div className="flex flex-col h-full text-white bg-[#1D2D49]">
+    <div className="flex items-center gap-3 px-6 py-8 border-b border-white/10 bg-[#162238]">
+      <div className="w-10 h-10 bg-brand-teal/20 rounded-xl flex items-center justify-center shrink-0">
+        <span className="font-bold text-brand-teal">IO</span>
+      </div>
+      <div className="min-w-0">
+        <h2 className="font-bold text-lg leading-tight truncate">IOCA Admin</h2>
+        <p className="text-xs text-white/60 truncate">Management Portal</p>
+      </div>
+    </div>
+
+    <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+      {navItems.map((item) => {
+        const Icon = item.icon;
+        return (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                isActive 
+                  ? 'bg-brand-teal text-white border-l-[3px] border-brand-teal shadow-lg shadow-[#0D9488]/20' 
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+              }`
+            }
+          >
+            <Icon className="w-5 h-5 shrink-0" />
+            <span className="truncate">{item.label}</span>
+          </NavLink>
+        );
+      })}
+    </nav>
+
+    <div className="p-4 border-t border-white/10">
+      <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-white/5">
+        {user?.user_metadata?.avatar_url ? (
+          <img 
+            src={optimizeImage(user.user_metadata.avatar_url, { width: 80 })}
+            alt="Profile" 
+            className="w-8 h-8 rounded-full shrink-0"
+            width={32}
+            height={32}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-brand-teal flex items-center justify-center shrink-0" aria-hidden="true">
+            <span className="text-white text-xs font-bold">
+              {initials}
+            </span>
+          </div>
+        )}
+
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate text-white">{user?.user_metadata?.full_name || 'Admin User'}</p>
+          <p className="text-xs text-white/60 truncate">{user?.email}</p>
+        </div>
+      </div>
+      <button
+        onClick={handleSignOut}
+        className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+      >
+        <LogOut className="w-4 h-4 shrink-0" />
+        Sign Out
+      </button>
+    </div>
+  </div>
+);
+
 export function AdminLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -49,127 +140,57 @@ export function AdminLayout() {
     navigate('/login');
   };
 
-  const navItems = [
-    { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { to: '/admin/site-settings', label: 'Hero Section & Settings', icon: Settings },
-    { to: '/admin/projects', label: 'Active Appeals & Projects', icon: Heart },
-    { to: '/admin/programs', label: 'Programs', icon: Target },
-    { to: '/admin/personnel', label: 'Team & Personnel', icon: Users },
-    { to: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
-    { to: '/admin/impact-stories', label: 'Impact Stories', icon: Megaphone },
-    { to: '/admin/impact-stats', label: 'Impact Stats', icon: TrendingUp },
-    { to: '/admin/gallery', label: 'Gallery', icon: Image },
-    { to: '/admin/posts', label: 'News & Updates', icon: Megaphone },
-    { to: '/admin/events', label: 'Events', icon: Calendar },
-    { to: '/admin/donations', label: 'Donations & Financials', icon: DollarSign },
-    { to: '/admin/queries', label: 'Client Queries', icon: MessageSquare },
-    { to: '/admin/applications', label: 'Applications', icon: ClipboardList },
-    { to: '/admin/volunteers', label: 'Volunteers', icon: HeartHandshake },
-    { to: '/admin/tiers', label: 'Membership Tiers', icon: Shield },
-    { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
-  ];
-
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full text-white bg-[#1D2D49]">
-      <div className="flex items-center gap-3 px-6 py-8 border-b border-white/10 bg-[#162238]">
-        <div className="w-10 h-10 bg-brand-teal/20 rounded-xl flex items-center justify-center">
-          <span className="font-bold text-brand-teal">IO</span>
-        </div>
-        <div>
-          <h2 className="font-bold text-lg leading-tight">IOCA Admin</h2>
-          <p className="text-xs text-white/60">Management Portal</p>
-        </div>
-      </div>
-
-      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                  isActive 
-                    ? 'bg-brand-teal text-white border-l-[3px] border-brand-teal shadow-lg shadow-[#0D9488]/20' 
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`
-              }
-            >
-              <Icon className="w-5 h-5" />
-              {item.label}
-            </NavLink>
-          );
-        })}
-      </nav>
-
-      <div className="p-4 border-t border-white/10">
-        <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-white/5">
-          {user?.user_metadata?.avatar_url ? (
-            <img 
-              src={optimizeImage(user.user_metadata.avatar_url, { width: 80 })}
-              alt="Profile" 
-              className="w-8 h-8 rounded-full"
-              width={32}
-              height={32}
-              loading="lazy"
-              decoding="async"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-brand-teal flex items-center justify-center shrink-0" aria-hidden="true">
-              <span className="text-white text-xs font-bold">
-                {(user?.user_metadata?.full_name || user?.email || 'A')
-                  .split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
-              </span>
-            </div>
-          )}
-
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate text-white">{user?.user_metadata?.full_name || 'Admin User'}</p>
-            <p className="text-xs text-white/60 truncate">{user?.email}</p>
-          </div>
-        </div>
-        <button
-          onClick={handleSignOut}
-          className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-        >
-          <LogOut className="w-4 h-4" />
-          Sign Out
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:block w-72 h-screen sticky top-0">
-        <SidebarContent />
+      <aside className={`hidden lg:block h-screen sticky top-0 bg-[#1D2D49] transition-all duration-300 ease-in-out ${isDesktopSidebarOpen ? 'w-72' : 'w-0 overflow-hidden opacity-0'}`}>
+        <div className="w-72 h-full">
+          <SidebarContent 
+            user={user} 
+            setIsMobileMenuOpen={setIsMobileMenuOpen} 
+            handleSignOut={handleSignOut} 
+            initials={initials} 
+          />
+        </div>
       </aside>
 
       {/* Mobile Sidebar Overlay */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden flex">
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
-            onClick={() => setIsMobileMenuOpen(false)}
+      <div className={`fixed inset-0 z-40 lg:hidden flex transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div 
+          className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+        <div className={`relative w-72 max-w-[80%] bg-gray-900 h-full transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <SidebarContent 
+            user={user} 
+            setIsMobileMenuOpen={setIsMobileMenuOpen} 
+            handleSignOut={handleSignOut} 
+            initials={initials} 
           />
-          <div className="relative w-72 max-w-[80%] bg-gray-900 h-full transform transition-transform duration-300 ease-in-out">
-            <SidebarContent />
-          </div>
         </div>
-      )}
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
         {/* Header */}
         <header className="bg-white border-b px-4 py-3 flex items-center justify-between z-30">
-          <div className="flex items-center gap-3 lg:hidden">
-            <div className="w-8 h-8 bg-brand-teal/20 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-brand-teal text-xs">IO</span>
+          <div className="flex items-center gap-3">
+            {/* Desktop Toggle Button */}
+            <button 
+              onClick={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
+              className="hidden lg:flex p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Toggle Sidebar"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            
+            {/* Mobile Title */}
+            <div className="flex items-center gap-3 lg:hidden">
+              <div className="w-8 h-8 bg-brand-teal/20 rounded-lg flex items-center justify-center">
+                <span className="font-bold text-brand-teal text-xs">IO</span>
+              </div>
+              <span className="font-bold text-[#1D2D49]">IOCA Admin</span>
             </div>
-            <span className="font-bold text-[#1D2D49]">IOCA Admin</span>
           </div>
 
           {/* Right side: Avatar & Mobile menu */}

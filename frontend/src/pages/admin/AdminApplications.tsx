@@ -132,58 +132,60 @@ export function AdminApplications() {
                         {app.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right space-x-2 pr-8">
-                      {app.status === 'pending' && (
-                        <AdminButton 
-                          onClick={() => handleUpdateStatus(app.id, 'under_review')}
-                          disabled={submitting}
-                          variant="warning"
-                          size="sm"
-                        >
-                          Review
-                        </AdminButton>
-                      )}
-                      
-                      {(app.status === 'pending' || app.status === 'under_review') && (
-                        <>
+                    <td className="px-6 py-4 pr-8">
+                      <div className="flex items-center justify-end flex-wrap gap-2">
+                        {app.status === 'pending' && (
                           <AdminButton 
-                            onClick={() => {
-                              if (window.confirm(`Approve ${app.full_name}? This will auto-create their membership.`)) {
-                                handleUpdateStatus(app.id, 'approved');
-                              }
-                            }}
+                            onClick={() => handleUpdateStatus(app.id, 'under_review')}
                             disabled={submitting}
-                            variant="success"
+                            variant="warning"
                             size="sm"
                           >
-                            Approve
+                            Review
                           </AdminButton>
-                          
-                          <AdminButton 
-                            onClick={() => {
-                              setSelectedApp(app);
-                              setRejectNotes('');
-                              setIsRejectModalOpen(true);
-                            }}
-                            disabled={submitting}
-                            variant="danger"
-                            size="sm"
-                          >
-                            Reject
-                          </AdminButton>
-                        </>
-                      )}
+                        )}
+                        
+                        {(app.status === 'pending' || app.status === 'under_review') && (
+                          <>
+                            <AdminButton 
+                              onClick={() => {
+                                if (window.confirm(`Approve ${app.full_name}? This will auto-create their membership.`)) {
+                                  handleUpdateStatus(app.id, 'approved');
+                                }
+                              }}
+                              disabled={submitting}
+                              variant="success"
+                              size="sm"
+                            >
+                              Approve
+                            </AdminButton>
+                            
+                            <AdminButton 
+                              onClick={() => {
+                                setSelectedApp(app);
+                                setRejectNotes('');
+                                setIsRejectModalOpen(true);
+                              }}
+                              disabled={submitting}
+                              variant="danger"
+                              size="sm"
+                            >
+                              Reject
+                            </AdminButton>
+                          </>
+                        )}
 
-                      <AdminButton 
-                        onClick={() => {
-                          alert(`Motivation:\n${app.motivation}\n\nCNIC: ${app.cnic || 'N/A'}\nOccupation: ${app.occupation || 'N/A'}\nAddress: ${app.address || 'N/A'}`);
-                        }}
-                        variant="ghost"
-                        size="sm"
-                        title="View Details"
-                      >
-                        Info
-                      </AdminButton>
+                        <AdminButton 
+                          onClick={() => {
+                            alert(`Motivation:\n${app.motivation}\n\nCNIC: ${app.cnic || 'N/A'}\nOccupation: ${app.occupation || 'N/A'}\nAddress: ${app.address || 'N/A'}`);
+                          }}
+                          variant="ghost"
+                          size="sm"
+                          title="View Details"
+                        >
+                          Info
+                        </AdminButton>
+                      </div>
                     </td>
                   </tr>
                 ))
