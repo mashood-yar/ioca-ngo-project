@@ -961,9 +961,8 @@ END:VCALENDAR`;
                       </div>
                     )}
 
-                    {/* Apply form — only show if no pending application */}
-                    {!pendingApplication && (
-
+                    {/* Just submitted success state */}
+                    {!pendingApplication && memberSuccessMsg && (
                       <div className="text-center py-8 max-w-sm mx-auto space-y-4">
                         <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
                           <Check className="w-8 h-8" />
@@ -975,7 +974,10 @@ END:VCALENDAR`;
                         </div>
                         <p className="text-xs text-brand-navy/40">Review usually takes 2–3 business days. You will be notified via email.</p>
                       </div>
-                    ) : (
+                    )}
+
+                    {/* Apply form — only show if no pending application and not just submitted */}
+                    {!pendingApplication && !memberSuccessMsg && (
                       <form onSubmit={handleApplyMembership} className="space-y-6">
                         {memberErrorMsg && (
                           <div className="bg-red-50 text-red-700 text-sm p-4 rounded-xl border border-red-100 font-medium">
@@ -1095,8 +1097,6 @@ END:VCALENDAR`;
                           )}
                         </button>
                       </form>
-                    )}
-                    {/* End !pendingApplication block */}
                     )}
                   </div>
                 )}
