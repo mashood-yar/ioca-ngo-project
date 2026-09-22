@@ -1121,8 +1121,10 @@ END:VCALENDAR`;
                                     const file = e.target.files?.[0];
                                     if (file) {
                                       try {
-                                        const url = await upload(file);
-                                        setMemberForm(prev => ({ ...prev, profileImageUrl: url }));
+                                        const result = await upload(file, 'ioca/members');
+                                        if (result) {
+                                          setMemberForm(prev => ({ ...prev, profileImageUrl: result.url }));
+                                        }
                                       } catch (err) {
                                         console.error("Upload failed", err);
                                       }

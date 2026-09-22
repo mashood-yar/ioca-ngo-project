@@ -125,7 +125,7 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     const pdfBytes = await pdfDoc.save();
     
     // Trigger download
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const blob = new Blob([pdfBytes.buffer], { type: 'application/pdf' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${userData.name?.replace(/\s+/g, '_')}_ID.pdf`;

@@ -285,9 +285,11 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                           const file = e.target.files?.[0];
                           if (file) {
                             try {
-                              const url = await upload(file);
-                              setFormData(prev => ({ ...prev, profile_image_url: url }));
-                              if (errors.profile_image_url) setErrors(prev => ({ ...prev, profile_image_url: '' }));
+                              const result = await upload(file, 'ioca/volunteers');
+                              if (result) {
+                                setFormData(prev => ({ ...prev, profile_image_url: result.url }));
+                                if (errors.profile_image_url) setErrors(prev => ({ ...prev, profile_image_url: '' }));
+                              }
                             } catch (err) {
                               console.error("Upload failed", err);
                             }
