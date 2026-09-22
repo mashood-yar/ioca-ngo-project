@@ -17,7 +17,6 @@ import {
   Globe,
   Search,
   Download,
-  ChevronRight,
   ShieldCheck,
   Edit2
 } from 'lucide-react';
