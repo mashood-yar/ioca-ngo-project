@@ -510,3 +510,5 @@ CREATE INDEX IF NOT EXISTS idx_donations_project_id ON public.donations (project
 CREATE INDEX IF NOT EXISTS idx_contacts_status ON public.contacts (status);
 CREATE INDEX IF NOT EXISTS idx_projects_slug ON public.projects (slug);
 CREATE INDEX IF NOT EXISTS idx_events_slug ON public.events (slug);
+A L T E R   T A B L E   p u b l i c . t i e r s   A D D   C O L U M N   I F   N O T   E X I S T S   n a m e _ u r   T E X T ;   A L T E R   T A B L E   p u b l i c . t i e r s   A D D   C O L U M N   I F   N O T   E X I S T S   b e n e f i t s   J S O N B ;  
+ 

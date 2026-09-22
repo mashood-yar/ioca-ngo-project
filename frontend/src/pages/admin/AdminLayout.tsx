@@ -20,6 +20,7 @@ import {
   Megaphone,
   TrendingUp,
   HeartHandshake,
+  Shield,
 } from 'lucide-react';
 
 export function AdminLayout() {
@@ -64,6 +65,7 @@ export function AdminLayout() {
     { to: '/admin/queries', label: 'Client Queries', icon: MessageSquare },
     { to: '/admin/applications', label: 'Applications', icon: ClipboardList },
     { to: '/admin/volunteers', label: 'Volunteers', icon: HeartHandshake },
+    { to: '/admin/tiers', label: 'Membership Tiers', icon: Shield },
     { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
   ];
 

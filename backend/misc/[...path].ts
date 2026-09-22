@@ -558,6 +558,106 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return ok(res, { ...application, ...updatePayload })
         }
       }
+
+      if (adminSub === 'tiers') {
+        if (req.method === 'GET') {
+          const user = await requireAdmin(req, res)
+          if (!user) return
+          const { data, error } = await supabase
+            .from('tiers')
+            .select('*')
+            .order('price', { ascending: true })
+          if (error) throw error
+          return ok(res, data)
+        }
+
+        if (req.method === 'POST') {
+          const user = await requireAdmin(req, res)
+          if (!user) return
+          const schema = z.object({
+            name: z.string().min(2),
+            nameUr: z.string().optional(),
+            price: z.number().min(0),
+            durationDays: z.number().min(1),
+            benefits: z.array(z.string()).optional(),
+            isActive: z.boolean().default(true)
+          })
+          const validatedData = schema.parse(req.body)
+          const { data, error } = await supabase.from('tiers').insert({
+            name: validatedData.name,
+            name_ur: validatedData.nameUr,
+            price: validatedData.price,
+            duration_days: validatedData.durationDays,
+            benefits: validatedData.benefits,
+            is_active: validatedData.isActive
+          }).select().single()
+          
+          if (error) throw error
+          return ok(res, data, 201)
+        }
+
+        if (req.method === 'PATCH' && adminId) {
+          const user = await requireAdmin(req, res)
+          if (!user) return
+          const schema = z.object({
+            name: z.string().min(2).optional(),
+            nameUr: z.string().optional(),
+            price: z.number().min(0).optional(),
+            durationDays: z.number().min(1).optional(),
+            benefits: z.array(z.string()).optional(),
+            isActive: z.boolean().optional()
+          })
+          const validatedData = schema.parse(req.body)
+          
+          const updatePayload: Record<string, any> = {}
+          if (validatedData.name !== undefined) updatePayload.name = validatedData.name
+          if (validatedData.nameUr !== undefined) updatePayload.name_ur = validatedData.nameUr
+          if (validatedData.price !== undefined) updatePayload.price = validatedData.price
+          if (validatedData.durationDays !== undefined) updatePayload.duration_days = validatedData.durationDays
+          if (validatedData.benefits !== undefined) updatePayload.benefits = validatedData.benefits
+          if (validatedData.isActive !== undefined) updatePayload.is_active = validatedData.isActive
+          
+          const { data, error } = await supabase
+            .from('tiers')
+            .update(updatePayload)
+            .eq('id', adminId)
+            .select()
+            .single()
+            
+          if (error) throw error
+          return ok(res, data)
+        }
+
+        if (req.method === 'DELETE' && adminId) {
+          const user = await requireAdmin(req, res)
+          if (!user) return
+          // Check if memberships exist
+          const { count, error: countErr } = await supabase
+            .from('memberships')
+            .select('*', { count: 'exact', head: true })
+            .eq('tier_id', adminId)
+            
+          if (countErr) throw countErr
+          if (count && count > 0) {
+            return err(res, 'Cannot delete tier because it has active or past memberships attached. Please mark it as Inactive instead.', 400)
+          }
+          
+          // Check if applications exist
+          const { count: appCount, error: appCountErr } = await supabase
+            .from('applications')
+            .select('*', { count: 'exact', head: true })
+            .eq('tier_id', adminId)
+            
+          if (appCountErr) throw appCountErr
+          if (appCount && appCount > 0) {
+             return err(res, 'Cannot delete tier because there are membership applications attached. Please mark it as Inactive instead.', 400)
+          }
+          
+          const { error } = await supabase.from('tiers').delete().eq('id', adminId)
+          if (error) throw error
+          return ok(res, { success: true })
+        }
+      }
     }
 
 
