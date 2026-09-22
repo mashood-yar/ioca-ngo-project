@@ -53,7 +53,7 @@ const SectionHeader: React.FC<{ label: string; isUrdu: boolean }> = ({ label, is
 
 const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
   const { user } = useAuth();
-  const { uploadImage, isUploading } = useCloudinaryUpload();
+  const { upload, uploading } = useCloudinaryUpload();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -230,7 +230,7 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                   onClick={() => {
                     setIsSubmitted(false);
                     setFormData({
-                      name: '', email: '', phone: '', cnic: '', date_of_birth: '', city: '',
+                      name: '', father_name: '', profile_image_url: '', email: '', phone: '', cnic: '', date_of_birth: '', city: '',
                       education: '', program: '', availability: '', skills_detail: '',
                       heardFrom: '', message: '', emergency_contact_name: '',
                       emergency_contact_phone: '', agreeTerms: false
@@ -285,7 +285,7 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                           const file = e.target.files?.[0];
                           if (file) {
                             try {
-                              const url = await uploadImage(file);
+                              const url = await upload(file);
                               setFormData(prev => ({ ...prev, profile_image_url: url }));
                               if (errors.profile_image_url) setErrors(prev => ({ ...prev, profile_image_url: '' }));
                             } catch (err) {
@@ -295,7 +295,7 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
                         }}
                       />
                       <label htmlFor="vol-profile-image" className="inline-block px-4 py-2 bg-brand-navy/5 hover:bg-brand-navy/10 text-brand-navy text-sm font-medium rounded-lg cursor-pointer transition-colors">
-                        {isUploading ? (isUrdu ? 'اپ لوڈ ہو رہا ہے...' : 'Uploading...') : (isUrdu ? 'تصویر منتخب کریں' : 'Choose Image')}
+                        {uploading ? (isUrdu ? 'اپ لوڈ ہو رہا ہے...' : 'Uploading...') : (isUrdu ? 'تصویر منتخب کریں' : 'Choose Image')}
                       </label>
                       {errors.profile_image_url && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.profile_image_url}</p>}
                     </div>

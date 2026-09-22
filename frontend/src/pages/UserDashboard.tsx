@@ -114,7 +114,7 @@ type Tab = 'overview' | 'profile' | 'membership' | 'donations' | 'events' | 'zon
 export function UserDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { uploadImage, isUploading } = useCloudinaryUpload();
+  const { upload, uploading } = useCloudinaryUpload();
   
   // Navigation
   const [activeTab, setActiveTab] = useState<Tab>('overview');
@@ -1121,7 +1121,7 @@ END:VCALENDAR`;
                                     const file = e.target.files?.[0];
                                     if (file) {
                                       try {
-                                        const url = await uploadImage(file);
+                                        const url = await upload(file);
                                         setMemberForm(prev => ({ ...prev, profileImageUrl: url }));
                                       } catch (err) {
                                         console.error("Upload failed", err);
@@ -1130,7 +1130,7 @@ END:VCALENDAR`;
                                   }}
                                 />
                                 <label htmlFor="member-profile-image" className="inline-block px-4 py-2 bg-brand-navy/5 hover:bg-brand-navy/10 text-brand-navy text-sm font-medium rounded-lg cursor-pointer transition-colors">
-                                  {isUploading ? 'Uploading...' : 'Choose Image'}
+                                  {uploading ? 'Uploading...' : 'Choose Image'}
                                 </label>
                               </div>
                             </div>
