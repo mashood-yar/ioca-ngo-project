@@ -207,8 +207,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // === Upload Resource ===
     if (resource === 'upload') {
       if (req.method === 'POST') {
-        const user = await requireAdmin(req, res)
-        if (!user) return
+        if (!applyRateLimit(req, res)) return
 
         const { file, image, folder } = uploadSchema.parse(req.body)
         const base64Str = file || image || ''
