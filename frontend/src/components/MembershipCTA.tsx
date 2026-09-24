@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
-import { ShieldCheck, Award, Heart, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Award, Heart, Users, ArrowRight } from 'lucide-react';
 
 interface MembershipCTAProps {
   isUrdu: boolean;
