@@ -207,43 +207,40 @@ export function AdminVolunteers() {
         <div className="flex-1 bg-gray-50/50 flex flex-col min-w-0">
           {selectedVolunteer ? (
             <div className="flex-1 overflow-y-auto">
-              {/* Header Actions */}
-              <div className="p-6 bg-white border-b border-[#E5E7EB] sticky top-0 z-10 shadow-sm">
-                <div className="flex justify-between items-start gap-4">
-                  <div className="flex items-center gap-4">
+              {/* Compact Sticky Header — ONLY profile + status buttons */}
+              <div className="p-4 bg-white border-b border-[#E5E7EB] sticky top-0 z-10 shadow-sm">
+                <div className="flex justify-between items-center gap-4">
+                  <div className="flex items-center gap-3">
                     {/* Profile Picture */}
                     {selectedVolunteer.profile_image_url ? (
                       <img
                         src={selectedVolunteer.profile_image_url}
                         alt={selectedVolunteer.full_name}
-                        className="w-16 h-16 rounded-full object-cover border-2 border-[#E5E7EB] flex-shrink-0"
+                        className="w-12 h-12 rounded-full object-cover border-2 border-[#E5E7EB] flex-shrink-0"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center text-xl font-bold text-slate-500 flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center text-lg font-bold text-slate-500 flex-shrink-0">
                         {selectedVolunteer.full_name.charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div>
-                      <h2 className="text-xl font-bold text-gray-900">{selectedVolunteer.full_name}</h2>
+                      <h2 className="text-base font-bold text-gray-900 leading-tight">{selectedVolunteer.full_name}</h2>
                       {selectedVolunteer.father_name && (
-                        <p className="text-xs text-gray-500 mt-0.5">S/O, D/O: {selectedVolunteer.father_name}</p>
+                        <p className="text-xs text-gray-500">S/O, D/O: {selectedVolunteer.father_name}</p>
                       )}
-                      <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-500">
-                        <div className="flex items-center gap-1.5">
-                          <Mail className="w-4 h-4" />
-                          <a href={`mailto:${selectedVolunteer.email}`} className="hover:text-[#0D9488]">{selectedVolunteer.email}</a>
-                        </div>
+                      <div className="flex flex-wrap gap-3 mt-0.5 text-xs text-gray-400">
+                        <a href={`mailto:${selectedVolunteer.email}`} className="flex items-center gap-1 hover:text-[#0D9488]">
+                          <Mail className="w-3 h-3" />{selectedVolunteer.email}
+                        </a>
                         {selectedVolunteer.phone && (
-                          <div className="flex items-center gap-1.5">
-                            <Phone className="w-4 h-4" />
-                            <a href={`tel:${selectedVolunteer.phone}`} className="hover:text-[#0D9488]">{selectedVolunteer.phone}</a>
-                          </div>
+                          <a href={`tel:${selectedVolunteer.phone}`} className="flex items-center gap-1 hover:text-[#0D9488]">
+                            <Phone className="w-3 h-3" />{selectedVolunteer.phone}
+                          </a>
                         )}
                         {selectedVolunteer.city && (
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4" />
-                            {selectedVolunteer.city}
-                          </div>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />{selectedVolunteer.city}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -271,14 +268,18 @@ export function AdminVolunteers() {
                     </AdminButton>
                   </div>
                 </div>
+              </div>
 
-                {/* Convert to Personnel button — only shown when accepted and NOT yet converted */}
+              {/* Scrollable Content */}
+              <div className="p-6 space-y-6 max-w-3xl">
+
+                {/* Convert to Personnel — top of content, NOT sticky */}
                 {selectedVolunteer.status === 'accepted' && (
-                  <div className="mt-4 pt-4 border-t border-[#E5E7EB]">
+                  <div className="bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-sm">
                     {selectedVolunteer.personnel_uid ? (
                       <div className="flex items-center gap-2 text-[#059669] bg-green-50 border border-green-200 px-4 py-2.5 rounded-xl text-sm font-semibold w-fit">
                         <CheckCircle2 className="w-4 h-4" />
-                        Added to Personnel as <span className="font-mono font-bold">{selectedVolunteer.personnel_uid}</span>
+                        Added to Personnel as <span className="font-mono font-bold ml-1">{selectedVolunteer.personnel_uid}</span>
                       </div>
                     ) : (
                       <>
@@ -300,10 +301,6 @@ export function AdminVolunteers() {
                     )}
                   </div>
                 )}
-              </div>
-
-              {/* Content */}
-              <div className="p-6 space-y-6 max-w-3xl">
 
                 {/* Personal Details */}
                 <div className="bg-white p-6 rounded-xl border border-[#E5E7EB] shadow-sm">

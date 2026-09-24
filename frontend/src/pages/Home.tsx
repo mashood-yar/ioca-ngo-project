@@ -6,6 +6,7 @@ import TrustBar from '../components/TrustBar';
 import ProcessBlocks from '../components/ProcessBlocks';
 import CampaignCarousel from '../components/CampaignCarousel';
 import TestimonialGallery from '../components/TestimonialGallery';
+import MembershipCTA from '../components/MembershipCTA';
 import SEO from '../components/SEO';
 
 interface HomeProps {
@@ -27,6 +28,7 @@ const Home: React.FC<HomeProps> = ({ isUrdu, onDonateClick }) => {
       <ImpactBentoGrid isUrdu={isUrdu} />
       <ImpactStoriesCarousel isUrdu={isUrdu} />
       <ProcessBlocks isUrdu={isUrdu} />
+      <MembershipCTA isUrdu={isUrdu} />
       <TestimonialGallery isUrdu={isUrdu} />
     </>
   );

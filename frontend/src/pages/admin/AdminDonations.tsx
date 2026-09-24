@@ -328,13 +328,13 @@ export function AdminDonations() {
                 setActiveTab(tab.id as any);
                 setSearchTerm('');
               }}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${
+              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'bg-[#1D2D49] text-white shadow-md'
                   : 'text-[#6B7280] hover:text-[#1D2D49] hover:bg-[#F3F4F6]'
               }`}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4 shrink-0" />
               {tab.label}
             </button>
           );
