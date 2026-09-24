@@ -40,6 +40,7 @@ const navItems = [
   { to: '/admin/volunteers', label: 'Volunteers', icon: HeartHandshake },
   { to: '/admin/tiers', label: 'Membership Tiers', icon: Shield },
   { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
+  { to: '/admin/campaigns', label: 'Campaigns & CRM', icon: Megaphone },
 ];
 
 const SidebarContent = ({ user, setIsMobileMenuOpen, handleSignOut, initials }: any) => (

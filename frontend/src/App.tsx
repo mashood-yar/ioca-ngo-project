@@ -52,6 +52,7 @@ const AdminProjects = lazy(() => import('./pages/admin/AdminProjects').then(m =>
 const AdminPrograms = lazy(() => import('./pages/admin/AdminPrograms').then(m => ({ default: m.AdminPrograms })));
 const AdminVolunteers = lazy(() => import('./pages/admin/AdminVolunteers').then(m => ({ default: m.AdminVolunteers })));
 const AdminTiers = lazy(() => import('./pages/admin/AdminTiers').then(m => ({ default: m.AdminTiers })));
+const AdminCampaigns = lazy(() => import('./pages/admin/AdminCampaigns').then(m => ({ default: m.AdminCampaigns })));
 
 /** Scrolls to top on route change */
 function ScrollToTop() {
@@ -152,6 +153,7 @@ function App() {
               <Route path="projects" element={<AdminProjects />} />
               <Route path="programs" element={<AdminPrograms />} />
               <Route path="volunteers" element={<AdminVolunteers />} />
+              <Route path="campaigns" element={<AdminCampaigns />} />
             </Route>
           </Routes>
         </Suspense>

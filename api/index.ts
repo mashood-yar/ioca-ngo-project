@@ -20,6 +20,9 @@ import impactStories from '../backend/impact-stories/[...path]';
 import verify from '../backend/verify/[uid]';
 import volunteers from '../backend/volunteers/[...path]';
 
+import adminCampaigns from '../backend/admin/campaigns/[...path]';
+import contacts from '../backend/contacts/[...path]';
+
 async function router(req: VercelRequest, res: VercelResponse) {
   const url = req.url?.split('?')[0] || '';
   const parts = url.split('/').filter(Boolean); // e.g. ['api', 'gallery', 'something']
@@ -28,6 +31,10 @@ async function router(req: VercelRequest, res: VercelResponse) {
   if (parts[1] === 'admin' && parts[2] === 'personnel') {
     req.query.path = parts.slice(3);
     return adminPersonnel(req, res);
+  }
+  if (parts[1] === 'admin' && parts[2] === 'campaigns') {
+    req.query.path = parts.slice(3);
+    return adminCampaigns(req, res);
   }
   if (parts[1] === 'contacts') { req.query.path = parts.slice(2); return contacts(req, res); }
   if (parts[1] === 'donations') { req.query.path = parts.slice(2); return donations(req, res); }
