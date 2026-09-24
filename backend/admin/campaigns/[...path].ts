@@ -19,20 +19,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
     const token = authHeader.split(' ')[1];
     
-    // We use the service role key to decode because it's a backend operation, 
-    // or we just call getUser with the token.
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    // Create an authenticated client so RLS policies pass correctly
+    const userSupabase = createClient(supabaseUrl, process.env.VITE_SUPABASE_ANON_KEY || supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+
+    const { data: { user }, error: userError } = await userSupabase.auth.getUser();
     if (userError || !user) return res.status(401).json({ error: 'Unauthorized' });
 
     // Admin Check
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    const { data: profile } = await userSupabase.from('profiles').select('role').eq('id', user.id).single();
     if (!profile || profile.role !== 'admin') {
       return res.status(403).json({ error: 'Forbidden: Admin access required' });
     }
 
     // GET /api/admin/campaigns/audience
     if (method === 'GET' && pathParts[0] === 'audience') {
-      const { data, error } = await supabase
+      const { data, error } = await userSupabase
         .from('audience_contacts')
         .select('*')
         .order('created_at', { ascending: false });
@@ -54,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!subject || !html) return res.status(400).json({ error: 'Subject and HTML content are required' });
       
       // Fetch target audience
-      let query = supabase.from('audience_contacts').select('email, first_name').eq('is_subscribed_email', true);
+      let query = userSupabase.from('audience_contacts').select('email, first_name').eq('is_subscribed_email', true);
       
       if (targetTags && targetTags.length > 0 && !targetTags.includes('all')) {
         // Match ANY of the tags
