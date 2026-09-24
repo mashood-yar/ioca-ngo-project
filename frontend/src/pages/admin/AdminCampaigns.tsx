@@ -97,7 +97,7 @@ export function AdminCampaigns() {
             </div>
 
             {sendResult && (
-              <div className={\`p-4 mb-6 rounded-xl text-sm flex items-start gap-2 \${sendResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}\`}>
+              <div className={`p-4 mb-6 rounded-xl text-sm flex items-start gap-2 ${sendResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                 {sendResult.success ? <CheckCircle2 className="w-4 h-4 mt-0.5" /> : <ShieldAlert className="w-4 h-4 mt-0.5" />}
                 {sendResult.message}
               </div>
