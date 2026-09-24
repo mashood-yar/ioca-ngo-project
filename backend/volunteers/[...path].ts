@@ -185,9 +185,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         title: 'Volunteer',
         bio: volunteer.motivation || null,
         status: 'active',
+        profile_image_url: volunteer.profile_image_url || null,
       })
 
-      // 4. Send acceptance email with the assigned UID
+      // 4. Mark the volunteer record as converted (store the generated UID)
+      await supabase
+        .from('volunteers')
+        .update({ personnel_uid: personnelRecord.uid })
+        .eq('id', id)
+
+      // 5. If the volunteer has a linked user account, sync their profile data
+      if (volunteer.user_id) {
+        await supabase
+          .from('profiles')
+          .update({
+            is_volunteer: true,
+            phone: volunteer.phone || null,
+            cnic: volunteer.cnic || null,
+            father_name: volunteer.father_name || null,
+          })
+          .eq('id', volunteer.user_id)
+      }
+
+      // 6. Send acceptance email with the assigned UID
       if (volunteer.email) {
         try {
           await sendVolunteerAcceptedEmail(volunteer.full_name, volunteer.email, personnelRecord.uid)

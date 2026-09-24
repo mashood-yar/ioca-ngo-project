@@ -39,6 +39,7 @@ interface ProfileData {
   cnic?: string;
   occupation?: string;
   avatar_url?: string;
+  father_name?: string;
   onboarding_completed?: boolean;
   is_volunteer?: boolean;
 }
@@ -127,6 +128,7 @@ export function UserDashboard() {
   const [eventRegistrations, setEventRegistrations] = useState<RegistrationData[]>([]);
   const [member, setMember] = useState<MemberData | null>(null);
   const [pendingApplication, setPendingApplication] = useState<ApplicationData | null>(null);
+  const [volunteerPersonnel, setVolunteerPersonnel] = useState<any | null>(null);
 
   // Lists for forms
   const [zones, setZones] = useState<Zone[]>([]);
@@ -235,6 +237,18 @@ export function UserDashboard() {
       setAvailableEvents(Array.isArray(allEventsData) ? allEventsData : []);
       setPaymentMethods(Array.isArray(paymentMethodsData) ? paymentMethodsData : []);
       setDonationsEnabled((settingsData as any)?.donations_enabled === 'true');
+
+      // Fetch volunteer personnel record if user is a volunteer
+      if (profileData?.is_volunteer && profileData?.id) {
+        fetchApi<any>(`/admin/personnel?category=volunteer&email=${encodeURIComponent(user?.email || '')}`)
+          .then(({ data }) => {
+            // Handle both array and paginated response
+            const records = Array.isArray(data) ? data : (data?.personnel || []);
+            if (records.length > 0) setVolunteerPersonnel(records[0]);
+          })
+          .catch(() => {});
+      }
+
       // Only show pending application banner if no active membership exists
       if (applicationData && (applicationData.status === 'pending' || applicationData.status === 'under_review')) {
         setPendingApplication(applicationData);
@@ -949,14 +963,20 @@ END:VCALENDAR`;
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => generateIdCard({
-                        id: profile?.id,
-                        name: fullName,
-                        fatherName: memberForm.fatherName || 'N/A',
-                        profileImageUrl: avatarUrl,
-                        issueDate: new Date().toLocaleDateString(),
-                        validUntil: membership?.end_date ? new Date(membership.end_date).toLocaleDateString() : 'N/A'
-                      }, false)}
+                      onClick={() => {
+                        const isVol = profile?.is_volunteer === true;
+                        generateIdCard({
+                          id: isVol ? (volunteerPersonnel?.uid || profile?.id) : (member?.id || profile?.id),
+                          name: fullName,
+                          fatherName: profile?.father_name || volunteerPersonnel?.father_name || 'N/A',
+                          profileImageUrl: volunteerPersonnel?.profile_image_url || avatarUrl,
+                          issueDate: new Date().toLocaleDateString(),
+                          validUntil: membership?.end_date
+                            ? new Date(membership.end_date).toLocaleDateString()
+                            : isVol ? new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()
+                            : 'N/A'
+                        }, isVol);
+                      }}
                       className="flex items-center gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-md shadow-brand-navy/20"
                     >
                       <Download className="w-4 h-4" />
