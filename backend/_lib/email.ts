@@ -78,7 +78,7 @@ export async function sendApplicationConfirmation(to: string, name: string, zone
       from: process.env.RESEND_FROM_EMAIL!,
       to,
       subject: 'Your IOCA membership application has been received',
-      text: `Hi ${name},\n\nThank you for applying to become a member of IOCA.\n\nYour application details:\n- Zone: ${zoneName}\n- Tier: ${tierName}\n- Submitted: ${new Date().toLocaleDateString()}\n\nOur admin team will review your application within 3–5 business days.\nYou will receive an email notification once a decision has been made.\n\nYou can track your application status at:\n${process.env.CLIENT_URL}/membership/waiting\n\nBest regards,\nIOCA Team`,
+      text: `Hi ${name},\n\nThank you for applying to become a member of IOCA.\n\nYour application details:\n- Zone: ${zoneName}\n- Tier: ${tierName}\n- Submitted: ${new Date().toLocaleDateString()}\n\nOur admin team will review your application within 3–5 business days.\nYou will receive an email notification once a decision has been made.\n\nYou can track your application status at:\nhttps://www.iocaworld.org/membership/waiting\n\nBest regards,\nIOCA Team`,
     });
   } catch (error) {
     console.error('Failed to send application confirmation:', error);
@@ -91,7 +91,7 @@ export async function sendNewApplicationNotification(adminEmail: string, applica
       from: process.env.RESEND_FROM_EMAIL!,
       to: (process.env.ADMIN_NOTIFICATION_EMAIL || 'iocaworld.org@gmail.com'),
       subject: `New membership application — ${applicantName}`,
-      text: `A new membership application has been submitted.\n\nApplicant: ${applicantName}\nZone: ${zoneName}\nTier: ${tierName}\nSubmitted: ${new Date().toLocaleDateString()}\n\nReview it at:\n${process.env.CLIENT_URL}/admin/applications`,
+      text: `A new membership application has been submitted.\n\nApplicant: ${applicantName}\nZone: ${zoneName}\nTier: ${tierName}\nSubmitted: ${new Date().toLocaleDateString()}\n\nReview it at:\nhttps://www.iocaworld.org/admin/applications`,
     });
   } catch (error) {
     console.error('Failed to send admin notification:', error);
@@ -104,7 +104,7 @@ export async function sendApplicationApproved(to: string, name: string, tierName
       from: process.env.RESEND_FROM_EMAIL!,
       to,
       subject: 'Your IOCA membership has been approved! 🎉',
-      text: `Hi ${name},\n\nGreat news! Your IOCA membership application has been approved.\n\nMembership details:\n- Tier: ${tierName}\n- Valid until: ${new Date(endDate).toLocaleDateString()}\n\nYou can view your membership at:\n${process.env.CLIENT_URL}/dashboard\n\nWelcome to IOCA!`,
+      text: `Hi ${name},\n\nGreat news! Your IOCA membership application has been approved.\n\nMembership details:\n- Tier: ${tierName}\n- Valid until: ${new Date(endDate).toLocaleDateString()}\n\nYou can view your membership at:\nhttps://www.iocaworld.org/dashboard\n\nWelcome to IOCA!`,
     });
   } catch (error) {
     console.error('Failed to send approval email:', error);
@@ -464,7 +464,7 @@ export async function sendVolunteerAcceptedEmail(
   email: string,
   uid: string
 ): Promise<void> {
-  const baseUrl = process.env.CLIENT_URL || 'https://www.iocaworld.org'
+  const baseUrl = 'https://www.iocaworld.org'
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@iocaworld.org'
   try {
     await resend.emails.send({
