@@ -61,8 +61,8 @@ export function ResetPassword() {
   // If there is no authenticated session (e.g. they visited the route directly without link token)
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1D2D49] to-[#0D9488] flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center border border-white/10">
+      <div className="min-h-screen bg-gradient-to-br from-[#1D2D49] to-[#0D9488] flex flex-col items-center p-4 pt-32 pb-12 overflow-y-auto">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center border border-white/10 my-auto">
           <div className="flex justify-center mb-6">
             <img
               src="/assets/logos/logo-icon-teal.webp"
@@ -87,8 +87,8 @@ export function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1D2D49] to-[#0D9488] flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border border-white/10 transition-all duration-300">
+    <div className="min-h-screen flex flex-col items-center p-4 pt-32 pb-12 overflow-y-auto bg-gradient-to-br from-[#1D2D49] to-[#0D9488]">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border border-white/10 transition-all duration-300 my-auto">
         
         {/* Logo */}
         <div className="text-center mb-6">

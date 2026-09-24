@@ -44,9 +44,8 @@ export const VerifyID: React.FC = () => {
   return (
     <>
       <SEO title="ID Verification | IOCA" description="Verify IOCA Personnel ID" />
-      <div className="py-24 bg-brand-gray flex items-center justify-center p-4">
-        {/* M-06: rounded-2xl → rounded-xl to match brand shape language */}
-        <div className={`max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden border ${borderColor}`}>
+      <div className="min-h-screen py-24 md:py-32 bg-brand-gray flex flex-col items-center p-4 overflow-y-auto">
+        <div className={`max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden border ${borderColor} my-auto`}>
           
           <div className={`${bgColor} p-6 pb-14 text-center border-b ${borderColor}`}>
             {isActive ? (
