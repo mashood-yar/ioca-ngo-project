@@ -13,21 +13,21 @@ const tiers = [
     nameUr: 'حامی',
     feeEn: 'PKR 1,000 / yr',
     feeUr: '۱,۰۰۰ روپے / سال',
-    color: 'text-brand-teal',
+    hoverColor: 'group-hover:text-brand-teal',
   },
   {
     nameEn: 'Associate',
     nameUr: 'ایسوسی ایٹ',
     feeEn: 'PKR 5,000 / yr',
     feeUr: '۵,۰۰۰ روپے / سال',
-    color: 'text-brand-gold',
+    hoverColor: 'group-hover:text-brand-gold',
   },
   {
     nameEn: 'Full Member',
     nameUr: 'مکمل رکن',
     feeEn: 'PKR 10,000 / yr',
     feeUr: '۱۰,۰۰۰ روپے / سال',
-    color: 'text-white',
+    hoverColor: 'group-hover:text-white',
   },
 ];
 
@@ -119,42 +119,48 @@ const MembershipCTA: React.FC<MembershipCTAProps> = ({ isUrdu }) => {
           </div>
 
           {/* ── Right Column (Tiers & Trust) ── */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
+          <div className="lg:col-span-5 flex flex-col justify-center relative">
             
-            {/* Tiers Card - Sleek and compact */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm overflow-hidden">
-              <div className="px-5 py-3 border-b border-white/10 bg-black/10">
-                <p className={`text-white/60 text-xs font-bold uppercase tracking-widest ${isUrdu ? 'text-right' : ''}`}>
-                  {isUrdu ? 'رکنیت کیٹیگریز' : 'Membership Tiers'}
-                </p>
-              </div>
-              <div className="divide-y divide-white/5">
+            {/* Minimalist Editorial Layout */}
+            <div className={`relative z-10 ${isUrdu ? 'lg:pr-10' : 'lg:pl-10'}`}>
+              {/* Elegant vertical divider line on desktop */}
+              <div className={`hidden lg:block absolute top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/15 to-transparent ${isUrdu ? 'right-0' : 'left-0'}`} />
+
+              <h3 className={`text-white/40 text-[10px] font-bold uppercase tracking-[0.3em] mb-8 ${isUrdu ? 'text-right' : ''}`}>
+                {isUrdu ? 'رکنیت کی اقسام' : 'Annual Contributions'}
+              </h3>
+              
+              <div className="space-y-7">
                 {tiers.map((tier, i) => (
-                  <div key={i} className={`flex items-center justify-between px-5 py-3.5 hover:bg-white/5 transition-colors ${isUrdu ? 'flex-row-reverse' : ''}`}>
-                    <div className={`flex items-center gap-3 ${isUrdu ? 'flex-row-reverse' : ''}`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-brand-teal' : i === 1 ? 'bg-brand-gold' : 'bg-white/50'}`} />
-                      <span className={`text-sm font-bold text-white ${isUrdu ? 'font-urduHeading' : ''}`}>
+                  <div key={i} className={`group cursor-default flex flex-col ${isUrdu ? 'items-end' : 'items-start'}`}>
+                    <div className={`w-full flex items-end justify-between ${isUrdu ? 'flex-row-reverse' : ''}`}>
+                      <h4 className={`text-white/90 font-medium text-lg lg:text-xl transition-colors duration-300 ${tier.hoverColor} ${isUrdu ? 'font-urduHeading' : ''}`}>
                         {isUrdu ? tier.nameUr : tier.nameEn}
+                      </h4>
+                      
+                      {/* Menu-style dot leader */}
+                      <div className="flex-1 mx-4 border-b-2 border-dotted border-white/15 relative top-[-6px] opacity-40 group-hover:opacity-100 transition-opacity duration-300" />
+                      
+                      <span className={`text-white/60 font-medium transition-colors duration-300 ${tier.hoverColor} ${isUrdu ? 'font-urduBody text-sm' : 'font-mono text-sm'}`}>
+                        {isUrdu ? tier.feeUr : tier.feeEn}
                       </span>
                     </div>
-                    <span className={`text-xs font-semibold tracking-wide ${tier.color} ${isUrdu ? 'font-urduBody' : 'font-mono'}`}>
-                      {isUrdu ? tier.feeUr : tier.feeEn}
-                    </span>
                   </div>
                 ))}
               </div>
+              
+              <p className={`text-white/30 text-[11px] mt-10 font-medium tracking-wide ${isUrdu ? 'text-right font-urduBody' : ''}`}>
+                {isUrdu ? '* تمام کیٹیگریز براہ راست ہمارے فلاحی پروگراموں کی معاونت کرتی ہیں۔' : '* All tiers directly support our core community programs.'}
+              </p>
             </div>
 
-            {/* Editorial Trust Badges Line (Replacing bulky pills) */}
-            <div className={`flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-medium text-white/50 ${isUrdu ? 'justify-end flex-row-reverse' : ''}`}>
+            {/* Trust Badges - Ultra minimal */}
+            <div className={`mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center gap-x-5 gap-y-3 text-[10px] font-bold text-white/40 uppercase tracking-widest ${isUrdu ? 'justify-end flex-row-reverse lg:pr-10' : 'justify-start lg:pl-10'}`}>
               {trustBadges.map((badge, i) => (
-                <React.Fragment key={i}>
-                  <span className={`flex items-center gap-1.5 ${isUrdu ? 'flex-row-reverse' : ''}`}>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-brand-teal/70" />
-                    {badge}
-                  </span>
-                  {i < trustBadges.length - 1 && <span>•</span>}
-                </React.Fragment>
+                <span key={i} className={`flex items-center gap-1.5 transition-colors hover:text-white/80 cursor-default ${isUrdu ? 'flex-row-reverse' : ''}`}>
+                  <ShieldCheck className="w-3.5 h-3.5 opacity-60" />
+                  {badge}
+                </span>
               ))}
             </div>
 
