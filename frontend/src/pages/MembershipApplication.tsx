@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Heart, CheckCircle2, Shield, AlertCircle, Upload, Users, Star } from 'lucide-react';
+import { CheckCircle2, Shield, AlertCircle, Upload, Users, Star } from 'lucide-react';
 import { fetchApi } from '../lib/apiClient';
-import { useAuth } from '../hooks/useAuth';
 import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
 
 interface MembershipProps {
@@ -51,7 +50,7 @@ const SectionHeader: React.FC<{ label: string; isUrdu: boolean }> = ({ label, is
 );
 
 const MembershipApplication: React.FC<MembershipProps> = ({ isUrdu }) => {
-  const { user } = useAuth();
+  // useAuth removed because user is unused, or we can just omit it
   const { upload, uploading } = useCloudinaryUpload();
 
   const [formData, setFormData] = useState({
