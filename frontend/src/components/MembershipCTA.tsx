@@ -103,7 +103,7 @@ const MembershipCTA: React.FC<MembershipCTAProps> = ({ isUrdu }) => {
             {/* Action Buttons */}
             <div className={`flex flex-wrap items-center gap-4 pt-4 ${isUrdu ? 'flex-row-reverse' : ''}`}>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/member')}
                 className="group flex items-center gap-2 bg-brand-teal hover:bg-brand-teal-dark text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm shadow-md"
               >
                 {isUrdu ? 'رکنیت حاصل کریں' : 'Become a Member'}

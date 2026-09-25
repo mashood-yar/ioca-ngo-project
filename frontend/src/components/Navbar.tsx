@@ -224,9 +224,6 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
             <Link to="/volunteer" className={`ml-2 bg-brand-gray text-brand-navy hover:bg-brand-navy/5 font-semibold px-5 py-2 rounded-full transition-colors`}>
               {isUrdu ? 'رضاکار' : 'Volunteer'}
             </Link>
-            <Link to="/member" className={`ml-2 bg-brand-teal text-brand-white hover:opacity-90 font-semibold px-5 py-2 rounded-full transition-colors`}>
-              {isUrdu ? 'ممبر بنیں' : 'Become a Member'}
-            </Link>
           </div>
 
           {/* Action Buttons (Right) */}
@@ -386,9 +383,6 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
                 </Link>
                 <Link to="/volunteer" onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-bold text-brand-teal">
                   {isUrdu ? 'رضاکار بنیں' : 'Volunteer'}
-                </Link>
-                <Link to="/member" onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-bold text-brand-teal">
-                  {isUrdu ? 'ممبر بنیں' : 'Become a Member'}
                 </Link>
 
                 {!user ? (
