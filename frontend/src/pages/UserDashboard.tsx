@@ -129,6 +129,7 @@ export function UserDashboard() {
   const [member, setMember] = useState<MemberData | null>(null);
   const [pendingApplication, setPendingApplication] = useState<ApplicationData | null>(null);
   const [volunteerPersonnel, setVolunteerPersonnel] = useState<any | null>(null);
+  const [assignedProjects, setAssignedProjects] = useState<any[]>([]);
 
   // Lists for forms
   const [zones, setZones] = useState<Zone[]>([]);
@@ -212,7 +213,8 @@ export function UserDashboard() {
         { data: allEventsData },
         { data: applicationData },
         { data: paymentMethodsData },
-        { data: settingsData }
+        { data: settingsData },
+        { data: assignedProjectsData }
       ] = await Promise.all([
         fetchApi<ProfileData>('/profile/me'),
         fetchApi<MembershipData>('/memberships/me').catch(() => ({ data: null, error: null })),
@@ -224,7 +226,8 @@ export function UserDashboard() {
         fetchApi<EventData[]>('/events').catch(() => ({ data: [] as EventData[], error: null })),
         fetchApi<ApplicationData>('/misc/applications/me').catch(() => ({ data: null, error: null })),
         fetchApi<any[]>('/payment-methods').catch(() => ({ data: [], error: null })),
-        fetchApi<Record<string, string>>('/site-settings').catch(() => ({ data: {}, error: null }))
+        fetchApi<Record<string, string>>('/site-settings').catch(() => ({ data: {}, error: null })),
+        fetchApi<any[]>('/projects/assigned').catch(() => ({ data: [], error: null }))
       ]);
 
       setProfile(profileData);
@@ -237,6 +240,7 @@ export function UserDashboard() {
       setAvailableEvents(Array.isArray(allEventsData) ? allEventsData : []);
       setPaymentMethods(Array.isArray(paymentMethodsData) ? paymentMethodsData : []);
       setDonationsEnabled((settingsData as any)?.donations_enabled === 'true');
+      setAssignedProjects(Array.isArray(assignedProjectsData) ? assignedProjectsData : []);
 
       // Fetch volunteer personnel record if user is a volunteer
       if (profileData?.is_volunteer && profileData?.id) {
@@ -1871,12 +1875,37 @@ END:VCALENDAR`;
                     Download Digital ID Card
                   </button>
                 </div>
-                
-                <div className="p-5 rounded-2xl border border-brand-navy/5 bg-brand-gray/50 shadow-sm text-center">
-                  <Users className="w-8 h-8 text-brand-navy/20 mx-auto mb-3" />
-                  <h3 className="font-bold text-brand-navy/80 text-base">Your Assigned Projects</h3>
-                  <p className="text-sm text-brand-navy/50 mt-2">No active project assignments currently. Please check back later or contact your zone administrator.</p>
-                </div>
+                {assignedProjects.length === 0 ? (
+                  <div className="p-5 rounded-2xl border border-brand-navy/5 bg-brand-gray/50 shadow-sm text-center">
+                    <Users className="w-8 h-8 text-brand-navy/20 mx-auto mb-3" />
+                    <h3 className="font-bold text-brand-navy/80 text-base">Your Assigned Projects</h3>
+                    <p className="text-sm text-brand-navy/50 mt-2">No active project assignments currently. Please check back later or contact your zone administrator.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-brand-navy/80 text-lg">Your Assigned Projects</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {assignedProjects.map(assignment => (
+                        <div key={assignment.id} className="p-5 rounded-2xl border border-brand-navy/10 bg-white shadow-sm flex items-start gap-4">
+                          <div className="w-12 h-12 bg-brand-teal/10 text-brand-teal rounded-xl flex items-center justify-center flex-shrink-0">
+                            <MapPin className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-brand-navy">{assignment.projects?.title_en || assignment.projects?.titleEn || 'Project'}</h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-navy/5 text-brand-navy/70 capitalize">
+                                Role: {assignment.role}
+                              </span>
+                              <span className="text-xs text-brand-navy/50">
+                                Assigned: {new Date(assignment.assigned_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

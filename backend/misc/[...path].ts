@@ -218,6 +218,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // === Proxy Image Resource ===
+    if (resource === 'proxy-image') {
+      if (req.method === 'GET') {
+        const imageUrl = req.query.url as string;
+        if (!imageUrl) return err(res, 'Missing url parameter', 400);
+        
+        try {
+          const fetchRes = await fetch(imageUrl);
+          if (!fetchRes.ok) throw new Error('Failed to fetch image');
+          
+          const arrayBuffer = await fetchRes.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          
+          // Use sharp to convert to JPEG (supported by pdf-lib)
+          const sharp = (await import('sharp')).default;
+          const jpegBuffer = await sharp(buffer).jpeg({ quality: 90, force: true }).toBuffer();
+          
+          res.setHeader('Content-Type', 'image/jpeg');
+          res.setHeader('Cache-Control', 'public, max-age=86400');
+          return res.status(200).send(jpegBuffer);
+        } catch (e: any) {
+          console.error('Proxy image error:', e);
+          return err(res, e.message || 'Image proxy failed', 500);
+        }
+      }
+    }
+
     // === Zones Resource ===
     if (resource === 'zones') {
       if (req.method === 'GET' && !subPath) {

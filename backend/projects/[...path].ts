@@ -223,6 +223,75 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return ok(res, { message: 'Project deleted' })
     }
 
+    // 6. GET /api/projects/assigned — Logged-in user gets their assigned projects
+    if (req.method === 'GET' && id === 'assigned') {
+      const authHeader = req.headers.authorization
+      if (!authHeader) return err(res, 'Unauthorized', 401)
+      const token = authHeader.split(' ')[1]
+      const { data: { user }, error: userError } = await supabase.auth.getUser(token)
+      
+      if (userError || !user) return err(res, 'Unauthorized', 401)
+
+      const { data, error } = await supabase
+        .from('project_assignments')
+        .select(`
+          id, role, assigned_at,
+          projects (*)
+        `)
+        .eq('user_id', user.id)
+
+      if (error) throw new Error(error.message)
+      return ok(res, data)
+    }
+
+    // 7. GET /api/projects/:id/team — Admin views assigned users for a project
+    if (req.method === 'GET' && id && id !== 'assigned' && segments[1] === 'team') {
+      const user = await requireAdmin(req, res)
+      if (!user) return
+
+      const { data, error } = await supabase
+        .from('project_assignments')
+        .select(`
+          id, role, assigned_at,
+          user_id,
+          profiles (full_name, avatar_url, phone, email)
+        `)
+        .eq('project_id', id)
+
+      if (error) throw new Error(error.message)
+      return ok(res, data)
+    }
+
+    // 8. POST /api/projects/:id/team — Admin assigns or unassigns a user
+    if (req.method === 'POST' && id && id !== 'assigned' && segments[1] === 'team') {
+      const adminUser = await requireAdmin(req, res)
+      if (!adminUser) return
+
+      const { action, user_id, email, role } = req.body as { action: 'assign' | 'unassign', user_id?: string, email?: string, role?: string }
+      
+      let targetUserId = user_id;
+      if (!targetUserId && email) {
+        const { data: profile } = await supabase.from('profiles').select('id').eq('email', email).single()
+        if (profile) targetUserId = profile.id;
+      }
+
+      if (!targetUserId) return err(res, 'User not found. Ensure they have registered an account with this email.', 404)
+
+      if (action === 'unassign') {
+        const { error } = await supabase.from('project_assignments').delete().match({ project_id: id, user_id: targetUserId })
+        if (error) throw new Error(error.message)
+        return ok(res, { message: 'Unassigned successfully' })
+      } else {
+        const { error } = await supabase.from('project_assignments').upsert({
+          project_id: id,
+          user_id: targetUserId,
+          role: role || 'volunteer'
+        }, { onConflict: 'project_id,user_id' })
+        if (error) throw new Error(error.message)
+        return ok(res, { message: 'Assigned successfully' })
+      }
+    }
+
     return err(res, 'Method not allowed', 405)
   } catch (e) {
     const errorMsg = e instanceof Error ? e.message : JSON.stringify(e)

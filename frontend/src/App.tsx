@@ -21,6 +21,7 @@ const ProjectDetails = lazy(() => import('./pages/ProjectDetails'));
 const ImpactStories = lazy(() => import('./pages/ImpactStories'));
 const DonatePage = lazy(() => import('./pages/DonatePage'));
 const Volunteer = lazy(() => import('./pages/Volunteer'));
+const MembershipApplication = lazy(() => import('./pages/MembershipApplication'));
 const Gallery = lazy(() => import('./pages/Gallery'));
 const Contact = lazy(() => import('./pages/Contact'));
 const News = lazy(() => import('./pages/News'));
@@ -198,6 +199,7 @@ function App() {
               {/* H1-08: pass handleDonateClick with amount so DonatePage can pre-fill the modal */}
               <Route path="/donate" element={<DonatePage isUrdu={isUrdu} />} />
               <Route path="/volunteer" element={<Volunteer isUrdu={isUrdu} />} />
+              <Route path="/member" element={<MembershipApplication isUrdu={isUrdu} />} />
               <Route path="/gallery" element={<Gallery isUrdu={isUrdu} />} />
               <Route path="/news" element={<News isUrdu={isUrdu} />} />
               <Route path="/events" element={<Events isUrdu={isUrdu} />} />

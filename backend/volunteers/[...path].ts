@@ -81,6 +81,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           })
         if (error) throw new Error(error.message)
 
+        // Auto-sync uploaded profile picture and details to main user profile if logged in
+        if (validated.user_id) {
+          await supabase.from('profiles').update({
+            avatar_url: validated.profile_image_url || null,
+            phone: validated.phone || null,
+            cnic: validated.cnic || null,
+            father_name: validated.father_name || null,
+          }).eq('id', validated.user_id)
+        }
         try {
           await Promise.all([
             sendVolunteerNotification(validated.full_name, validated.email, validated.city, validated.skills),
@@ -200,6 +209,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           .from('profiles')
           .update({
             is_volunteer: true,
+            avatar_url: volunteer.profile_image_url || null,
             phone: volunteer.phone || null,
             cnic: volunteer.cnic || null,
             father_name: volunteer.father_name || null,

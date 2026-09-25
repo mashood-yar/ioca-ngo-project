@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Image as ImageIcon, Star } from 'lucide-react';
+import { Plus, Edit2, Trash2, Image as ImageIcon, Star, Users } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
@@ -39,6 +39,7 @@ export function AdminProjects() {
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isTeamOpen, setIsTeamOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const [formData, setFormData] = useState({
@@ -264,6 +265,14 @@ export function AdminProjects() {
                     <AdminButton
                       variant="outline"
                       size="sm"
+                      onClick={() => { setSelectedProject(project); setIsTeamOpen(true); }}
+                      title="Team"
+                    >
+                      <Users className="w-4 h-4 mr-1 inline-block" /> Team
+                    </AdminButton>
+                    <AdminButton
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleOpenForm(project)}
                       title="Edit"
                     >
@@ -435,6 +444,140 @@ export function AdminProjects() {
         confirmLabel="Delete"
         onConfirm={handleDelete}
       />
+
+      <ProjectTeamModal
+        project={selectedProject}
+        isOpen={isTeamOpen}
+        onClose={() => setIsTeamOpen(false)}
+      />
     </div>
+  );
+}
+
+interface TeamMember {
+  id: string;
+  role: string;
+  user_id: string;
+  profiles: {
+    full_name: string;
+    email: string;
+  };
+}
+
+function ProjectTeamModal({ project, isOpen, onClose }: { project: Project | null, isOpen: boolean, onClose: () => void }) {
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('volunteer');
+  const [adding, setAdding] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && project) {
+      loadTeam();
+    }
+  }, [isOpen, project]);
+
+  const loadTeam = async () => {
+    if (!project) return;
+    setLoading(true);
+    try {
+      const { data } = await fetchApi<TeamMember[]>(`/projects/${project.id}/team`);
+      if (data) setTeam(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!project || !email) return;
+    setAdding(true);
+    try {
+      const { error } = await fetchApi(`/projects/${project.id}/team`, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'assign', email, role })
+      });
+      if (error) throw new Error(error);
+      setEmail('');
+      loadTeam();
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Member added', variant: 'success' } }));
+    } catch (err: any) {
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message, variant: 'error' } }));
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleRemove = async (userId: string) => {
+    if (!project) return;
+    if (!window.confirm('Remove this member?')) return;
+    try {
+      const { error } = await fetchApi(`/projects/${project.id}/team`, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'unassign', user_id: userId })
+      });
+      if (error) throw new Error(error);
+      loadTeam();
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Member removed', variant: 'success' } }));
+    } catch (err: any) {
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: err.message, variant: 'error' } }));
+    }
+  };
+
+  if (!project) return null;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={`Team: ${project.titleEn}`}>
+      <div className="space-y-6">
+        <form onSubmit={handleAdd} className="flex gap-2 items-end">
+          <div className="flex-1">
+            <label className="block text-sm font-semibold mb-1">User Email</label>
+            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488]" placeholder="user@example.com" />
+          </div>
+          <div className="w-40">
+            <label className="block text-sm font-semibold mb-1">Role</label>
+            <select value={role} onChange={e => setRole(e.target.value)} className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488]">
+              <option value="volunteer">Volunteer</option>
+              <option value="coordinator">Coordinator</option>
+              <option value="member">Member</option>
+            </select>
+          </div>
+          <AdminButton type="submit" variant="accent" isLoading={adding}>Add</AdminButton>
+        </form>
+
+        <div className="border border-[#E5E7EB] rounded-lg overflow-hidden">
+          {loading ? (
+            <div className="p-4 text-center text-sm text-gray-500">Loading...</div>
+          ) : team.length === 0 ? (
+            <div className="p-4 text-center text-sm text-gray-500">No team members assigned.</div>
+          ) : (
+            <table className="w-full text-left text-sm">
+              <thead className="bg-[#F9FAFB] border-b border-[#E5E7EB] text-[#6B7280]">
+                <tr>
+                  <th className="p-3 font-semibold">Name</th>
+                  <th className="p-3 font-semibold">Email</th>
+                  <th className="p-3 font-semibold">Role</th>
+                  <th className="p-3 text-right font-semibold">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E5E7EB]">
+                {team.map(member => (
+                  <tr key={member.id} className="hover:bg-[#F9FAFB]">
+                    <td className="p-3 text-[#111827]">{member.profiles?.full_name || 'Unknown'}</td>
+                    <td className="p-3 text-[#6B7280]">{member.profiles?.email || 'N/A'}</td>
+                    <td className="p-3 text-[#111827] capitalize">{member.role}</td>
+                    <td className="p-3 text-right">
+                      <button onClick={() => handleRemove(member.user_id)} className="text-red-500 hover:text-red-700 font-medium">Remove</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </Modal>
   );
 }

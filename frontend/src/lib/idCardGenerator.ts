@@ -1,34 +1,13 @@
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import QRCode from 'qrcode';
 
-// Helper to convert WebP (or any image) to JPEG array buffer using Canvas
+// Helper to convert WebP (or any image) to JPEG array buffer using our proxy API
 const fetchImageAsJpeg = async (url: string): Promise<ArrayBuffer> => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return reject('No canvas context');
-      // Create a circular clipping path if desired, or just draw it
-      ctx.beginPath();
-      ctx.arc(img.width / 2, img.height / 2, Math.min(img.width, img.height) / 2, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-      ctx.drawImage(img, 0, 0);
-      canvas.toBlob(blob => {
-        if (blob) {
-          blob.arrayBuffer().then(resolve).catch(reject);
-        } else {
-          reject('Blob conversion failed');
-        }
-      }, 'image/jpeg', 0.95);
-    };
-    img.onerror = reject;
-    img.src = url;
-  });
+  // Pass the URL to our backend proxy which converts it to a JPEG buffer using sharp
+  const proxyUrl = `/api/misc/proxy-image?url=${encodeURIComponent(url)}`;
+  const response = await fetch(proxyUrl);
+  if (!response.ok) throw new Error('Failed to fetch proxy image');
+  return response.arrayBuffer();
 };
 
 export const generateIdCard = async (userData: any, isVolunteer: boolean = false) => {
@@ -36,13 +15,16 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     const existingPdfBytes = await fetch('/assets/id-template.pdf').then(res => res.arrayBuffer());
     const pdfDoc = await PDFDocument.load(existingPdfBytes);
     
-    // Register font
+    // Register fonts
     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     
     const pages = pdfDoc.getPages();
     const frontPage = pages[0];
     const backPage = pages.length > 1 ? pages[1] : frontPage; // Use same page if only 1 page
+    
+    const { width, height } = frontPage.getSize();
+    const centerX = width / 2;
 
     // Front Page
     // Profile Pic
@@ -50,11 +32,15 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
       try {
         const jpgBytes = await fetchImageAsJpeg(userData.profileImageUrl);
         const img = await pdfDoc.embedJpg(jpgBytes);
+        
+        // Template design assumption: Avatar is centered horizontally, about 60% up the page
+        const imgSize = width * 0.4; // Avatar is 40% of card width
+        
         frontPage.drawImage(img, {
-          x: 172,
-          y: 457,
-          width: 250,
-          height: 250,
+          x: centerX - (imgSize / 2),
+          y: height * 0.54, // Positioned in the upper half based on typical ID layout
+          width: imgSize,
+          height: imgSize,
         });
       } catch (e) {
         console.error("Error embedding profile image", e);
@@ -62,18 +48,22 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     }
 
     // Name
-    frontPage.drawText(userData.name || 'Unknown', {
-      x: 200,
-      y: 400,
+    const nameText = userData.name || 'Unknown';
+    const nameWidth = helveticaBold.widthOfTextAtSize(nameText, 18);
+    frontPage.drawText(nameText, {
+      x: centerX - (nameWidth / 2),
+      y: height * 0.46,
       size: 18,
       font: helveticaBold,
       color: rgb(0, 0, 0),
     });
 
     // Designation
-    frontPage.drawText(isVolunteer ? 'Volunteer' : 'Member', {
-      x: 200,
-      y: 370,
+    const designation = isVolunteer ? 'Volunteer' : 'Member';
+    const desigWidth = helveticaFont.widthOfTextAtSize(designation, 14);
+    frontPage.drawText(designation, {
+      x: centerX - (desigWidth / 2),
+      y: height * 0.42,
       size: 14,
       font: helveticaFont,
       color: rgb(0, 0, 0),
@@ -81,9 +71,11 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
 
     // Father Name
     if (userData.fatherName) {
-      frontPage.drawText(`S/O, D/O: ${userData.fatherName}`, {
-        x: 200,
-        y: 320,
+      const fnText = `S/O, D/O: ${userData.fatherName}`;
+      const fnWidth = helveticaFont.widthOfTextAtSize(fnText, 12);
+      frontPage.drawText(fnText, {
+        x: centerX - (fnWidth / 2),
+        y: height * 0.36,
         size: 12,
         font: helveticaFont,
         color: rgb(0.2, 0.2, 0.2),
@@ -91,9 +83,11 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     }
 
     // Member ID
-    frontPage.drawText(`ID: ${userData.id || 'N/A'}`, {
-      x: 200,
-      y: 290,
+    const idText = `ID: ${userData.id || 'N/A'}`;
+    const idWidth = helveticaFont.widthOfTextAtSize(idText, 12);
+    frontPage.drawText(idText, {
+      x: centerX - (idWidth / 2),
+      y: height * 0.32,
       size: 12,
       font: helveticaFont,
       color: rgb(0, 0, 0),
@@ -102,9 +96,11 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     // Issue/Valid Dates
     const issueDate = userData.issueDate || new Date().toLocaleDateString();
     const validUntil = userData.validUntil || 'N/A';
-    frontPage.drawText(`Issued: ${issueDate} | Valid Until: ${validUntil}`, {
-      x: 200,
-      y: 200,
+    const datesText = `Issued: ${issueDate} | Valid: ${validUntil}`;
+    const datesWidth = helveticaFont.widthOfTextAtSize(datesText, 10);
+    frontPage.drawText(datesText, {
+      x: centerX - (datesWidth / 2),
+      y: height * 0.22,
       size: 10,
       font: helveticaFont,
       color: rgb(0.4, 0.4, 0.4),
@@ -115,11 +111,14 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     const qrBytes = await fetch(qrDataUrl).then(res => res.arrayBuffer());
     const qrImage = await pdfDoc.embedPng(qrBytes);
     
+    const { width: backWidth, height: backHeight } = backPage.getSize();
+    const qrSize = backWidth * 0.3; // QR is 30% of back page width
+    
     backPage.drawImage(qrImage, {
-      x: 200,
-      y: 400,
-      width: 100,
-      height: 100,
+      x: (backWidth / 2) - (qrSize / 2),
+      y: backHeight * 0.4,
+      width: qrSize,
+      height: qrSize,
     });
 
     const pdfBytes = await pdfDoc.save();
@@ -128,7 +127,7 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${userData.name?.replace(/\s+/g, '_')}_ID.pdf`;
+    link.download = `${(userData.name || 'ID').replace(/\s+/g, '_')}_ID.pdf`;
     link.click();
   } catch (error) {
     console.error("Failed to generate ID Card", error);
