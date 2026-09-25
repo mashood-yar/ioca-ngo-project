@@ -21,7 +21,6 @@ import verify from '../backend/verify/[uid]';
 import volunteers from '../backend/volunteers/[...path]';
 
 import adminCampaigns from '../backend/admin/campaigns/[...path]';
-import contacts from '../backend/contacts/[...path]';
 
 async function router(req: VercelRequest, res: VercelResponse) {
   const url = req.url?.split('?')[0] || '';
