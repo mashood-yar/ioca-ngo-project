@@ -70,18 +70,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Prepare standard Resend batch payloads
       const emails = audience.map(contact => ({
-        from: \`IOCA Updates <\${FROM_EMAIL}>\`,
+        from: `IOCA Updates <${FROM_EMAIL}>`,
         to: contact.email,
         subject: subject,
-        html: \`
+        html: `
           <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
-            \${html}
+            ${html}
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eaeaea; font-size: 12px; color: #888; text-align: center;">
               <p>You received this email because you are subscribed to updates from IOCA.</p>
               <p>IOCA - International Organization for Community Advancement</p>
             </div>
           </div>
-        \`
+        `
       }));
 
       // Send in batches of 100 max (Resend limitation)
@@ -103,7 +103,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       
       return res.status(200).json({ 
         success: true, 
-        message: \`Successfully sent campaign to \${sentCount} contacts.\` 
+        message: `Successfully sent campaign to ${sentCount} contacts.` 
       });
     }
 
