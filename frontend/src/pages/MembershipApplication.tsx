@@ -207,7 +207,7 @@ const MembershipApplication: React.FC<MembershipProps> = ({ isUrdu }) => {
                   onClick={() => {
                     setIsSubmitted(false);
                     setFormData({
-                      fullName: '', fatherName: '', phone: '', cnic: '', address: '', occupation: '',
+                      fullName: '', fatherName: '', email: '', phone: '', cnic: '', address: '', occupation: '',
                       zoneId: '', tierId: '', motivation: '', profileImageUrl: '', agreeTerms: false
                     });
                   }}
