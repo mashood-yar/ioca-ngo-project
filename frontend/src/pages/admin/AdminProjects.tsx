@@ -482,7 +482,11 @@ function ProjectTeamModal({ project, isOpen, onClose }: { project: Project | nul
     setLoading(true);
     try {
       const { data } = await fetchApi<TeamMember[]>(`/projects/${project.id}/team`);
-      if (data) setTeam(data);
+      if (Array.isArray(data)) {
+        setTeam(data);
+      } else {
+        setTeam([]);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -529,7 +533,7 @@ function ProjectTeamModal({ project, isOpen, onClose }: { project: Project | nul
   if (!project) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Team: ${project.titleEn}`}>
+    <Modal isOpen={isOpen} onClose={onClose} title={`Team: ${project.title_en || project.titleEn || project.title || 'Project'}`}>
       <div className="space-y-6">
         <form onSubmit={handleAdd} className="flex gap-2 items-end">
           <div className="flex-1">
@@ -563,16 +567,19 @@ function ProjectTeamModal({ project, isOpen, onClose }: { project: Project | nul
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5E7EB]">
-                {team.map(member => (
-                  <tr key={member.id} className="hover:bg-[#F9FAFB]">
-                    <td className="p-3 text-[#111827]">{member.profiles?.full_name || 'Unknown'}</td>
-                    <td className="p-3 text-[#6B7280]">{member.profiles?.email || 'N/A'}</td>
-                    <td className="p-3 text-[#111827] capitalize">{member.role}</td>
-                    <td className="p-3 text-right">
-                      <button onClick={() => handleRemove(member.user_id)} className="text-red-500 hover:text-red-700 font-medium">Remove</button>
-                    </td>
-                  </tr>
-                ))}
+                {team.map(member => {
+                  const prof = Array.isArray(member.profiles) ? member.profiles[0] : member.profiles;
+                  return (
+                    <tr key={member.id} className="hover:bg-[#F9FAFB]">
+                      <td className="p-3 text-[#111827]">{prof?.full_name || 'Unknown'}</td>
+                      <td className="p-3 text-[#6B7280]">{prof?.email || 'N/A'}</td>
+                      <td className="p-3 text-[#111827] capitalize">{member.role}</td>
+                      <td className="p-3 text-right">
+                        <button onClick={() => handleRemove(member.user_id)} className="text-red-500 hover:text-red-700 font-medium">Remove</button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}

@@ -35,8 +35,8 @@ async function handler(req: VercelRequest, res: VercelResponse) {
       if (!title || typeof title !== 'string' || title.trim().length === 0) {
         return err(res, 400, 'Title is required');
       }
-      if (!category || !['board', 'partner', 'employee', 'volunteer'].includes(category)) {
-        return err(res, 400, 'Invalid category. Must be one of: board, partner, employee, volunteer');
+      if (!category || !['board', 'partner', 'employee', 'volunteer', 'member'].includes(category)) {
+        return err(res, 400, 'Invalid category. Must be one of: board, partner, employee, volunteer, member');
       }
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return err(res, 400, 'Invalid email format');

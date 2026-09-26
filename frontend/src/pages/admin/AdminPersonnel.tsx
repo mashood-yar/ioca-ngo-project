@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Users, Plus, QrCode, Trash2, Link, Edit, Image as ImageIcon, AlertCircle, Search } from 'lucide-react';
 import { PageLoadingSpinner } from '../../components/PageLoadingSpinner';
 import { optimizeImage } from '../../lib/optimizeImage';
@@ -251,6 +251,7 @@ export const AdminPersonnel: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-brand-navy/70 mb-1">Category</label>
               <select className="w-full border border-brand-navy/20 rounded-lg p-2" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} disabled={!!editingId}>
+                <option value="member">Member</option>
                 <option value="employee">Employee</option>
                 <option value="volunteer">Volunteer</option>
                 <option value="board">Board Member</option>
@@ -299,7 +300,7 @@ export const AdminPersonnel: React.FC = () => {
       {/* Search and Filters */}
       <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="flex flex-wrap gap-2">
-          {['all', 'board', 'partner', 'employee', 'volunteer'].map(cat => (
+          {['all', 'board', 'partner', 'employee', 'volunteer', 'member'].map(cat => (
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
@@ -366,7 +367,7 @@ export const AdminPersonnel: React.FC = () => {
                   </div>
                 </td>
                 <td className="p-4 capitalize">
-                  <span className={`px-2 py-1 rounded text-xs font-semibold ${p.category === 'board' ? 'bg-brand-teal/10 text-brand-teal' : p.category === 'employee' ? 'bg-brand-navy/10 text-brand-navy' : p.category === 'volunteer' ? 'bg-brand-gold/10 text-brand-gold' : 'bg-brand-navy/5 text-brand-navy/70'}`}>
+                  <span className={`px-2 py-1 rounded text-xs font-semibold ${p.category === 'board' ? 'bg-brand-teal/10 text-brand-teal' : p.category === 'employee' ? 'bg-brand-navy/10 text-brand-navy' : p.category === 'volunteer' ? 'bg-brand-gold/10 text-brand-gold' : p.category === 'member' ? 'bg-indigo-100 text-indigo-700' : 'bg-brand-navy/5 text-brand-navy/70'}`}>
                     {p.category}
                   </span>
                 </td>
