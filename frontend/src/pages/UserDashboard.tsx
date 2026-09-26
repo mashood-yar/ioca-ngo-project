@@ -976,8 +976,8 @@ END:VCALENDAR`;
                           name: fullName,
                           fatherName: profile?.father_name || volunteerPersonnel?.father_name || 'N/A',
                           phone: profile?.phone || 'N/A',
-                          email: profile?.email || 'N/A',
-                          designation: member?.role_in_org || volunteerPersonnel?.title || (isVol ? 'Volunteer' : 'Member'),
+                          email: profile?.email || user?.email || 'N/A',
+                          occupation: profile?.occupation || volunteerPersonnel?.occupation || 'N/A',
                           profileImageUrl: volunteerPersonnel?.profile_image_url || avatarUrl,
                           issueDate: new Date().toLocaleDateString(),
                           validUntil: membership?.end_date
@@ -1867,12 +1867,12 @@ END:VCALENDAR`;
                   </div>
                   <button
                     onClick={() => generateIdCard({
-                      id: profile?.id,
+                      id: volunteerPersonnel?.uid || profile?.id,
                       name: fullName,
                       fatherName: profile?.father_name || volunteerPersonnel?.father_name || 'N/A',
                       phone: profile?.phone || 'N/A',
-                      email: profile?.email || 'N/A',
-                      designation: volunteerPersonnel?.title || 'Volunteer',
+                      email: profile?.email || user?.email || 'N/A',
+                      occupation: profile?.occupation || volunteerPersonnel?.occupation || 'N/A',
                       profileImageUrl: avatarUrl,
                       issueDate: new Date().toLocaleDateString(),
                       validUntil: 'N/A'

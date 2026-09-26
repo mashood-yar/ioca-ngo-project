@@ -31,11 +31,11 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
         const pngBytes = await fetchImageAsPng(userData.profileImageUrl, true);
         const img = await pdfDoc.embedPng(pngBytes);
         
-        // Exact positioning logic matching Image 2
-        const imgSize = width * 0.35;
+        // Exact positioning logic to fit perfectly inside the template's blue ring
+        const imgSize = width * 0.385; // Slightly larger to fill the white circle
         frontPage.drawImage(img, {
           x: centerX - (imgSize / 2),
-          y: height * 0.55,
+          y: height * 0.565, // Nudged up slightly
           width: imgSize,
           height: imgSize,
         });
@@ -57,10 +57,10 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     });
 
     // Sub-title / Main Role (Centered, smaller, light blue)
-    const designation = userData.designation || (isVolunteer ? 'Volunteer' : 'Member');
+    const roleTitle = isVolunteer ? 'Volunteer' : 'Member';
     const desigFontSize = width * 0.045; // Dynamically scaled
-    const desigWidth = helveticaFont.widthOfTextAtSize(designation, desigFontSize);
-    frontPage.drawText(designation, {
+    const desigWidth = helveticaFont.widthOfTextAtSize(roleTitle, desigFontSize);
+    frontPage.drawText(roleTitle, {
       x: centerX - (desigWidth / 2),
       y: height * 0.45,
       size: desigFontSize,
@@ -85,14 +85,23 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     const rightColX = width * 0.46;
     const detailSize = width * 0.032; // Dynamically scaled to prevent overlap
     
-    const formattedId = userData.id ? (userData.id.startsWith('PAR') ? userData.id : userData.id.split('-')[0].toUpperCase()) : 'N/A';
+    // Format ID to be extremely short and readable (e.g., MEM-6537 or VOL-A1B2)
+    let formattedId = 'N/A';
+    if (userData.id) {
+      if (userData.id.startsWith('PAR')) {
+        formattedId = userData.id;
+      } else {
+        const shortHex = userData.id.split('-')[0].substring(0, 4).toUpperCase();
+        formattedId = isVolunteer ? `VOL-${shortHex}` : `MEM-${shortHex}`;
+      }
+    }
 
     const details = [
       { label: 'FATHER NAME', value: userData.fatherName || 'N/A' },
       { label: 'MEMBER ID', value: formattedId },
       { label: 'PHONE NO.', value: userData.phone || 'N/A' },
       { label: 'EMAIL', value: userData.email || 'N/A' },
-      { label: 'DESIGNATION', value: designation },
+      { label: 'DESIGNATION', value: userData.occupation || 'N/A' }, // Real life occupation
       { label: 'ISSUE DATE', value: userData.issueDate || new Date().toLocaleDateString() },
       { label: 'VALID TILL', value: userData.validUntil || 'N/A' },
     ];
