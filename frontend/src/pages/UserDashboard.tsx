@@ -833,15 +833,19 @@ END:VCALENDAR`;
               <span className="text-[10px] font-bold text-brand-navy/40 uppercase tracking-wider">Current Assignment</span>
               <div className="flex flex-wrap items-center gap-2 mt-0.5">
                 <h4 className="text-sm font-extrabold text-brand-navy/80">
-                  {activeZone ? activeZone.name : 'Unassigned Project'}
+                  {activeZone ? activeZone.name : (assignedProjects && assignedProjects.length > 0 ? (assignedProjects[0].projects?.title_en || assignedProjects[0].projects?.titleEn || assignedProjects[0].projects?.title || 'Active Project') : 'Unassigned Project')}
                 </h4>
                 {activeZone && (
-                  <>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-brand-teal/10 text-brand-teal px-2.5 py-1 rounded-full uppercase">
-                      <MapPin className="w-3 h-3" />
-                      {activeZone.city} Zone
-                    </span>
-                  </>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-brand-teal/10 text-brand-teal px-2.5 py-1 rounded-full uppercase">
+                    <MapPin className="w-3 h-3" />
+                    {activeZone.city} Zone
+                  </span>
+                )}
+                {!activeZone && assignedProjects && assignedProjects.length > 0 && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-extrabold bg-brand-teal/10 text-brand-teal px-2.5 py-1 rounded-full uppercase">
+                    <MapPin className="w-3 h-3" />
+                    Volunteer Assignment
+                  </span>
                 )}
               </div>
             </div>
@@ -899,7 +903,7 @@ END:VCALENDAR`;
                     { title: 'Membership', val: membershipStatus === 'active' ? 'Active member' : membershipStatus === 'pending' ? 'Pending Approval' : 'Not Active', sub: membership?.tier?.name || 'Apply Now', color: 'indigo' },
                     { title: 'Total Donations', val: `PKR ${totalDonations.toLocaleString('en-PK')}`, sub: `${confirmedDonations.length} confirmed receipts`, color: 'emerald' },
                     { title: 'Registered Events', val: totalRegistrations, sub: 'Upcoming / Attended', color: 'amber' },
-                    { title: 'Active Project', val: activeZone?.name || 'Unassigned', sub: activeZone ? `${activeZone.city}` : 'Choose Zone', color: 'teal' }
+                    { title: 'Active Project', val: activeZone?.name || (assignedProjects && assignedProjects.length > 0 ? (assignedProjects[0].projects?.title_en || assignedProjects[0].projects?.titleEn || assignedProjects[0].projects?.title || 'Active Project') : 'Unassigned'), sub: activeZone ? `${activeZone.city}` : (assignedProjects && assignedProjects.length > 0 ? 'Volunteer Assignment' : 'Choose Zone'), color: 'teal' }
                   ].map((stat, i) => (
                     <div key={i} className="bg-white border border-brand-navy/5 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
                       <p className="text-xs font-semibold text-brand-navy/50 uppercase tracking-wider mb-2">{stat.title}</p>
@@ -1047,7 +1051,7 @@ END:VCALENDAR`;
                       { label: 'CNIC', val: profile?.cnic || '—' },
                       { label: 'Occupation', val: profile?.occupation || '—' },
                       { label: 'Address', val: profile?.address || '—', span: true },
-                      { label: 'Local Project', val: activeZone ? `${activeZone.name} (${activeZone.city})` : 'Not assigned' }
+                      { label: 'Assigned Project', val: activeZone ? `${activeZone.name} (${activeZone.city})` : (assignedProjects && assignedProjects.length > 0 ? (assignedProjects[0].projects?.title_en || assignedProjects[0].projects?.titleEn || assignedProjects[0].projects?.title || 'Active Project') : 'Not assigned') }
                     ].map((f, i) => (
                       <div key={i} className={`space-y-1 ${f.span ? 'md:col-span-2' : ''}`}>
                         <span className="text-xs font-semibold text-brand-navy/40 uppercase tracking-wider">{f.label}</span>
