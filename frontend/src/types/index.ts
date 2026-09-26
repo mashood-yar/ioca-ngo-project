@@ -140,7 +140,7 @@ export interface NavLink {
 
 export interface Personnel {
   id: string;
-  category: 'board' | 'partner' | 'employee' | 'volunteer';
+  category: 'board' | 'partner' | 'employee' | 'volunteer' | 'member';
   uid: string;
   full_name: string;
   email: string | null;

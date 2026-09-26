@@ -9,6 +9,9 @@ import { AdminButton } from './AdminButton';
 
 interface Project {
   id: string;
+  title?: string;
+  title_en?: string;
+  title_ur?: string;
   titleEn: string;
   titleUr: string;
   descEn: string;
@@ -230,7 +233,7 @@ export function AdminProjects() {
                 <tr key={project.id} className="hover:bg-[#F9FAFB] transition-colors duration-100 text-[#111827] text-sm">
                   <td className="p-4 pl-6 w-24">
                     {project.image_url ? (
-                      <img src={optimizeImage(project.image_url, { width: 80 })} alt={project.titleEn} className="w-16 h-12 object-cover rounded-lg border border-[#E5E7EB]" width={64} height={48} loading="lazy" decoding="async" />
+                      <img src={optimizeImage(project.image_url, { width: 80 })} alt={project.title_en || project.titleEn} className="w-16 h-12 object-cover rounded-lg border border-[#E5E7EB]" width={64} height={48} loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-16 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-[#E5E7EB]">
                         <ImageIcon className="w-5 h-5 text-gray-400" />
@@ -238,7 +241,7 @@ export function AdminProjects() {
                     )}
                   </td>
                   <td className="p-4 font-medium">
-                    <div>{project.titleEn}</div>
+                    <div>{project.title_en || project.titleEn || project.title}</div>
                     {project.category && (
                       <span className="text-xs text-gray-400">{project.category}</span>
                     )}
