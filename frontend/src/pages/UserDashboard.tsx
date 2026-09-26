@@ -968,29 +968,51 @@ END:VCALENDAR`;
                     <p className="text-sm text-brand-navy/50 mt-1">Manage your personal and contact details linked to your account.</p>
                   </div>
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        const isVol = profile?.is_volunteer === true;
-                        generateIdCard({
-                          id: isVol ? (volunteerPersonnel?.uid || profile?.id) : (member?.id || profile?.id),
-                          name: fullName,
-                          fatherName: profile?.father_name || volunteerPersonnel?.father_name || 'N/A',
-                          phone: profile?.phone || 'N/A',
-                          email: profile?.email || user?.email || 'N/A',
-                          occupation: profile?.occupation || volunteerPersonnel?.occupation || 'N/A',
-                          profileImageUrl: volunteerPersonnel?.profile_image_url || avatarUrl,
-                          issueDate: new Date().toLocaleDateString(),
-                          validUntil: membership?.end_date
-                            ? new Date(membership.end_date).toLocaleDateString()
-                            : isVol ? new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()
-                            : 'N/A'
-                        }, isVol);
-                      }}
-                      className="flex items-center gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-md shadow-brand-navy/20"
-                    >
-                      <Download className="w-4 h-4" />
-                      Download Digital ID Card
-                    </button>
+                    {(member || profile?.role === 'member') && (
+                      <button
+                        onClick={() => {
+                          generateIdCard({
+                            id: member?.id || profile?.id,
+                            name: fullName,
+                            fatherName: profile?.father_name || 'N/A',
+                            phone: profile?.phone || 'N/A',
+                            email: profile?.email || user?.email || 'N/A',
+                            occupation: profile?.occupation || 'N/A',
+                            profileImageUrl: avatarUrl,
+                            issueDate: new Date().toLocaleDateString(),
+                            validUntil: membership?.end_date
+                              ? new Date(membership.end_date).toLocaleDateString()
+                              : 'N/A'
+                          }, false);
+                        }}
+                        className="flex items-center gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-md shadow-brand-navy/20"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download Member ID
+                      </button>
+                    )}
+
+                    {profile?.is_volunteer && (
+                      <button
+                        onClick={() => {
+                          generateIdCard({
+                            id: volunteerPersonnel?.uid || profile?.id,
+                            name: fullName,
+                            fatherName: profile?.father_name || volunteerPersonnel?.father_name || 'N/A',
+                            phone: profile?.phone || 'N/A',
+                            email: profile?.email || user?.email || 'N/A',
+                            occupation: profile?.occupation || volunteerPersonnel?.occupation || 'N/A',
+                            profileImageUrl: volunteerPersonnel?.profile_image_url || avatarUrl,
+                            issueDate: new Date().toLocaleDateString(),
+                            validUntil: 'N/A'
+                          }, true);
+                        }}
+                        className="flex items-center gap-2 bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-md shadow-brand-teal/20"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download Volunteer ID
+                      </button>
+                    )}
                     <button
                       onClick={openEditModal}
                       className="flex items-center gap-2 bg-brand-teal/10 hover:bg-indigo-100 text-brand-teal font-semibold px-5 py-2.5 rounded-xl text-sm transition"
