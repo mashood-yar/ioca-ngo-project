@@ -69,7 +69,7 @@ const createMemberSchema = z.object({
 const updateMemberSchema = createMemberSchema.partial()
 
 const updateApplicationStatusSchema = z.object({
-  status: z.enum(['pending', 'approved', 'rejected']),
+  status: z.enum(['pending', 'under_review', 'approved', 'rejected']),
   adminNotes: z.string().optional(),
 })
 
