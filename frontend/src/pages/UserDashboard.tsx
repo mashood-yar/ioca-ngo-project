@@ -2050,7 +2050,7 @@ END:VCALENDAR`;
                           const file = e.target.files?.[0];
                           if (file) {
                             try {
-                              const uploadedData = await upload(file);
+                              const uploadedData = await upload(file, 'profiles');
                               if (uploadedData?.url) {
                                 setEditAvatarUrl(uploadedData.url);
                               }
