@@ -84,10 +84,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Auto-sync uploaded profile picture and details to main user profile if logged in
         if (validated.user_id) {
           await supabase.from('profiles').update({
-            avatar_url: validated.profile_image_url || null,
+            full_name: validated.full_name,
+            father_name: validated.father_name || null,
             phone: validated.phone || null,
             cnic: validated.cnic || null,
-            father_name: validated.father_name || null,
+            address: validated.city || null,
+            avatar_url: validated.profile_image_url || null,
+            email: validated.email,
           }).eq('id', validated.user_id)
         }
         try {
@@ -204,7 +207,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .eq('id', id)
 
       // 5. If the volunteer has a linked user account, sync their profile data
-      if (volunteer.user_id) {
+      let finalUserId = volunteer.user_id;
+
+      // Handle Guest Application Account Auto-Generation
+      if (!finalUserId && volunteer.email) {
+        const tempPassword = Math.random().toString(36).slice(-8) + 'V1!'; 
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+          email: volunteer.email,
+          password: tempPassword,
+          email_confirm: true,
+          user_metadata: { full_name: volunteer.full_name }
+        });
+
+        if (!authError && authData.user) {
+          finalUserId = authData.user.id;
+          
+          await supabase.from('volunteers').update({ user_id: finalUserId }).eq('id', volunteer.id);
+
+          await supabase.from('profiles').insert({
+            id: finalUserId,
+            full_name: volunteer.full_name,
+            father_name: volunteer.father_name || null,
+            email: volunteer.email,
+            phone: volunteer.phone || null,
+            cnic: volunteer.cnic || null,
+            address: volunteer.city || null,
+            occupation: volunteer.occupation || null,
+            avatar_url: volunteer.profile_image_url || null,
+            role: 'user',
+            is_volunteer: true
+          });
+
+          // Send Guest Welcome Email with Temp Password
+          try {
+            const { Resend } = require('resend');
+            const resend = new Resend(process.env.RESEND_API_KEY);
+            await resend.emails.send({
+              from: process.env.RESEND_FROM_EMAIL || 'admin@ioca.org',
+              to: volunteer.email,
+              subject: 'Welcome to IOCA! Your Account is Ready',
+              html: `
+                <h3>Congratulations ${volunteer.full_name}!</h3>
+                <p>Your IOCA volunteer application has been approved.</p>
+                <p>An account has been automatically generated for you to access the dashboard and download your Digital ID Card.</p>
+                <p><strong>Login Email:</strong> ${volunteer.email}</p>
+                <p><strong>Temporary Password:</strong> ${tempPassword}</p>
+                <p>Please log in and change your password immediately.</p>
+              `
+            });
+          } catch (emailErr) {
+            console.error("Failed to send guest welcome email", emailErr);
+          }
+        }
+      }
+
+      // Sync if finalUserId exists
+      if (finalUserId) {
         await supabase
           .from('profiles')
           .update({
@@ -214,7 +272,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             cnic: volunteer.cnic || null,
             father_name: volunteer.father_name || null,
           })
-          .eq('id', volunteer.user_id)
+          .eq('id', finalUserId)
       }
 
       // 6. Send acceptance email with the assigned UID

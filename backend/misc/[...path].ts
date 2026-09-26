@@ -169,6 +169,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         if (insertError) throw insertError
 
+        // Two-way sync: if logged in, update master profile
+        if (userId) {
+          await supabase.from('profiles').update({
+            full_name: validatedData.fullName,
+            father_name: validatedData.fatherName,
+            phone: validatedData.phone,
+            cnic: validatedData.cnic,
+            address: validatedData.address,
+            occupation: validatedData.occupation,
+            avatar_url: validatedData.profileImageUrl,
+            email: userEmail
+          }).eq('id', userId);
+        }
+
         const [{ data: zone }, { data: tier }] = await Promise.all([
           supabase.from('zones').select('name').eq('id', validatedData.zoneId).single(),
           supabase.from('tiers').select('name').eq('id', validatedData.tierId).single()
@@ -598,13 +612,69 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           if (updateError) throw updateError
 
           if (validatedData.status === 'approved') {
+            let finalUserId = application.user_id;
+
+            // Handle Guest Applications
+            if (!finalUserId && application.email) {
+              const tempPassword = Math.random().toString(36).slice(-8) + 'A1!'; // e.g. "x9k2m4pzA1!"
+              const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+                email: application.email,
+                password: tempPassword,
+                email_confirm: true,
+                user_metadata: { full_name: application.full_name }
+              });
+
+              if (!authError && authData.user) {
+                finalUserId = authData.user.id;
+                
+                // Update application with the new user_id
+                await supabase.from('applications').update({ user_id: finalUserId }).eq('id', application.id);
+
+                // Create the global profile record
+                await supabase.from('profiles').insert({
+                  id: finalUserId,
+                  full_name: application.full_name,
+                  father_name: application.father_name || null,
+                  email: application.email,
+                  phone: application.phone || null,
+                  cnic: application.cnic || null,
+                  address: application.address || null,
+                  occupation: application.occupation || null,
+                  avatar_url: application.profile_image_url || null,
+                  role: 'member',
+                  is_volunteer: false
+                });
+
+                // Send email with temp password
+                try {
+                  const { Resend } = require('resend');
+                  const resend = new Resend(process.env.RESEND_API_KEY);
+                  await resend.emails.send({
+                    from: process.env.RESEND_FROM_EMAIL || 'admin@ioca.org',
+                    to: application.email,
+                    subject: 'Welcome to IOCA! Your Membership is Approved',
+                    html: `
+                      <h3>Congratulations ${application.full_name}!</h3>
+                      <p>Your IOCA membership application has been approved.</p>
+                      <p>An account has been automatically generated for you to access the dashboard and download your Digital ID Card.</p>
+                      <p><strong>Login Email:</strong> ${application.email}</p>
+                      <p><strong>Temporary Password:</strong> ${tempPassword}</p>
+                      <p>Please log in and change your password immediately.</p>
+                    `
+                  });
+                } catch (emailErr) {
+                  console.error("Failed to send guest welcome email", emailErr);
+                }
+              }
+            }
+
             const durationDays = application.tiers?.duration_days || 365
             const startDate = new Date()
             const endDate = new Date()
             endDate.setDate(endDate.getDate() + durationDays)
 
             const { error: membershipError } = await supabase.from('memberships').insert({
-              user_id: application.user_id,
+              user_id: finalUserId,
               tier_id: application.tier_id,
               status: 'active',
               start_date: startDate.toISOString(),
@@ -615,7 +685,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (membershipError) console.error('Failed to create membership:', membershipError.message)
 
             const { error: memberError } = await supabase.from('members').insert({
-              user_id: application.user_id,
+              user_id: finalUserId,
               zone_id: application.zone_id,
               full_name: application.full_name,
               email: application.email,

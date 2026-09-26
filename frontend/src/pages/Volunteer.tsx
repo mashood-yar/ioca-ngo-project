@@ -79,6 +79,26 @@ const Volunteer: React.FC<VolunteerProps> = ({ isUrdu }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
+  // Smart Auto-fill
+  React.useEffect(() => {
+    if (user) {
+      fetchApi<any>('/profile/me').then(res => {
+        if (res.data) {
+          setFormData(prev => ({
+            ...prev,
+            name: res.data.full_name || user.user_metadata?.full_name || prev.name,
+            father_name: res.data.father_name || prev.father_name,
+            email: res.data.email || user.email || prev.email,
+            phone: res.data.phone || prev.phone,
+            cnic: res.data.cnic || prev.cnic,
+            city: res.data.address || prev.city, // Address to city loosely
+            profile_image_url: res.data.avatar_url || prev.profile_image_url,
+          }));
+        }
+      }).catch(err => console.error("Could not fetch profile for auto-fill", err));
+    }
+  }, [user]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;

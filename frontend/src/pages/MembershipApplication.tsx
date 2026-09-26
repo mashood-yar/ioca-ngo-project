@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, Shield, AlertCircle, Upload, Users, Star } from 'lucide-react';
 import { fetchApi } from '../lib/apiClient';
 import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
+import { useAuth } from '../hooks/useAuth';
 
 interface MembershipProps {
   isUrdu: boolean;
@@ -50,7 +51,7 @@ const SectionHeader: React.FC<{ label: string; isUrdu: boolean }> = ({ label, is
 );
 
 const MembershipApplication: React.FC<MembershipProps> = ({ isUrdu }) => {
-  // useAuth removed because user is unused, or we can just omit it
+  const { user } = useAuth();
   const { upload, uploading } = useCloudinaryUpload();
 
   const [formData, setFormData] = useState({
@@ -79,7 +80,26 @@ const MembershipApplication: React.FC<MembershipProps> = ({ isUrdu }) => {
   useEffect(() => {
     fetchApi<any[]>('/zones').then(res => setZones(res.data || []));
     fetchApi<any[]>('/tiers').then(res => setTiers(res.data || []));
-  }, []);
+
+    // Smart Auto-fill
+    if (user) {
+      fetchApi<any>('/profile/me').then(res => {
+        if (res.data) {
+          setFormData(prev => ({
+            ...prev,
+            fullName: res.data.full_name || user.user_metadata?.full_name || prev.fullName,
+            fatherName: res.data.father_name || prev.fatherName,
+            email: res.data.email || user.email || prev.email,
+            phone: res.data.phone || prev.phone,
+            cnic: res.data.cnic || prev.cnic,
+            address: res.data.address || prev.address,
+            occupation: res.data.occupation || prev.occupation,
+            profileImageUrl: res.data.avatar_url || prev.profileImageUrl,
+          }));
+        }
+      }).catch(err => console.error("Could not fetch profile for auto-fill", err));
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
