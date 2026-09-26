@@ -474,11 +474,23 @@ function ProjectTeamModal({ project, isOpen, onClose }: { project: Project | nul
   const [role, setRole] = useState('volunteer');
   const [adding, setAdding] = useState(false);
 
+  const [candidates, setCandidates] = useState<{id:string, full_name:string, email:string, role:string, is_volunteer:boolean}[]>([]);
+
   useEffect(() => {
     if (isOpen && project) {
       loadTeam();
+      loadCandidates();
     }
   }, [isOpen, project]);
+
+  const loadCandidates = async () => {
+    try {
+      const { data } = await fetchApi<any[]>('/projects/candidates');
+      if (Array.isArray(data)) setCandidates(data);
+    } catch (err) {
+      console.error('Failed to load candidates', err);
+    }
+  };
 
   const loadTeam = async () => {
     if (!project) return;
@@ -540,8 +552,13 @@ function ProjectTeamModal({ project, isOpen, onClose }: { project: Project | nul
       <div className="space-y-6">
         <form onSubmit={handleAdd} className="flex gap-2 items-end">
           <div className="flex-1">
-            <label className="block text-sm font-semibold mb-1">User Email</label>
-            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488]" placeholder="user@example.com" />
+            <label className="block text-sm font-semibold mb-1">Select User</label>
+            <select required value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488]">
+              <option value="" disabled>-- Select a registered member/volunteer --</option>
+              {candidates.map(c => (
+                <option key={c.id} value={c.email}>{c.full_name} ({c.email}) - {c.is_volunteer ? 'Volunteer' : c.role}</option>
+              ))}
+            </select>
           </div>
           <div className="w-40">
             <label className="block text-sm font-semibold mb-1">Role</label>

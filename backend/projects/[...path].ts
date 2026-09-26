@@ -105,7 +105,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 2. GET /api/projects/:id — Public: get single project
-    if (req.method === 'GET' && id) {
+    if (req.method === 'GET' && id && id !== 'assigned' && id !== 'candidates' && segments[1] !== 'team') {
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       let query = supabase.from('projects').select('*');
       
@@ -242,6 +242,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) throw new Error(error.message)
       return ok(res, data)
+    }
+
+    // GET /api/projects/candidates — Admin views all members and volunteers to assign
+    if (req.method === 'GET' && id === 'candidates') {
+      const adminUser = await requireAdmin(req, res)
+      if (!adminUser) return
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, role, is_volunteer')
+        .order('full_name', { ascending: true })
+
+      if (error) throw new Error(error.message)
+      // Filter out profiles with no email or null names just in case
+      const validProfiles = data?.filter(p => p.email && p.full_name) || []
+      return ok(res, validProfiles)
     }
 
     // 7. GET /api/projects/:id/team — Admin views assigned users for a project
