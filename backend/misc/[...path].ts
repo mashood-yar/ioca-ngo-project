@@ -71,6 +71,8 @@ const updateMemberSchema = createMemberSchema.partial()
 const updateApplicationStatusSchema = z.object({
   status: z.enum(['pending', 'under_review', 'approved', 'rejected']),
   adminNotes: z.string().optional(),
+  paymentMethod: z.string().optional(),
+  paymentRef: z.string().optional(),
 })
 
 function toDbRow(d: Partial<z.infer<typeof createMemberSchema>>) {
@@ -598,7 +600,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               status: 'active',
               start_date: startDate.toISOString(),
               end_date: endDate.toISOString(),
-              payment_ref: `IOCA-${Date.now()}`,
+              payment_ref: validatedData.paymentRef || `IOCA-${Date.now()}`,
+              payment_method: validatedData.paymentMethod || 'Manual',
             })
             if (membershipError) console.error('Failed to create membership:', membershipError.message)
 

@@ -38,7 +38,7 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
         
         frontPage.drawImage(img, {
           x: centerX - (imgSize / 2),
-          y: height * 0.54, // Positioned in the upper half based on typical ID layout
+          y: height * 0.52, // Nudged down slightly to fit the template box
           width: imgSize,
           height: imgSize,
         });
@@ -49,22 +49,24 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
 
     // Name
     const nameText = userData.name || 'Unknown';
-    const nameWidth = helveticaBold.widthOfTextAtSize(nameText, 18);
+    const nameFontSize = 15;
+    const nameWidth = helveticaBold.widthOfTextAtSize(nameText, nameFontSize);
     frontPage.drawText(nameText, {
       x: centerX - (nameWidth / 2),
-      y: height * 0.46,
-      size: 18,
+      y: height * 0.41,
+      size: nameFontSize,
       font: helveticaBold,
       color: rgb(0, 0, 0),
     });
 
     // Designation
     const designation = isVolunteer ? 'Volunteer' : 'Member';
-    const desigWidth = helveticaFont.widthOfTextAtSize(designation, 14);
+    const desigFontSize = 12;
+    const desigWidth = helveticaFont.widthOfTextAtSize(designation, desigFontSize);
     frontPage.drawText(designation, {
       x: centerX - (desigWidth / 2),
-      y: height * 0.42,
-      size: 14,
+      y: height * 0.36,
+      size: desigFontSize,
       font: helveticaFont,
       color: rgb(0, 0, 0),
     });
@@ -72,23 +74,26 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     // Father Name
     if (userData.fatherName) {
       const fnText = `S/O, D/O: ${userData.fatherName}`;
-      const fnWidth = helveticaFont.widthOfTextAtSize(fnText, 12);
+      const fnFontSize = 10;
+      const fnWidth = helveticaFont.widthOfTextAtSize(fnText, fnFontSize);
       frontPage.drawText(fnText, {
         x: centerX - (fnWidth / 2),
-        y: height * 0.36,
-        size: 12,
+        y: height * 0.32,
+        size: fnFontSize,
         font: helveticaFont,
         color: rgb(0.2, 0.2, 0.2),
       });
     }
 
-    // Member ID
-    const idText = `ID: ${userData.id || 'N/A'}`;
-    const idWidth = helveticaFont.widthOfTextAtSize(idText, 12);
+    // Member ID (Sliced)
+    const formattedId = userData.id ? userData.id.split('-')[0].toUpperCase() : 'N/A';
+    const idText = `ID: ${formattedId}`;
+    const idFontSize = 9;
+    const idWidth = helveticaFont.widthOfTextAtSize(idText, idFontSize);
     frontPage.drawText(idText, {
       x: centerX - (idWidth / 2),
-      y: height * 0.32,
-      size: 12,
+      y: height * 0.29,
+      size: idFontSize,
       font: helveticaFont,
       color: rgb(0, 0, 0),
     });
@@ -97,11 +102,12 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     const issueDate = userData.issueDate || new Date().toLocaleDateString();
     const validUntil = userData.validUntil || 'N/A';
     const datesText = `Issued: ${issueDate} | Valid: ${validUntil}`;
-    const datesWidth = helveticaFont.widthOfTextAtSize(datesText, 10);
+    const datesFontSize = 8;
+    const datesWidth = helveticaFont.widthOfTextAtSize(datesText, datesFontSize);
     frontPage.drawText(datesText, {
       x: centerX - (datesWidth / 2),
-      y: height * 0.22,
-      size: 10,
+      y: height * 0.26,
+      size: datesFontSize,
       font: helveticaFont,
       color: rgb(0.4, 0.4, 0.4),
     });

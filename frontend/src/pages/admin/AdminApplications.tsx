@@ -30,6 +30,11 @@ export function AdminApplications() {
   const [rejectNotes, setRejectNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Payment recording state
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('bank_transfer');
+  const [paymentRef, setPaymentRef] = useState('');
+
   useEffect(() => {
     loadApplications();
   }, []);
@@ -47,17 +52,19 @@ export function AdminApplications() {
     }
   };
 
-  const handleUpdateStatus = async (id: string, status: 'under_review' | 'approved' | 'rejected', notes?: string) => {
+  const handleUpdateStatus = async (id: string, status: 'under_review' | 'approved' | 'rejected', notes?: string, pMethod?: string, pRef?: string) => {
     try {
       setSubmitting(true);
       const { error } = await fetchApi(`/admin/applications/${id}/status`, {
         method: 'PATCH',
-        body: JSON.stringify({ status, adminNotes: notes }),
+        body: JSON.stringify({ status, adminNotes: notes, paymentMethod: pMethod, paymentRef: pRef }),
       });
       if (error) throw new Error(error);
 
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Application marked as ${status}`, variant: 'success' } }));
       
+      setIsRejectModalOpen(false);
+      setIsApproveModalOpen(false);
       // Update local state
       setApplications(apps => apps.map(app => 
         app.id === id ? { ...app, status, admin_notes: notes || app.admin_notes } : app
@@ -149,9 +156,10 @@ export function AdminApplications() {
                           <>
                             <AdminButton 
                               onClick={() => {
-                                if (window.confirm(`Approve ${app.full_name}? This will auto-create their membership.`)) {
-                                  handleUpdateStatus(app.id, 'approved');
-                                }
+                                setSelectedApp(app);
+                                setPaymentMethod('bank_transfer');
+                                setPaymentRef('');
+                                setIsApproveModalOpen(true);
                               }}
                               disabled={submitting}
                               variant="success"
@@ -235,6 +243,65 @@ export function AdminApplications() {
               isLoading={submitting}
             >
               Confirm Rejection
+            </AdminButton>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={isApproveModalOpen}
+        onClose={() => !submitting && setIsApproveModalOpen(false)}
+        title="Approve Membership & Record Payment"
+      >
+        <div className="p-4 space-y-4">
+          <p className="text-sm text-gray-600">
+            You are approving <strong>{selectedApp?.full_name}</strong>'s application. Please record their initial membership payment details below.
+          </p>
+          <div>
+            <label className="block text-sm font-semibold text-[#111827] mb-2">Payment Method</label>
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488]"
+            >
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="easypaisa">Easypaisa</option>
+              <option value="jazzcash">JazzCash</option>
+              <option value="cash">Cash</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-[#111827] mb-2">Transaction ID / Reference Number</label>
+            <input
+              type="text"
+              value={paymentRef}
+              onChange={(e) => setPaymentRef(e.target.value)}
+              className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488]"
+              placeholder="e.g. TID-123456789 or Receipt No."
+              required
+            />
+          </div>
+          
+          <div className="pt-4 border-t border-[#E5E7EB] flex justify-end gap-3">
+            <AdminButton
+              onClick={() => setIsApproveModalOpen(false)}
+              disabled={submitting}
+              variant="ghost"
+            >
+              Cancel
+            </AdminButton>
+            <AdminButton
+              onClick={() => {
+                if (selectedApp) {
+                  handleUpdateStatus(selectedApp.id, 'approved', undefined, paymentMethod, paymentRef);
+                }
+              }}
+              variant="success"
+              isLoading={submitting}
+              disabled={!paymentRef.trim()}
+            >
+              Approve & Activate
             </AdminButton>
           </div>
         </div>

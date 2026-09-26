@@ -117,6 +117,7 @@ const MembershipApplication: React.FC<MembershipProps> = ({ isUrdu }) => {
       const { error } = await fetchApi('/misc/applications', {
         method: 'POST',
         body: JSON.stringify(formData),
+        skipAuth: true,
       });
 
       if (error) throw new Error(error);

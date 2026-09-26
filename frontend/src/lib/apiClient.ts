@@ -6,16 +6,19 @@ const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
 export async function fetchApi<T = unknown>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit & { skipAuth?: boolean } = {}
 ): Promise<{ data: T | null; error: string | null }> {
   try {
-    const headers = new Headers(options.headers || {});
+    const { skipAuth, ...fetchOptions } = options;
+    const headers = new Headers(fetchOptions.headers || {});
     headers.set('Content-Type', 'application/json');
 
-    // Automatically append Supabase auth token if logged in
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.access_token) {
-      headers.set('Authorization', `Bearer ${session.access_token}`);
+    // Automatically append Supabase auth token if logged in and not explicitly skipped
+    if (!skipAuth) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        headers.set('Authorization', `Bearer ${session.access_token}`);
+      }
     }
 
     // Construct full URL intelligently

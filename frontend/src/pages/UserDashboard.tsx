@@ -1292,7 +1292,7 @@ END:VCALENDAR`;
                             { label: 'Start Date', val: formatDate(membership.start_date) },
                             { label: 'Renewal Date', val: formatDate(membership.end_date) },
                             { label: 'Payment Reference', val: membership.payment_ref, mono: true },
-                            { label: 'Payment Method on File', val: 'Visa ending in 4242' }
+                            { label: 'Payment Method', val: (membership as any).payment_method?.replace('_', ' ').toUpperCase() || 'MANUAL TRANSFER' }
                           ].map((item, idx) => (
                             <div key={idx} className="space-y-1">
                               <span className="text-xs font-semibold text-brand-navy/40 uppercase tracking-wider">{item.label}</span>
