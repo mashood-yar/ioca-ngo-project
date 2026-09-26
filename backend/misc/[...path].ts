@@ -267,13 +267,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const arrayBuffer = await fetchRes.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
           
-          // Use sharp to convert to JPEG (supported by pdf-lib)
           const sharp = (await import('sharp')).default;
-          const jpegBuffer = await sharp(buffer).jpeg({ quality: 90, force: true }).toBuffer();
+          let pipeline = sharp(buffer);
           
-          res.setHeader('Content-Type', 'image/jpeg');
-          res.setHeader('Cache-Control', 'public, max-age=86400');
-          return res.status(200).send(jpegBuffer);
+          if (req.query.circle === 'true') {
+            pipeline = pipeline.resize(400, 400, { fit: 'cover' });
+            const circleSvg = `<svg width="400" height="400"><circle cx="200" cy="200" r="200" fill="white"/></svg>`;
+            const pngBuffer = await pipeline.composite([{ input: Buffer.from(circleSvg), blend: 'dest-in' }]).png({ force: true }).toBuffer();
+            res.setHeader('Content-Type', 'image/png');
+            res.setHeader('Cache-Control', 'public, max-age=86400');
+            return res.status(200).send(pngBuffer);
+          } else {
+            const jpegBuffer = await pipeline.jpeg({ quality: 90, force: true }).toBuffer();
+            res.setHeader('Content-Type', 'image/jpeg');
+            res.setHeader('Cache-Control', 'public, max-age=86400');
+            return res.status(200).send(jpegBuffer);
+          }
         } catch (e: any) {
           console.error('Proxy image error:', e);
           return err(res, e.message || 'Image proxy failed', 500);

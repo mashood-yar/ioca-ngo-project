@@ -973,6 +973,9 @@ END:VCALENDAR`;
                           id: isVol ? (volunteerPersonnel?.uid || profile?.id) : (member?.id || profile?.id),
                           name: fullName,
                           fatherName: profile?.father_name || volunteerPersonnel?.father_name || 'N/A',
+                          phone: profile?.phone || 'N/A',
+                          email: profile?.email || 'N/A',
+                          designation: member?.role_in_org || volunteerPersonnel?.title || (isVol ? 'Volunteer' : 'Member'),
                           profileImageUrl: volunteerPersonnel?.profile_image_url || avatarUrl,
                           issueDate: new Date().toLocaleDateString(),
                           validUntil: membership?.end_date
@@ -1864,7 +1867,10 @@ END:VCALENDAR`;
                     onClick={() => generateIdCard({
                       id: profile?.id,
                       name: fullName,
-                      fatherName: memberForm.fatherName || 'N/A',
+                      fatherName: profile?.father_name || volunteerPersonnel?.father_name || 'N/A',
+                      phone: profile?.phone || 'N/A',
+                      email: profile?.email || 'N/A',
+                      designation: volunteerPersonnel?.title || 'Volunteer',
                       profileImageUrl: avatarUrl,
                       issueDate: new Date().toLocaleDateString(),
                       validUntil: 'N/A'
