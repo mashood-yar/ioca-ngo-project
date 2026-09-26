@@ -2014,14 +2014,35 @@ END:VCALENDAR`;
                 </div>
 
                 <div>
-                  <label className="block text-brand-navy/70 font-bold mb-1">Avatar Image URL</label>
-                  <input
-                    type="url"
-                    placeholder="https://..."
-                    className="w-full px-3.5 py-2.5 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal font-medium text-brand-navy/80"
-                    value={editAvatarUrl}
-                    onChange={e => setEditAvatarUrl(e.target.value)}
-                  />
+                  <label className="block text-brand-navy/70 font-bold mb-1">Profile Image</label>
+                  <div className="flex items-center gap-4">
+                    {editAvatarUrl && (
+                      <img src={editAvatarUrl} alt="Preview" className="w-12 h-12 rounded-full object-cover border border-brand-navy/10" />
+                    )}
+                    <label className="cursor-pointer bg-brand-gray border border-brand-navy/10 hover:border-brand-teal/30 rounded-xl px-4 py-2.5 transition flex items-center justify-center gap-2 flex-1">
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            try {
+                              const uploadedData = await upload(file);
+                              if (uploadedData?.url) {
+                                setEditAvatarUrl(uploadedData.url);
+                              }
+                            } catch (err) {
+                              console.error('Failed to upload image', err);
+                            }
+                          }
+                        }}
+                      />
+                      <span className="text-sm font-medium text-brand-navy/70">
+                        {uploading ? 'Uploading...' : 'Upload New Photo'}
+                      </span>
+                    </label>
+                  </div>
                 </div>
 
                 <div className="pt-4 flex justify-end gap-2 text-xs font-semibold">
