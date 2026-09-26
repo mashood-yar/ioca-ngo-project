@@ -249,14 +249,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const adminUser = await requireAdmin(req, res)
       if (!adminUser) return
       
-      const { data, error } = await supabase
+      const { data: profiles, error } = await supabase
         .from('profiles')
-        .select('id, full_name, email, role, is_volunteer')
+        .select('id, full_name, role')
         .order('full_name', { ascending: true })
 
       if (error) throw new Error(error.message)
-      // Filter out profiles with no email or null names just in case
-      const validProfiles = data?.filter(p => p.email && p.full_name) || []
+
+      // Map emails from auth.users
+      const { data: authData } = await supabase.auth.admin.listUsers()
+      const usersMap = new Map()
+      if (authData?.users) {
+        authData.users.forEach((u: any) => usersMap.set(u.id, u.email))
+      }
+
+      const validProfiles = profiles?.map((p: any) => ({
+        id: p.id,
+        full_name: p.full_name,
+        email: usersMap.get(p.id) || '',
+        role: p.role,
+        is_volunteer: p.role === 'volunteer'
+      })).filter((p: any) => p.email && p.full_name) || []
+
       return ok(res, validProfiles)
     }
 
@@ -270,12 +284,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .select(`
           id, role, assigned_at,
           user_id,
-          profiles (full_name, avatar_url, phone, email)
+          profiles (full_name, avatar_url, phone)
         `)
         .eq('project_id', id)
 
       if (error) throw new Error(error.message)
-      return ok(res, data)
+
+      const { data: authData } = await supabase.auth.admin.listUsers()
+      const usersMap = new Map()
+      if (authData?.users) {
+        authData.users.forEach((u: any) => usersMap.set(u.id, u.email))
+      }
+
+      const formatted = data?.map((assignment: any) => ({
+        ...assignment,
+        profiles: {
+          ...(Array.isArray(assignment.profiles) ? assignment.profiles[0] : assignment.profiles),
+          email: usersMap.get(assignment.user_id) || 'Unknown'
+        }
+      })) || []
+
+      return ok(res, formatted)
     }
 
     // 8. POST /api/projects/:id/team — Admin assigns or unassigns a user
@@ -287,8 +316,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       
       let targetUserId = user_id;
       if (!targetUserId && email) {
-        const { data: profile } = await supabase.from('profiles').select('id').eq('email', email).single()
-        if (profile) targetUserId = profile.id;
+        const { data: authData } = await supabase.auth.admin.listUsers()
+        const foundUser = authData?.users?.find((u: any) => u.email === email)
+        if (foundUser) targetUserId = foundUser.id;
       }
 
       if (!targetUserId) return err(res, 'User not found. Ensure they have registered an account with this email.', 404)
