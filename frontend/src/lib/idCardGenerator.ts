@@ -46,35 +46,44 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
 
     // Name (Centered, big, dark blue)
     const nameText = userData.name || 'Unknown';
-    const nameFontSize = 14;
+    const nameFontSize = width * 0.065; // Dynamically scaled
     const nameWidth = helveticaBold.widthOfTextAtSize(nameText, nameFontSize);
     frontPage.drawText(nameText, {
       x: centerX - (nameWidth / 2),
-      y: height * 0.50,
+      y: height * 0.49,
       size: nameFontSize,
       font: helveticaBold,
-      color: rgb(0.12, 0.17, 0.35), // Dark blue (#1E2B59)
+      color: rgb(0.12, 0.17, 0.35),
     });
 
     // Sub-title / Main Role (Centered, smaller, light blue)
     const designation = userData.designation || (isVolunteer ? 'Volunteer' : 'Member');
-    const desigFontSize = 10;
+    const desigFontSize = width * 0.045; // Dynamically scaled
     const desigWidth = helveticaFont.widthOfTextAtSize(designation, desigFontSize);
     frontPage.drawText(designation, {
       x: centerX - (desigWidth / 2),
-      y: height * 0.46,
+      y: height * 0.45,
       size: desigFontSize,
       font: helveticaFont,
-      color: rgb(0.35, 0.65, 0.85), // Light blue (#58A5D9)
+      color: rgb(0.35, 0.65, 0.85),
+    });
+
+    // Wipe out the tiny baked-in labels from the original template
+    frontPage.drawRectangle({
+      x: width * 0.1,
+      y: height * 0.15,
+      width: width * 0.8,
+      height: height * 0.28, // covers up to 0.43
+      color: rgb(1, 1, 1),
     });
 
     // Details List (Two Columns)
-    const startY = height * 0.41;
-    const lineSpacing = height * 0.035;
-    const leftColX = width * 0.18;
-    const colonX = width * 0.40;
-    const rightColX = width * 0.45;
-    const detailSize = 7.5;
+    const startY = height * 0.40;
+    const lineSpacing = height * 0.032;
+    const leftColX = width * 0.15;
+    const colonX = width * 0.42;
+    const rightColX = width * 0.46;
+    const detailSize = width * 0.032; // Dynamically scaled to prevent overlap
     
     const formattedId = userData.id ? (userData.id.startsWith('PAR') ? userData.id : userData.id.split('-')[0].toUpperCase()) : 'N/A';
 
