@@ -40,6 +40,7 @@ interface ProfileData {
   occupation?: string;
   avatar_url?: string;
   father_name?: string;
+  email?: string;
   onboarding_completed?: boolean;
   is_volunteer?: boolean;
 }
@@ -108,6 +109,7 @@ interface Zone {
 interface MemberData {
   id: string;
   zone?: Zone;
+  role_in_org?: string;
 }
 
 type Tab = 'overview' | 'profile' | 'membership' | 'donations' | 'events' | 'zones' | 'volunteer_hub';
