@@ -17,6 +17,7 @@ import {
 const createApplicationSchema = z.object({
   fullName: z.string().min(2),
   fatherName: z.string().min(2),
+  email: z.string().email().optional(),
   phone: z.string(),
   cnic: z.string(),
   address: z.string(),
@@ -27,6 +28,7 @@ const createApplicationSchema = z.object({
   profileImageUrl: z.string().url(),
   profileImagePublicId: z.string().optional().nullable(),
 })
+
 
 const uploadSchema = z.object({
   file: z.string().startsWith('data:image/').optional().nullable(),
@@ -104,17 +106,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // === Applications Resource ===
     if (resource === 'applications') {
       if (req.method === 'POST') {
-        const user = await requireAuth(req, res)
-        if (!user) return
+        if (!applyRateLimit(req, res)) return
 
         const validatedData = createApplicationSchema.parse(req.body)
+        
+        let userId: string | null = null;
+        let userEmail: string = validatedData.email || '';
 
-        const { data: existingApp } = await supabase
-          .from('applications')
-          .select('status')
-          .eq('user_id', user.id)
-          .neq('status', 'rejected')
-          .maybeSingle()
+        // Attempt to get user from auth token if provided
+        const authHeader = req.headers.authorization
+        if (authHeader) {
+          const token = authHeader.split(' ')[1]
+          if (token) {
+             const { data: { user: authUser } } = await supabase.auth.getUser(token)
+             if (authUser) {
+               userId = authUser.id;
+               if (!userEmail) userEmail = authUser.email || '';
+             }
+          }
+        }
+
+        if (!userEmail) {
+          return err(res, 'Email is required for public applications', 400);
+        }
+
+        // Check if application already exists for this email or user
+        let query = supabase.from('applications').select('status').neq('status', 'rejected')
+        if (userId) {
+          query = query.eq('user_id', userId)
+        } else {
+          query = query.eq('email', userEmail)
+        }
+
+        const { data: existingApp } = await query.maybeSingle()
 
         if (existingApp) {
           return err(res, 'You already have a pending or active application', 409)
@@ -123,8 +147,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const { data: newApp, error: insertError } = await supabase
           .from('applications')
           .insert({
-            user_id: user.id,
-            email: user.email!,
+            user_id: userId,
+            email: userEmail,
             status: 'pending',
             zone_id: validatedData.zoneId,
             tier_id: validatedData.tierId,
@@ -152,8 +176,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const tierName = tier?.name || 'Selected Tier'
         const adminEmail = process.env.RESEND_FROM_EMAIL || 'admin@ioca.org'
 
-        try { await sendApplicationConfirmation(user.email!, validatedData.fullName, zoneName, tierName) } catch(e) { console.error(e) }
+        try { await sendApplicationConfirmation(userEmail, validatedData.fullName, zoneName, tierName) } catch(e) { console.error(e) }
         try { await sendNewApplicationNotification(adminEmail, validatedData.fullName, zoneName, tierName) } catch(e) { console.error(e) }
+
+        // Auto-sync uploaded profile picture and details to main user profile if logged in
+        if (userId) {
+          await supabase.from('profiles').update({
+            avatar_url: validatedData.profileImageUrl || null,
+            phone: validatedData.phone || null,
+            cnic: validatedData.cnic || null,
+            father_name: validatedData.fatherName || null,
+          }).eq('id', userId)
+        }
 
         return ok(res, newApp, 201)
       }

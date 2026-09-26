@@ -56,6 +56,7 @@ const MembershipApplication: React.FC<MembershipProps> = ({ isUrdu }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     fatherName: '',
+    email: '',
     phone: '',
     cnic: '',
     address: '',
@@ -91,6 +92,8 @@ const MembershipApplication: React.FC<MembershipProps> = ({ isUrdu }) => {
     const newErrors: Record<string, string> = {};
     if (!formData.fullName.trim()) newErrors.fullName = isUrdu ? 'نام ضروری ہے' : 'Full name is required';
     if (!formData.fatherName.trim()) newErrors.fatherName = isUrdu ? 'والد کا نام ضروری ہے' : 'Father name is required';
+    if (!formData.email.trim()) newErrors.email = isUrdu ? 'ای میل ضروری ہے' : 'Email is required';
+    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = isUrdu ? 'درست ای میل درج کریں' : 'Valid email is required';
     if (!formData.profileImageUrl) newErrors.profileImageUrl = isUrdu ? 'پروفائل تصویر ضروری ہے' : 'Profile image is required';
     if (!formData.phone.trim()) newErrors.phone = isUrdu ? 'فون نمبر ضروری ہے' : 'Phone is required';
     if (!formData.cnic.trim()) newErrors.cnic = isUrdu ? 'شناختی کارڈ نمبر ضروری ہے' : 'CNIC is required';
@@ -225,6 +228,8 @@ const MembershipApplication: React.FC<MembershipProps> = ({ isUrdu }) => {
                   <InputField id="mem-name" name="fullName" label={isUrdu ? 'پورا نام' : 'Full Name'} required placeholder={isUrdu ? 'آپ کا نام' : 'Your full name'} value={formData.fullName} error={errors.fullName} isUrdu={isUrdu} onChange={handleChange} />
                   <InputField id="mem-father-name" name="fatherName" label={isUrdu ? 'والد کا نام' : 'Father Name'} required placeholder={isUrdu ? 'والد کا نام' : 'Father name'} value={formData.fatherName} error={errors.fatherName} isUrdu={isUrdu} onChange={handleChange} />
                 </div>
+                
+                <InputField id="mem-email" name="email" label={isUrdu ? 'ای میل' : 'Email Address'} type="email" required placeholder={isUrdu ? 'آپ کا ای میل' : 'Your email address'} value={formData.email} error={errors.email} isUrdu={isUrdu} onChange={handleChange} />
 
                 <div className="grid grid-cols-2 gap-4">
                   <InputField id="mem-phone" name="phone" label={isUrdu ? 'فون نمبر' : 'Phone'} type="tel" required placeholder={isUrdu ? 'مثلاً 03001234567' : 'e.g. 03001234567'} value={formData.phone} error={errors.phone} isUrdu={isUrdu} onChange={handleChange} />
