@@ -78,8 +78,8 @@ export const generateIdCard = async (userData: any, isVolunteer: boolean = false
     });
 
     // Details List (Two Columns)
-    const startY = height * 0.40;
-    const lineSpacing = height * 0.032;
+    const startY = height * 0.385; // Lowered slightly to center the block
+    const lineSpacing = height * 0.040; // Increased line spacing for breathability
     const leftColX = width * 0.15;
     const colonX = width * 0.42;
     const rightColX = width * 0.46;
