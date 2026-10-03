@@ -6,7 +6,10 @@ import { err, ok } from './_lib/response';
 async function handler(req: VercelRequest, res: VercelResponse) {
   // M-07: Verify Vercel Cron secret when configured to prevent abuse
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && req.headers['authorization'] !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    return err(res, 500, 'CRON_SECRET not configured');
+  }
+  if (req.headers['authorization'] !== `Bearer ${cronSecret}`) {
     return err(res, 401, 'Unauthorized');
   }
 

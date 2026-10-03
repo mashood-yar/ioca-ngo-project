@@ -45,7 +45,7 @@ export async function getProjects(): Promise<Project[]> {
       locationUr: locationUr,
       status,
       statusEn: status === 'completed' ? 'Completed' : 'Ongoing',
-      statusUr: status === 'completed' ? 'U.UcU.U,' : 'OO OUO',
+      statusUr: status === 'completed' ? 'مکمل' : status === 'ongoing' ? 'جاری' : 'آنے والا',
       image: row.image_url || '/assets/appeal1.webp',
       progress,
       date: dateStr,

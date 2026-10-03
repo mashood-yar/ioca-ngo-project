@@ -211,7 +211,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Handle Guest Application Account Auto-Generation
       if (!finalUserId && volunteer.email) {
-        const tempPassword = Math.random().toString(36).slice(-8) + 'V1!'; 
+        const tempPassword = require('crypto').randomBytes(12).toString('base64url').slice(0, 12) + 'A1!';
         const { data: authData, error: authError } = await supabase.auth.admin.createUser({
           email: volunteer.email,
           password: tempPassword,

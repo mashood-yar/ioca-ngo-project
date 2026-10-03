@@ -390,7 +390,7 @@ const Navbar: React.FC<NavbarProps> = ({ isUrdu, setIsUrdu }) => {
                     <Link to="/user/login" onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-semibold text-brand-teal">
                       {isUrdu ? 'لاگ ان کریں' : 'Sign In'}
                     </Link>
-                    <Link to="/user/signup" onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-semibold text-brand-teal">
+                    <Link to="/signup" onClick={closeMenu} className="min-h-[48px] flex items-center border-b border-brand-navy/5 font-semibold text-brand-teal">
                       {isUrdu ? 'سائن اپ کریں' : 'Sign Up'}
                     </Link>
                     <button

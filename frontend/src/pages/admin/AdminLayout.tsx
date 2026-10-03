@@ -20,6 +20,7 @@ import {
   TrendingUp,
   HeartHandshake,
   Shield,
+  CreditCard,
 } from 'lucide-react';
 
 const navItems = [
@@ -40,7 +41,8 @@ const navItems = [
   { to: '/admin/volunteers', label: 'Volunteers', icon: HeartHandshake },
   { to: '/admin/tiers', label: 'Membership Tiers', icon: Shield },
   { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
-  { to: '/admin/campaigns', label: 'Campaigns & CRM', icon: Megaphone },
+  { to: '/admin/users', label: 'Users', icon: Users },
+  { to: '/admin/memberships', label: 'Memberships', icon: CreditCard },
 ];
 
 const SidebarContent = ({ user, setIsMobileMenuOpen, handleSignOut, initials }: any) => (

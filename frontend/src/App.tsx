@@ -27,6 +27,9 @@ const Contact = lazy(() => import('./pages/Contact'));
 const News = lazy(() => import('./pages/News'));
 const Events = lazy(() => import('./pages/Events'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const ZakatPolicy = lazy(() => import('./pages/ZakatPolicy'));
 const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
 const ResetPassword = lazy(() => import('./pages/ResetPassword').then(m => ({ default: m.ResetPassword })));
 const UserDashboard = lazy(() => import('./pages/UserDashboard').then(m => ({ default: m.UserDashboard })));
@@ -48,6 +51,8 @@ const AdminTestimonials = lazy(() => import('./pages/admin/AdminTestimonials').t
 const AdminImpactStories = lazy(() => import('./pages/admin/AdminImpactStories').then(m => ({ default: m.AdminImpactStories })));
 const AdminImpactStats = lazy(() => import('./pages/admin/AdminImpactStats').then(m => ({ default: m.AdminImpactStats })));
 const AdminGallery = lazy(() => import('./pages/admin/AdminGallery').then(m => ({ default: m.AdminGallery })));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
+const AdminMemberships = lazy(() => import('./pages/admin/AdminMemberships').then(m => ({ default: m.AdminMemberships })));
 const AdminSiteSettings = lazy(() => import('./pages/admin/AdminSiteSettings').then(m => ({ default: m.AdminSiteSettings })));
 const AdminProjects = lazy(() => import('./pages/admin/AdminProjects').then(m => ({ default: m.AdminProjects })));
 const AdminPrograms = lazy(() => import('./pages/admin/AdminPrograms').then(m => ({ default: m.AdminPrograms })));
@@ -131,33 +136,37 @@ function App() {
       <>
         <ToastContainer />
         <ScrollToTop />
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/admin/login" element={<LoginPage />} />
-            <Route path="/admin" element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
-              <Route index element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="posts" element={<AdminPosts />} />
-              <Route path="events" element={<AdminEvents />} />
-              <Route path="zones" element={<AdminZones />} />
-              <Route path="tiers" element={<AdminTiers />} />
-              <Route path="members" element={<AdminMembers />} />
-              <Route path="applications" element={<AdminApplications />} />
-              <Route path="donations" element={<AdminDonations />} />
-              <Route path="queries" element={<AdminQueries />} />
-              <Route path="personnel" element={<AdminPersonnel />} />
-              <Route path="testimonials" element={<AdminTestimonials />} />
-              <Route path="impact-stories" element={<AdminImpactStories />} />
-              <Route path="impact-stats" element={<AdminImpactStats />} />
-              <Route path="gallery" element={<AdminGallery />} />
-              <Route path="site-settings" element={<AdminSiteSettings />} />
-              <Route path="projects" element={<AdminProjects />} />
-              <Route path="programs" element={<AdminPrograms />} />
-              <Route path="volunteers" element={<AdminVolunteers />} />
-              <Route path="campaigns" element={<AdminCampaigns />} />
-            </Route>
-          </Routes>
-        </Suspense>
+        <ErrorBoundary isUrdu={isUrdu}>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/admin/login" element={<LoginPage />} />
+              <Route path="/admin" element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
+                <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="posts" element={<AdminPosts />} />
+                <Route path="events" element={<AdminEvents />} />
+                <Route path="zones" element={<AdminZones />} />
+                <Route path="tiers" element={<AdminTiers />} />
+                <Route path="members" element={<AdminMembers />} />
+                <Route path="applications" element={<AdminApplications />} />
+                <Route path="donations" element={<AdminDonations />} />
+                <Route path="queries" element={<AdminQueries />} />
+                <Route path="personnel" element={<AdminPersonnel />} />
+                <Route path="testimonials" element={<AdminTestimonials />} />
+                <Route path="impact-stories" element={<AdminImpactStories />} />
+                <Route path="impact-stats" element={<AdminImpactStats />} />
+                <Route path="gallery" element={<AdminGallery />} />
+                <Route path="site-settings" element={<AdminSiteSettings />} />
+                <Route path="projects" element={<AdminProjects />} />
+                <Route path="programs" element={<AdminPrograms />} />
+                <Route path="volunteers" element={<AdminVolunteers />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="memberships" element={<AdminMemberships />} />
+                <Route path="campaigns" element={<AdminCampaigns />} />
+              </Route>
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </>
     );
   }
@@ -197,13 +206,16 @@ function App() {
               <Route path="/projects/:id" element={<ProjectDetails isUrdu={isUrdu} />} />
               <Route path="/impact-stories" element={<ImpactStories isUrdu={isUrdu} />} />
               {/* H1-08: pass handleDonateClick with amount so DonatePage can pre-fill the modal */}
-              <Route path="/donate" element={<DonatePage isUrdu={isUrdu} />} />
+              <Route path="/donate" element={<DonatePage isUrdu={isUrdu} onDonateClick={handleDonateClick} />} />
               <Route path="/volunteer" element={<Volunteer isUrdu={isUrdu} />} />
               <Route path="/member" element={<MembershipApplication isUrdu={isUrdu} />} />
               <Route path="/gallery" element={<Gallery isUrdu={isUrdu} />} />
               <Route path="/news" element={<News isUrdu={isUrdu} />} />
               <Route path="/events" element={<Events isUrdu={isUrdu} />} />
               <Route path="/contact" element={<Contact isUrdu={isUrdu} />} />
+              <Route path="/privacy" element={<PrivacyPolicy isUrdu={isUrdu} />} />
+              <Route path="/terms" element={<TermsOfService isUrdu={isUrdu} />} />
+              <Route path="/zakat-policy" element={<ZakatPolicy isUrdu={isUrdu} />} />
               <Route path="/login" element={<Navigate to="/user/login" replace />} />
               <Route path="/user/login" element={<LoginPage />} />
               <Route path="/signup" element={<LoginPage />} />

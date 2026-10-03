@@ -12,8 +12,8 @@ interface SEOProps {
 const SEO: React.FC<SEOProps> = ({ 
   title, 
   description, 
-  image = '/og-image.png', 
-  url = 'https://ioca.org',
+  image = 'https://iocaworld.org/og-image.png', 
+  url = 'https://iocaworld.org',
   isUrdu = false
 }) => {
   return (

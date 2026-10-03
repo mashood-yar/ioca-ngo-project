@@ -235,7 +235,7 @@ export function AdminZones() {
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         title="Delete Zone"
-        message="Are you sure you want to delete this zone? WARNING: This will also delete ALL members assigned to this zone permanently."
+        message="Are you sure you want to delete this zone? Members assigned to this zone will have their zone assignment cleared (not deleted)."
         confirmLabel="Delete Zone & Members"
         onConfirm={handleDelete}
       />

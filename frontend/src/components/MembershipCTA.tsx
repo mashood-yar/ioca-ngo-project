@@ -1,35 +1,30 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { ShieldCheck, Award, Heart, Users, ArrowRight } from 'lucide-react';
+import { fetchApi } from '../lib/apiClient';
 
 interface MembershipCTAProps {
   isUrdu: boolean;
 }
 
-const tiers = [
-  {
-    nameEn: 'Supporter',
-    nameUr: 'حامی',
-    feeEn: 'PKR 1,000 / yr',
-    feeUr: '۱,۰۰۰ روپے / سال',
-    hoverColor: 'group-hover:text-brand-teal',
-  },
-  {
-    nameEn: 'Associate',
-    nameUr: 'ایسوسی ایٹ',
-    feeEn: 'PKR 5,000 / yr',
-    feeUr: '۵,۰۰۰ روپے / سال',
-    hoverColor: 'group-hover:text-brand-gold',
-  },
-  {
-    nameEn: 'Full Member',
-    nameUr: 'مکمل رکن',
-    feeEn: 'PKR 10,000 / yr',
-    feeUr: '۱۰,۰۰۰ روپے / سال',
-    hoverColor: 'group-hover:text-white',
-  },
+interface Tier {
+  id: string;
+  name: string;
+  name_ur?: string;
+  price?: number;
+  fee?: number;
+  description?: string;
+}
+
+// Fallback tiers in case API is unavailable
+const FALLBACK_TIERS = [
+  { nameEn: 'Supporter', nameUr: 'حامی', feeEn: 'PKR 1,000 / yr', feeUr: '۱,۰۰۰ روپے / سال', hoverColor: 'group-hover:text-brand-teal' },
+  { nameEn: 'Associate', nameUr: 'ایسوسی ایٹ', feeEn: 'PKR 5,000 / yr', feeUr: '۵,۰۰۰ روپے / سال', hoverColor: 'group-hover:text-brand-gold' },
+  { nameEn: 'Full Member', nameUr: 'مکمل رکن', feeEn: 'PKR 10,000 / yr', feeUr: '۱۰,۰۰۰ روپے / سال', hoverColor: 'group-hover:text-white' },
 ];
+
+const HOVER_COLORS = ['group-hover:text-brand-teal', 'group-hover:text-brand-gold', 'group-hover:text-white'];
 
 const benefits = [
   { icon: ShieldCheck, en: 'PCP & FBR Certified', ur: 'PCP اور FBR تصدیق شدہ' },
@@ -48,6 +43,24 @@ const MembershipCTA: React.FC<MembershipCTAProps> = ({ isUrdu }) => {
   const navigate = useNavigate();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
+  const [dynamicTiers, setDynamicTiers] = useState<Tier[]>([]);
+
+  useEffect(() => {
+    fetchApi<Tier[]>('/tiers').then(({ data }) => {
+      if (data && data.length > 0) setDynamicTiers(data);
+    }).catch(() => {/* Use fallback tiers */});
+  }, []);
+
+  // Build display tiers: use dynamic if available, fallback otherwise
+  const displayTiers = dynamicTiers.length > 0
+    ? dynamicTiers.slice(0, 3).map((t, i) => ({
+        nameEn: t.name,
+        nameUr: t.name_ur || t.name,
+        feeEn: t.price ? `PKR ${t.price.toLocaleString()} / yr` : (t.fee ? `PKR ${Number(t.fee).toLocaleString()} / yr` : 'Contact Us'),
+        feeUr: t.price ? `${t.price.toLocaleString()} روپے / سال` : 'ہم سے رابطہ کریں',
+        hoverColor: HOVER_COLORS[i % HOVER_COLORS.length],
+      }))
+    : FALLBACK_TIERS;
 
   return (
     <section className="py-12 md:py-16 px-4 md:px-8 max-w-7xl mx-auto" style={{ direction: isUrdu ? 'rtl' : 'ltr' }}>
@@ -131,7 +144,7 @@ const MembershipCTA: React.FC<MembershipCTAProps> = ({ isUrdu }) => {
               </h3>
               
               <div className="space-y-7">
-                {tiers.map((tier, i) => (
+                {displayTiers.map((tier, i) => (
                   <div key={i} className={`group cursor-default flex flex-col ${isUrdu ? 'items-end' : 'items-start'}`}>
                     <div className={`w-full flex items-end justify-between ${isUrdu ? 'flex-row-reverse' : ''}`}>
                       <h4 className={`text-white/90 font-medium text-lg lg:text-xl transition-colors duration-300 ${tier.hoverColor} ${isUrdu ? 'font-urduHeading' : ''}`}>

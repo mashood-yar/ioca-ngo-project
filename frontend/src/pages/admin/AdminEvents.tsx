@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, Image as ImageIcon, Users } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
@@ -13,6 +13,8 @@ interface Event {
   description: string;
   location?: string;
   event_date?: string;
+  end_date?: string;
+  capacity?: number;
   image_url?: string;
 }
 
@@ -29,19 +31,34 @@ export function AdminEvents() {
     description: '', 
     location: '', 
     event_date: '',
-    is_online: false
+    endDate: '',
+    capacity: '',
+    is_online: false,
+    meetingUrl: ''
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
+  const [attendeeModal, setAttendeeModal] = useState<{ open: boolean; event: any; attendees: any[]; loading: boolean; } | null>(null);
+
   const { upload, uploading } = useCloudinaryUpload();
+
+  const handleOpenAttendees = async (event: Event) => {
+    setAttendeeModal({ open: true, event, attendees: [], loading: true });
+    try {
+      const { data } = await fetchApi<any[]>(`/event-registrations?event_id=${event.id}`);
+      setAttendeeModal({ open: true, event, attendees: data || [], loading: false });
+    } catch (err) {
+      setAttendeeModal({ open: true, event, attendees: [], loading: false });
+    }
+  };
 
   const loadEvents = async () => {
     try {
       const { data } = await fetchApi<Event[]>('/events');
       if (data) setEvents(data);
     } catch (err) {
-      console.error(err);
+      // Intentional empty catch
     } finally {
       setLoading(false);
     }
@@ -60,11 +77,14 @@ export function AdminEvents() {
         description: event.description,
         location: event.location || '',
         event_date: event.event_date ? new Date(event.event_date).toISOString().slice(0, 16) : '',
-        is_online: !!isOnline
+        endDate: event.end_date ? new Date(event.end_date).toISOString().slice(0, 16) : '',
+        capacity: event.capacity?.toString() || '',
+        is_online: !!isOnline,
+        meetingUrl: isOnline ? (event.location || '') : ''
       });
     } else {
       setSelectedEvent(null);
-      setFormData({ title: '', description: '', location: '', event_date: '', is_online: false });
+      setFormData({ title: '', description: '', location: '', event_date: '', endDate: '', capacity: '', is_online: false, meetingUrl: '' });
     }
     setSelectedFile(null);
     setIsFormOpen(true);
@@ -84,21 +104,13 @@ export function AdminEvents() {
       const payload = {
         title: formData.title,
         description: formData.description,
-        location: formData.location,
+        location: formData.is_online ? formData.meetingUrl : formData.location,
         eventDate: formData.event_date ? new Date(formData.event_date).toISOString() : null,
+        endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
+        capacity: formData.capacity ? parseInt(formData.capacity, 10) : null,
+        isOnline: formData.is_online,
         imageUrl,
       };
-
-      console.log('=== EVENT FORM SUBMISSION ===');
-      console.log('Form data:', {
-        title: formData.title,
-        description: formData.description,
-        location: formData.location,
-        event_date: formData.event_date,
-        imageUrl,
-      });
-      console.log('Payload to send:', JSON.stringify(payload, null, 2));
-      console.log('About to call api/events endpoint');
 
       const url = selectedEvent ? `/events/${selectedEvent.id}` : '/events';
       const method = selectedEvent ? 'PUT' : 'POST';
@@ -108,20 +120,15 @@ export function AdminEvents() {
         body: JSON.stringify(payload),
       });
 
-      console.log('=== API RESPONSE ===');
-      console.log('Result:', JSON.stringify(result, null, 2));
-
       if (result.error) {
-        console.error('API returned error:', result.error);
         window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Failed to save: ${result.error}`, variant: 'error' }}));
         return;
       }
 
-      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: selectedEvent ? 'Event updated' : 'Event created', variant: 'success' }}));
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Event saved successfully!', variant: 'success' }}));
       setIsFormOpen(false);
       loadEvents();
     } catch (err: any /* fixed M-01 */) {
-      console.error('Unexpected error:', err);
       window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: `Unexpected error: ${err.message || err}`, variant: 'error' }}));
     } finally {
       setSaving(false);
@@ -190,6 +197,14 @@ export function AdminEvents() {
                     <AdminButton
                       variant="outline"
                       size="sm"
+                      onClick={() => handleOpenAttendees(event)}
+                      title="Attendees"
+                    >
+                      <Users className="w-4 h-4" />
+                    </AdminButton>
+                    <AdminButton
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleOpenForm(event)}
                       title="Edit"
                     >
@@ -244,12 +259,33 @@ export function AdminEvents() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-[#111827] mb-1">Event Date & Time</label>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Start Date & Time</label>
               <input
                 type="datetime-local"
                 required
                 value={formData.event_date}
                 onChange={e => setFormData({ ...formData, event_date: e.target.value })}
+                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">End Date & Time (Optional)</label>
+              <input
+                type="datetime-local"
+                value={formData.endDate}
+                onChange={e => setFormData({ ...formData, endDate: e.target.value })}
+                className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-[#111827] mb-1">Capacity (Optional)</label>
+              <input
+                type="number"
+                value={formData.capacity}
+                onChange={e => setFormData({ ...formData, capacity: e.target.value })}
+                placeholder="e.g. 100"
                 className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
               />
             </div>
@@ -282,8 +318,8 @@ export function AdminEvents() {
               <input
                 type="text"
                 placeholder={formData.is_online ? 'https://zoom.us/j/123...' : '123 Main St...'}
-                value={formData.location}
-                onChange={e => setFormData({ ...formData, location: e.target.value })}
+                value={formData.is_online ? formData.meetingUrl : formData.location}
+                onChange={e => formData.is_online ? setFormData({ ...formData, meetingUrl: e.target.value }) : setFormData({ ...formData, location: e.target.value })}
                 className="w-full px-3 py-2 text-[#111827] bg-white border border-[#E5E7EB] rounded-lg placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-[#0D9488] disabled:bg-[#F9FAFB] disabled:text-[#6B7280] disabled:cursor-not-allowed transition-colors duration-150"
               />
             </div>
@@ -317,6 +353,43 @@ export function AdminEvents() {
         confirmLabel="Delete"
         onConfirm={handleDelete}
       />
+
+      {attendeeModal?.open && (
+        <Modal
+          isOpen={attendeeModal.open}
+          onClose={() => setAttendeeModal(null)}
+          title={`Attendees: ${attendeeModal.event.title} (${attendeeModal.attendees.length})`}
+        >
+          {attendeeModal.loading ? (
+            <div className="py-8 text-center">Loading attendees...</div>
+          ) : attendeeModal.attendees.length === 0 ? (
+            <div className="py-8 text-center text-gray-500">No attendees registered yet.</div>
+          ) : (
+            <div className="overflow-x-auto max-h-96">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="bg-gray-50 border-b">
+                    <th className="p-3">Name</th>
+                    <th className="p-3">Email</th>
+                    <th className="p-3">Phone</th>
+                    <th className="p-3">Registered At</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {attendeeModal.attendees.map((att: any) => (
+                    <tr key={att.id} className="hover:bg-gray-50">
+                      <td className="p-3 font-medium">{att.full_name || '—'}</td>
+                      <td className="p-3 text-gray-600">{att.email || '—'}</td>
+                      <td className="p-3 text-gray-600">{att.phone || '—'}</td>
+                      <td className="p-3 text-gray-600">{new Date(att.registered_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal>
+      )}
     </div>
   );
 }

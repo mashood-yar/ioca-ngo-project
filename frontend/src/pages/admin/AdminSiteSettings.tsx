@@ -74,8 +74,8 @@ export function AdminSiteSettings() {
     try {
       const uploadResult = await upload(file, 'ioca/hero');
       if (uploadResult) {
-        const currentSlides = formData.hero_slides ? JSON.parse(formData.hero_slides) : [];
-        const newSlide = { url: uploadResult.url, alt_en: 'New Slide', alt_ur: 'Ù†ÛŒØ§ Ø³Ù„Ø§Ø¦ÛŒÚˆ' };
+        const currentSlides = formData.hero_slides ? (() => { try { return JSON.parse(formData.hero_slides || '[]'); } catch { return []; } })() : [];
+        const newSlide = { url: uploadResult.url, alt_en: 'New Slide', alt_ur: 'نیا سلائیڈ' };
         handleChange('hero_slides', JSON.stringify([...currentSlides, newSlide]));
       }
     } catch (err: any /* fixed M-01 */) {
@@ -86,19 +86,19 @@ export function AdminSiteSettings() {
   };
 
   const updateSlide = (index: number, key: string, value: string) => {
-    const currentSlides = formData.hero_slides ? JSON.parse(formData.hero_slides) : [];
+    const currentSlides = formData.hero_slides ? (() => { try { return JSON.parse(formData.hero_slides || '[]'); } catch { return []; } })() : [];
     currentSlides[index][key] = value;
     handleChange('hero_slides', JSON.stringify(currentSlides));
   };
 
   const deleteSlide = (index: number) => {
-    const currentSlides = formData.hero_slides ? JSON.parse(formData.hero_slides) : [];
+    const currentSlides = formData.hero_slides ? (() => { try { return JSON.parse(formData.hero_slides || '[]'); } catch { return []; } })() : [];
     currentSlides.splice(index, 1);
     handleChange('hero_slides', JSON.stringify(currentSlides));
   };
 
   const moveSlide = (index: number, direction: -1 | 1) => {
-    const currentSlides = formData.hero_slides ? JSON.parse(formData.hero_slides) : [];
+    const currentSlides = formData.hero_slides ? (() => { try { return JSON.parse(formData.hero_slides || '[]'); } catch { return []; } })() : [];
     if (index + direction < 0 || index + direction >= currentSlides.length) return;
     
     const temp = currentSlides[index];
@@ -272,12 +272,12 @@ export function AdminSiteSettings() {
                   </div>
                 
                 <div className="space-y-3">
-                  {(formData.hero_slides ? JSON.parse(formData.hero_slides) : []).map((slide: any, idx: number) => (
+                  {(formData.hero_slides ? (() => { try { return JSON.parse(formData.hero_slides || '[]'); } catch { return []; } })() : []).map((slide: any, idx: number) => (
                     <div key={idx} className="flex gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200 items-start">
                       <div className="flex flex-col gap-1 items-center mt-2">
                         <button type="button" onClick={() => moveSlide(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-brand-teal disabled:opacity-30">â–²</button>
                         <span className="text-xs font-bold text-gray-400">{idx + 1}</span>
-                        <button type="button" onClick={() => moveSlide(idx, 1)} disabled={idx === (JSON.parse(formData.hero_slides).length - 1)} className="text-gray-400 hover:text-brand-teal disabled:opacity-30">â–¼</button>
+                        <button type="button" onClick={() => moveSlide(idx, 1)} disabled={idx === ((() => { try { return JSON.parse(formData.hero_slides || '[]'); } catch { return []; } })().length - 1)} className="text-gray-400 hover:text-brand-teal disabled:opacity-30">â–¼</button>
                       </div>
                       <img src={optimizeImage(slide.url, { width: 200 })} alt="Slide Preview" className="w-32 h-20 object-cover rounded shadow-sm" />
                       <div className="flex-1 space-y-2">
@@ -289,7 +289,7 @@ export function AdminSiteSettings() {
                       </button>
                     </div>
                   ))}
-                  {(!formData.hero_slides || JSON.parse(formData.hero_slides).length === 0) && (
+                  {(!formData.hero_slides || (() => { try { return JSON.parse(formData.hero_slides || '[]'); } catch { return []; } })().length === 0) && (
                     <div className="text-center py-8 text-gray-400 text-sm">No slides added. Click "Add Slide" to upload one.</div>
                   )}
                 </div>

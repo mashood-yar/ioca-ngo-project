@@ -7,9 +7,10 @@ import { fetchApi } from '../lib/apiClient';
 
 interface DonatePageProps {
   isUrdu: boolean;
+  onDonateClick?: (campaignName: string | null, amount: number | null, isMonthly: boolean) => void;
 }
 
-const DonatePage: React.FC<DonatePageProps> = ({ isUrdu }) => {
+const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);

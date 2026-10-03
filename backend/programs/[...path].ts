@@ -137,7 +137,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const user = await requireAdmin(req, res)
       if (!user) return
 
-      const body: any = createProgramSchema.parse(req.body)
+      const body: any = updateProgramSchema.parse(req.body)
       const updates: Record<string, any> = { updated_at: new Date().toISOString() }
 
       if (body.titleEn !== undefined) {

@@ -43,6 +43,8 @@ export function MembershipApply() {
     address: '',
     occupation: '',
     motivation: '',
+    fatherName: '',
+    profileImageUrl: '',
   });
 
   useEffect(() => {
@@ -98,7 +100,9 @@ export function MembershipApply() {
           cnic: formData.cnic,
           address: formData.address,
           occupation: formData.occupation,
-          motivation: formData.motivation
+          motivation: formData.motivation,
+          fatherName: formData.fatherName,
+          profileImageUrl: formData.profileImageUrl
         })
       });
 
@@ -248,6 +252,17 @@ export function MembershipApply() {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Father's Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.fatherName}
+                      onChange={e => setFormData(p => ({ ...p, fatherName: e.target.value }))}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      placeholder="Enter father's full name"
+                    />
+                  </div>
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
                     <input 
                       type="email" 
@@ -255,6 +270,18 @@ export function MembershipApply() {
                       value={formData.email}
                       className="w-full px-4 py-2.5 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg outline-none cursor-not-allowed"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo *</label>
+                    <input
+                      type="url"
+                      required
+                      value={formData.profileImageUrl}
+                      onChange={e => setFormData(p => ({ ...p, profileImageUrl: e.target.value }))}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      placeholder="https://... (paste profile image URL)"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Please upload your photo to an image host and paste the URL here</p>
                   </div>
                 </div>
 

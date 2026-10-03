@@ -19,11 +19,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── GET /api/testimonials ───────────────────────────────────────────────
     // Public: returns all active testimonials ordered by sort_order
     if (req.method === 'GET' && !id) {
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true })
+      const authHeader = req.headers.authorization;
+      let isAdmin = false;
+      if (authHeader) {
+        try {
+          const token = authHeader.replace('Bearer ', '');
+          const { data: { user } } = await supabase.auth.getUser(token);
+          if (user) {
+            const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+            isAdmin = profile?.role === 'admin';
+          }
+        } catch {}
+      }
+
+      let query = supabase.from('testimonials').select('*').order('sort_order', { ascending: true });
+      if (!isAdmin) query = query.eq('is_active', true);
+      const { data, error } = await query;
 
       if (error) throw new Error(error.message)
       return ok(res, data)

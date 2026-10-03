@@ -20,11 +20,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── GET /api/impact-stats ───────────────────────────────────────────────
     // Public: returns all active stats ordered by sort_order
     if (req.method === 'GET' && !id) {
-      const { data, error } = await supabase
-        .from('impact_stats')
-        .select('*')
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true })
+      const authHeader = req.headers.authorization;
+      let isAdmin = false;
+      if (authHeader) {
+        try {
+          const token = authHeader.replace('Bearer ', '');
+          const { data: { user } } = await supabase.auth.getUser(token);
+          if (user) {
+            const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+            isAdmin = profile?.role === 'admin';
+          }
+        } catch {}
+      }
+
+      let query = supabase.from('impact_stats').select('*').order('sort_order', { ascending: true });
+      if (!isAdmin) query = query.eq('is_active', true);
+      const { data, error } = await query;
 
       if (error) throw new Error(error.message)
       return ok(res, data)

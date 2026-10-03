@@ -104,6 +104,7 @@ interface Zone {
   city: string;
   description?: string;
   member_count?: number;
+  members?: { count: number }[];
 }
 
 interface MemberData {
@@ -138,9 +139,12 @@ export function UserDashboard() {
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [availableEvents, setAvailableEvents] = useState<EventData[]>([]);
 
+  const [onboardingLoading, setOnboardingLoading] = useState(false);
+
   // 1. Profile Edit Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editName, setEditName] = useState('');
+  const [editFatherName, setEditFatherName] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editAddress, setEditAddress] = useState('');
   const [editCnic, setEditCnic] = useState('');
@@ -297,6 +301,7 @@ export function UserDashboard() {
         body: JSON.stringify({
           full_name: editName,
           name: editName, // legacy fallback
+          father_name: editFatherName,
           phone: editPhone,
           address: editAddress,
           cnic: editCnic,
@@ -331,6 +336,7 @@ export function UserDashboard() {
 
   const openEditModal = () => {
     setEditName(profile?.full_name || profile?.name || user?.user_metadata?.full_name || '');
+    setEditFatherName(profile?.father_name || '');
     setEditPhone(profile?.phone || '');
     setEditAddress(profile?.address || '');
     setEditCnic(profile?.cnic || '');
@@ -720,33 +726,58 @@ END:VCALENDAR`;
           <p className="text-brand-navy/60 text-lg">Thank you for joining our community. How would you like to get started?</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
             <button
-              onClick={() => navigate('/volunteer')}
-              className="p-6 bg-brand-gray border border-brand-navy/10 rounded-xl hover:border-brand-teal hover:shadow-md transition group text-left"
+              onClick={async () => {
+                setOnboardingLoading(true);
+                try {
+                  await fetchApi('/profile/me', { method: 'PATCH', body: JSON.stringify({ onboarding_completed: true }) });
+                  setProfile(prev => prev ? { ...prev, onboarding_completed: true } : prev);
+                  navigate('/volunteer');
+                } finally {
+                  setOnboardingLoading(false);
+                }
+              }}
+              disabled={onboardingLoading}
+              className="p-6 bg-brand-gray border border-brand-navy/10 rounded-xl hover:border-brand-teal hover:shadow-md transition group text-left disabled:opacity-50 relative"
             >
+              {onboardingLoading && <div className="absolute top-4 right-4 w-4 h-4 border-2 border-brand-teal/30 border-t-brand-teal rounded-full animate-spin"></div>}
               <Users className="w-8 h-8 text-brand-teal mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="font-bold text-brand-navy">Become a Volunteer</h3>
               <p className="text-xs text-brand-navy/50 mt-1">Join our active ground teams.</p>
             </button>
             <button
               onClick={async () => {
-                await fetchApi('/profile/me', { method: 'PATCH', body: JSON.stringify({ onboarding_completed: true }) });
-                setProfile(prev => prev ? { ...prev, onboarding_completed: true } : null);
-                setActiveTab('membership');
+                setOnboardingLoading(true);
+                try {
+                  await fetchApi('/profile/me', { method: 'PATCH', body: JSON.stringify({ onboarding_completed: true }) });
+                  setProfile(prev => prev ? { ...prev, onboarding_completed: true } : null);
+                  setActiveTab('membership');
+                } finally {
+                  setOnboardingLoading(false);
+                }
               }}
-              className="p-6 bg-brand-teal/5 border border-brand-teal/20 rounded-xl hover:bg-brand-teal/10 hover:shadow-md transition group text-left"
+              disabled={onboardingLoading}
+              className="p-6 bg-brand-teal/5 border border-brand-teal/20 rounded-xl hover:bg-brand-teal/10 hover:shadow-md transition group text-left disabled:opacity-50 relative"
             >
+              {onboardingLoading && <div className="absolute top-4 right-4 w-4 h-4 border-2 border-brand-teal/30 border-t-brand-teal rounded-full animate-spin"></div>}
               <ShieldCheck className="w-8 h-8 text-brand-teal mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="font-bold text-brand-navy">Apply for Membership</h3>
               <p className="text-xs text-brand-navy/50 mt-1">Become an official voting member.</p>
             </button>
             <button
               onClick={async () => {
-                await fetchApi('/profile/me', { method: 'PATCH', body: JSON.stringify({ onboarding_completed: true }) });
-                setProfile(prev => prev ? { ...prev, onboarding_completed: true } : null);
-                setActiveTab('donations');
+                setOnboardingLoading(true);
+                try {
+                  await fetchApi('/profile/me', { method: 'PATCH', body: JSON.stringify({ onboarding_completed: true }) });
+                  setProfile(prev => prev ? { ...prev, onboarding_completed: true } : null);
+                  setActiveTab('donations');
+                } finally {
+                  setOnboardingLoading(false);
+                }
               }}
-              className="p-6 bg-brand-gray border border-brand-navy/10 rounded-xl hover:border-brand-teal hover:shadow-md transition group text-left"
+              disabled={onboardingLoading}
+              className="p-6 bg-brand-gray border border-brand-navy/10 rounded-xl hover:border-brand-teal hover:shadow-md transition group text-left disabled:opacity-50 relative"
             >
+              {onboardingLoading && <div className="absolute top-4 right-4 w-4 h-4 border-2 border-brand-teal/30 border-t-brand-teal rounded-full animate-spin"></div>}
               <Heart className="w-8 h-8 text-rose-500 mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="font-bold text-brand-navy">Track Donations</h3>
               <p className="text-xs text-brand-navy/50 mt-1">Just explore the portal for now.</p>
@@ -757,10 +788,20 @@ END:VCALENDAR`;
     );
   }
 
+  const navItems = [
+    { id: 'overview', label: 'Overview', icon: Globe, show: true },
+    { id: 'profile', label: 'Profile info', icon: User, show: true },
+    { id: 'membership', label: 'Membership', icon: ShieldCheck, show: true },
+    { id: 'donations', label: 'Donations', icon: Heart, show: true },
+    { id: 'events', label: 'Events', icon: Calendar, show: true },
+    { id: 'zones', label: 'Projects & Zones', icon: MapPin, show: profile?.role === 'member' },
+    { id: 'volunteer_hub', label: 'Volunteer Hub', icon: Users, show: profile?.is_volunteer === true },
+  ];
+
   return (
     <div className="min-h-screen bg-brand-gray flex flex-col md:flex-row pt-[72px] md:pt-[88px] lg:pt-[104px]">
       {/* --- Sidebar Navigation --- */}
-      <aside className="w-full md:w-64 bg-white border-r border-brand-navy/10 flex-shrink-0 flex flex-col">
+      <aside className="hidden md:flex w-full md:w-64 bg-white border-r border-brand-navy/10 flex-shrink-0 flex-col">
         {/* User Card */}
         <div className="p-6 border-b border-brand-navy/5 flex items-center gap-4">
           {avatarUrl ? (
@@ -778,15 +819,7 @@ END:VCALENDAR`;
 
         {/* Tab links */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {[
-            { id: 'overview', label: 'Overview', icon: Globe, show: true },
-            { id: 'profile', label: 'Profile info', icon: User, show: true },
-            { id: 'membership', label: 'Membership', icon: ShieldCheck, show: true },
-            { id: 'donations', label: 'Donations', icon: Heart, show: true },
-            { id: 'events', label: 'Events', icon: Calendar, show: true },
-            { id: 'zones', label: 'Projects & Zones', icon: MapPin, show: profile?.role === 'member' },
-            { id: 'volunteer_hub', label: 'Volunteer Hub', icon: Users, show: profile?.is_volunteer === true },
-          ].map(item => {
+          {navItems.map(item => {
             if (!item.show) return null;
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -819,6 +852,28 @@ END:VCALENDAR`;
           </button>
         </div>
       </aside>
+
+      {/* Mobile tab bar - shown only on small screens */}
+      <div className="md:hidden w-full overflow-x-auto flex gap-2 px-4 py-3 bg-white border-b border-brand-navy/10 sticky top-[72px] z-10 shadow-sm">
+        {navItems.filter(item => item.show !== false).map(item => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id as Tab)}
+              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                isActive 
+                  ? 'bg-brand-navy text-white' 
+                  : 'bg-brand-gray text-brand-navy/60 hover:bg-brand-navy/10'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
 
       {/* --- Main Dashboard Area --- */}
       <main className="flex-1 p-6 md:p-8 max-w-5xl mx-auto w-full overflow-hidden space-y-6">
@@ -1498,7 +1553,7 @@ END:VCALENDAR`;
                                   <div className="mt-4 pt-3 border-t border-brand-navy/10">
                                     <p className="text-brand-teal font-medium flex items-center gap-2">
                                       <CheckCircle className="w-4 h-4" />
-                                      After transferring, please enter the Transaction ID (TID) above. Send your screenshot proof to our WhatsApp at +92 3XX XXXXXXX.
+                                      After transferring, please enter the Transaction ID (TID) above. Please send your payment screenshot to our WhatsApp or email at info@iocaworld.org for confirmation.
                                     </p>
                                   </div>
                                 </div>
@@ -1836,7 +1891,7 @@ END:VCALENDAR`;
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {zones.map(zn => {
                     const isCurrent = activeZone?.id === zn.id;
-                    const count = zn.member_count || 0;
+                    const count = zn.members?.[0]?.count ?? zn.member_count ?? 0;
                     return (
                       <div
                         key={zn.id}
@@ -1966,7 +2021,7 @@ END:VCALENDAR`;
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-white rounded-xl shadow-2xl p-6 overflow-hidden"
+              className="relative w-full max-w-md bg-white rounded-xl shadow-2xl p-6 overflow-y-auto max-h-[90vh]"
             >
               <button
                 disabled={isSaving}
@@ -1994,6 +2049,17 @@ END:VCALENDAR`;
                     className="w-full px-3.5 py-2.5 border border-brand-navy/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal font-medium text-brand-navy/80"
                     value={editName}
                     onChange={e => setEditName(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-brand-navy/70 mb-1.5">Father's Name</label>
+                  <input
+                    type="text"
+                    value={editFatherName}
+                    onChange={e => setEditFatherName(e.target.value)}
+                    className="w-full border border-brand-navy/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30"
+                    placeholder="Enter father's name"
                   />
                 </div>
 

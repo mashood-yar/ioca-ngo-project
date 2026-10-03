@@ -85,8 +85,11 @@ export function AdminVolunteers() {
     }
   };
 
-  const handleConvertToPersonnel = async (volunteer: Volunteer) => {
-    if (!confirm(`Convert "${volunteer.full_name}" to an official IOCA Personnel member? This will generate a VOL-xxx ID and QR code, and send them a welcome email.`)) return;
+  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; message: string; onConfirm: () => void; }>({
+    open: false, message: '', onConfirm: () => {}
+  });
+
+  const doConvertToPersonnel = async (volunteer: Volunteer) => {
     setIsConverting(true);
     try {
       const { data, error } = await fetchApi<{ personnel: { uid: string } }>(`/volunteers/${volunteer.id}/convert`, {
@@ -107,9 +110,15 @@ export function AdminVolunteers() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this application? This action cannot be undone.')) return;
-    
+  const handleConvertToPersonnel = async (volunteer: Volunteer) => {
+    setConfirmDialog({ 
+      open: true, 
+      message: `Convert "${volunteer.full_name}" to an official IOCA Personnel member? This will generate a VOL-xxx ID and QR code, and send them a welcome email.`, 
+      onConfirm: () => doConvertToPersonnel(volunteer) 
+    });
+  };
+
+  const doDelete = async (id: string) => {
     setIsDeleting(true);
     try {
       await fetchApi(`/volunteers/${id}`, { method: 'DELETE' });
@@ -121,6 +130,14 @@ export function AdminVolunteers() {
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleDelete = async (id: string) => {
+    setConfirmDialog({ 
+      open: true, 
+      message: 'Are you sure you want to delete this application? This action cannot be undone.', 
+      onConfirm: () => doDelete(id) 
+    });
   };
 
   const handleNotesBlur = () => {
@@ -441,6 +458,13 @@ export function AdminVolunteers() {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        open={confirmDialog.open}
+        title="Confirm Action"
+        message={confirmDialog.message}
+        onConfirm={confirmDialog.onConfirm}
+        onCancel={() => setConfirmDialog(prev => ({ ...prev, open: false }))}
+      />
     </div>
   );
 }

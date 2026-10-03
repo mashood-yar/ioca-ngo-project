@@ -60,7 +60,9 @@ const Hero: React.FC<HeroProps> = ({ isUrdu }) => {
     if (!isSlideshow) return;
     
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      if (document.visibilityState === 'visible') {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }
     }, 4000);
     return () => clearInterval(timer);
   }, [isSlideshow, slides.length]);

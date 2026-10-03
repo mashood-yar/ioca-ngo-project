@@ -164,7 +164,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data, error } = await supabase
         .from('donations')
         .select('*, projects(title)')
-        .or(`user_id.eq.${user.id},email.eq.${user.email}`)
+        .or(`user_id.eq.${user.id},email.eq.${(user.email || '').replace(/[^a-zA-Z0-9@._+-]/g, '')}`)
         .order('created_at', { ascending: false })
 
       if (error) throw new Error(error.message)

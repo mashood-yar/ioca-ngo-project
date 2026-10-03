@@ -257,7 +257,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (error) throw new Error(error.message)
 
       // Map emails from auth.users
-      const { data: authData } = await supabase.auth.admin.listUsers()
+      const { data: authData } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 })
       const usersMap = new Map()
       if (authData?.users) {
         authData.users.forEach((u: any) => usersMap.set(u.id, u.email))
@@ -290,7 +290,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) throw new Error(error.message)
 
-      const { data: authData } = await supabase.auth.admin.listUsers()
+      const { data: authData } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 })
       const usersMap = new Map()
       if (authData?.users) {
         authData.users.forEach((u: any) => usersMap.set(u.id, u.email))
@@ -316,7 +316,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       
       let targetUserId = user_id;
       if (!targetUserId && email) {
-        const { data: authData } = await supabase.auth.admin.listUsers()
+        const { data: authData } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 })
         const foundUser = authData?.users?.find((u: any) => u.email === email)
         if (foundUser) targetUserId = foundUser.id;
       }

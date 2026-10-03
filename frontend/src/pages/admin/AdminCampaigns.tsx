@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Send, Users, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { AdminButton } from './AdminButton';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 
 interface Contact {
   id: string;
@@ -42,10 +43,11 @@ export function AdminCampaigns() {
     loadContacts();
   }, []);
 
-  const handleSendCampaign = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!confirm('Are you sure you want to broadcast this email? This cannot be undone.')) return;
-    
+  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; message: string; onConfirm: () => void; }>({
+    open: false, message: '', onConfirm: () => {}
+  });
+
+  const doSendCampaign = async () => {
     setSending(true);
     setSendResult(null);
     try {
@@ -68,6 +70,15 @@ export function AdminCampaigns() {
     } finally {
       setSending(false);
     }
+  };
+
+  const handleSendCampaign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setConfirmDialog({ 
+      open: true, 
+      message: 'Are you sure you want to broadcast this email? This cannot be undone.', 
+      onConfirm: () => doSendCampaign() 
+    });
   };
 
   // Get unique tags for the filter dropdown
@@ -236,6 +247,13 @@ export function AdminCampaigns() {
           </table>
         </div>
       </div>
+      <ConfirmDialog
+        open={confirmDialog.open}
+        title="Confirm Action"
+        message={confirmDialog.message}
+        onConfirm={confirmDialog.onConfirm}
+        onCancel={() => setConfirmDialog(prev => ({ ...prev, open: false }))}
+      />
     </div>
   );
 }

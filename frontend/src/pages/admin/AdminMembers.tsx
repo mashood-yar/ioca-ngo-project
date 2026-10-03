@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Mail, Phone, Shield } from 'lucide-react';
+import { Plus, Edit2, Trash2, Mail, Phone, Shield, Search } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
@@ -34,6 +34,8 @@ export function AdminMembers() {
   const [members, setMembers] = useState<Member[]>([]);
   const [zones, setZones] = useState<Zone[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -65,8 +67,7 @@ export function AdminMembers() {
       
       if (membersRes.data) setMembers(membersRes.data);
       if (zonesRes.data) setZones(zonesRes.data);
-    } catch (err) {
-      console.error(err);
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to load members', variant: 'error' }}));
     } finally {
       setLoading(false);
     }
@@ -163,7 +164,21 @@ export function AdminMembers() {
     }
   };
 
-  if (loading) return <div className="p-8">Loading members...</div>;
+  const filteredMembers = members.filter(m => {
+    const matchSearch = !searchQuery ||
+      m.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.phone?.includes(searchQuery) ||
+      m.cnic?.includes(searchQuery);
+    const matchStatus = statusFilter === 'all' || (statusFilter === 'active' ? m.is_active : !m.is_active);
+    return matchSearch && matchStatus;
+  });
+
+  if (loading) return (
+    <div className="flex items-center justify-center py-16">
+      <div className="w-8 h-8 border-4 border-brand-teal border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -183,6 +198,28 @@ export function AdminMembers() {
         </AdminButton>
       </div>
 
+      {/* Search and Filter Bar */}
+      <div className="flex flex-wrap gap-3">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search by name, email, phone, CNIC..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30"
+          />
+        </div>
+        <div className="flex gap-2">
+          {(['all', 'active', 'inactive'] as const).map(s => (
+            <button key={s} onClick={() => setStatusFilter(s)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${statusFilter === s ? 'bg-brand-navy text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+              {s === 'all' ? `All (${members.length})` : s === 'active' ? `Active (${members.filter(m => m.is_active).length})` : `Inactive (${members.filter(m => !m.is_active).length})`}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="bg-white border border-[#E5E7EB] rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[800px]">
@@ -196,19 +233,27 @@ export function AdminMembers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E7EB]">
-              {members.map((member) => (
+              {filteredMembers.length === 0 ? (
+                <tr><td colSpan={5} className="py-12 text-center text-gray-400 text-sm">No members match your search</td></tr>
+              ) : filteredMembers.map((member) => (
                 <tr key={member.id} className="hover:bg-[#F9FAFB] transition-colors duration-100 text-[#111827] text-sm">
                   <td className="p-4 pl-6">
                     <div className="flex items-center gap-3">
-                      <img 
-                        src={member.profile_image_url ? optimizeImage(member.profile_image_url, { width: 80 }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(member.full_name)}&background=random`} 
-                        alt={member.full_name} 
-                        className="w-10 h-10 rounded-full object-cover border border-[#E5E7EB]"
-                        width={40}
-                        height={40}
-                        loading="lazy"
-                        decoding="async"
-                      />
+                      {member.profile_image_url ? (
+                        <img 
+                          src={optimizeImage(member.profile_image_url, { width: 80 })}
+                          alt={member.full_name} 
+                          className="w-10 h-10 rounded-full object-cover border border-[#E5E7EB]"
+                          width={40}
+                          height={40}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-brand-navy/10 flex items-center justify-center text-sm font-bold text-brand-navy border border-[#E5E7EB]">
+                          {member.full_name?.charAt(0)?.toUpperCase() || '?'}
+                        </div>
+                      )}
                       <div>
                         <p className="font-medium text-gray-900">{member.full_name}</p>
                         <p className="text-xs text-gray-500">CNIC: {member.cnic || 'N/A'}</p>

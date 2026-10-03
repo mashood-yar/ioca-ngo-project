@@ -47,7 +47,7 @@ async function router(req: VercelRequest, res: VercelResponse) {
   if (parts[1] === 'projects') { req.query.path = parts.slice(2); return projects(req, res); }
   if (parts[1] === 'site-settings') return siteSettings(req, res);
   if (parts[1] === 'team') return team(req, res);
-  if (parts[1] === 'testimonials') return testimonials(req, res);
+  if (parts[1] === 'testimonials') { req.query.path = parts.slice(2); return testimonials(req, res); }
   if (parts[1] === 'impact-stories') { req.query.path = parts.slice(2); return impactStories(req, res); }
   if (parts[1] === 'verify') { req.query.uid = parts[2]; return verify(req, res); }
   if (parts[1] === 'volunteers') { req.query.path = parts.slice(2); return volunteers(req, res); }
@@ -59,6 +59,10 @@ async function router(req: VercelRequest, res: VercelResponse) {
   if (parts[1] === 'members') { req.query.path = ['members', ...parts.slice(2)]; return misc(req, res); }
   if (parts[1] === 'zones') { req.query.path = ['zones', ...parts.slice(2)]; return misc(req, res); }
   if (parts[1] === 'tiers') { req.query.path = ['tiers', ...parts.slice(2)]; return misc(req, res); }
+  if (parts[1] === 'payment-methods') { req.query.path = ['admin', 'payment-methods', ...parts.slice(2)]; return misc(req, res); }
+  if (parts[1] === 'applications') { req.query.path = ['applications', ...parts.slice(2)]; return misc(req, res); }
+  if (parts[1] === 'newsletter') { req.query.path = ['newsletter', ...parts.slice(2)]; return misc(req, res); }
+  if (parts[1] === 'personnel') { req.query.path = ['personnel', ...parts.slice(2)]; return misc(req, res); }
 
   return res.status(404).json({ error: 'Not found' });
 }

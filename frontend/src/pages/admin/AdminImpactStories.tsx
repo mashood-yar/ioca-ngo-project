@@ -110,7 +110,7 @@ export const AdminImpactStories: React.FC = () => {
       loadStories();
     } catch (error) {
       console.error('Error saving story:', error);
-      alert('Failed to save impact story');
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to save impact story. Please try again.', variant: 'error' } }));
     } finally {
       setSaving(false);
     }
@@ -124,7 +124,7 @@ export const AdminImpactStories: React.FC = () => {
       loadStories();
     } catch (error) {
       console.error('Error deleting story:', error);
-      alert('Failed to delete impact story');
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to delete impact story. Please try again.', variant: 'error' } }));
     }
   };
 
@@ -218,7 +218,6 @@ export const AdminImpactStories: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
               <input type="text" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-2 border rounded-lg" />
             </div>
-            <div></div>
 
             <div className="col-span-1 md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Excerpt (English)</label>

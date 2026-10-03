@@ -131,7 +131,14 @@ export function AdminProgramsList() {
         <button onClick={() => setFilterCategory('all')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterCategory === 'all' ? 'bg-[#1E293B] text-white' : 'bg-white text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]'}`}>All Programs</button>
         {categories.map(cat => (
           <button key={cat.id} onClick={() => setFilterCategory(cat.id)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${filterCategory === cat.id ? 'bg-[#1E293B] text-white' : 'bg-white text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]'}`}>
-            <span dangerouslySetInnerHTML={{ __html: cat.icon_svg || '' }} className="w-4 h-4" />
+            <span dangerouslySetInnerHTML={{ __html: (() => {
+              const svg = cat.icon_svg || '';
+              return svg
+                .replace(/<script[\s\S]*?<\/script>/gi, '')
+                .replace(/on\w+="[^"]*"/gi, '')
+                .replace(/on\w+='[^']*'/gi, '')
+                .replace(/javascript:/gi, '');
+            })() }} className="w-4 h-4" />
             {cat.name_en}
           </button>
         ))}

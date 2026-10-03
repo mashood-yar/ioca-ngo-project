@@ -224,8 +224,6 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, isUrdu, 
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-    // Simulate payment processing delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
     
     const finalAmount = amount || parseInt(customAmount) || 0;
     const message = `${campaign} • ${fundType}`;

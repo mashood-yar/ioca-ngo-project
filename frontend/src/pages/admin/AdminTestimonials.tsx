@@ -81,7 +81,7 @@ export const AdminTestimonials: React.FC = () => {
       };
 
       if (selectedTestimonial) {
-        await fetchApi(/testimonials/ + selectedTestimonial.id, { method: 'PATCH', body: JSON.stringify(payload) });
+        await fetchApi('/testimonials/' + selectedTestimonial.id, { method: 'PATCH', body: JSON.stringify(payload) });
       } else {
         await fetchApi('/testimonials', { method: 'POST', body: JSON.stringify(payload) });
       }
@@ -89,7 +89,7 @@ export const AdminTestimonials: React.FC = () => {
       loadTestimonials();
     } catch (error) {
       console.error('Error saving testimonial:', error);
-      alert('Failed to save testimonial');
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to save testimonial. Please try again.', variant: 'error' } }));
     } finally {
       setSaving(false);
     }
@@ -98,12 +98,12 @@ export const AdminTestimonials: React.FC = () => {
   const handleDelete = async () => {
     if (!selectedTestimonial) return;
     try {
-      await fetchApi(/testimonials/ + selectedTestimonial.id, { method: 'DELETE' });
+      await fetchApi('/testimonials/' + selectedTestimonial.id, { method: 'DELETE' });
       setIsDeleteOpen(false);
       loadTestimonials();
     } catch (error) {
       console.error('Error deleting testimonial:', error);
-      alert('Failed to delete testimonial');
+      window.dispatchEvent(new CustomEvent('app-toast', { detail: { message: 'Failed to delete testimonial. Please try again.', variant: 'error' } }));
     }
   };
 
@@ -146,7 +146,11 @@ export const AdminTestimonials: React.FC = () => {
                   <td className="p-4 text-gray-600 truncate max-w-xs">{t.quote_en}</td>
                   <td className="p-4 text-gray-500">{t.location_en}</td>
                   <td className="p-4">
-                    <span className={"px-2.5 py-1 text-xs font-medium rounded-full "}>
+                    <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
+                      t.is_active 
+                        ? 'bg-green-100 text-green-700 border border-green-200' 
+                        : 'bg-gray-100 text-gray-500 border border-gray-200'
+                    }`}>
                       {t.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>

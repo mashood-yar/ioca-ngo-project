@@ -11,6 +11,19 @@ interface ModalProps {
 
 export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-2xl' }: ModalProps) {
   useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        const modal = document.querySelector('[role="dialog"]');
+        if (modal) {
+          const focusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+          if (focusable) (focusable as HTMLElement).focus();
+        }
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
@@ -20,7 +33,7 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-2xl'
     }
     return () => {
       document.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     };
   }, [isOpen, onClose]);
 

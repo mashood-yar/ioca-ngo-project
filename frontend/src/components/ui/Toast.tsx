@@ -50,6 +50,7 @@ export function Toast({ id, message, variant = 'info', onClose, autoDismiss = 40
       </div>
       <button
         onClick={() => onClose(id)}
+        aria-label="Close notification"
         className="opacity-70 hover:opacity-100 transition-opacity ml-4"
       >
         <X className="w-4 h-4" />

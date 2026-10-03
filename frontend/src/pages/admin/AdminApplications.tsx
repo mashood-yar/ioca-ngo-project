@@ -35,6 +35,10 @@ export function AdminApplications() {
   const [paymentMethod, setPaymentMethod] = useState('bank_transfer');
   const [paymentRef, setPaymentRef] = useState('');
 
+  const [viewingApplication, setViewingApplication] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
   useEffect(() => {
     loadApplications();
   }, []);
@@ -78,6 +82,15 @@ export function AdminApplications() {
     }
   };
 
+  const filteredApplications = applications.filter(app => {
+    const matchesSearch = !searchQuery || 
+      app.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.phone?.includes(searchQuery);
+    const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   if (loading) {
     return <div className="animate-pulse">Loading applications...</div>;
   }
@@ -88,6 +101,29 @@ export function AdminApplications() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Membership Applications</h2>
           <p className="text-sm text-gray-500 mt-1">Review and manage incoming membership requests</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3 mb-4">
+        <input
+          type="text"
+          placeholder="Search by name, email, phone..."
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          className="flex-1 min-w-[200px] border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/30"
+        />
+        <div className="flex gap-2">
+          {['all', 'pending', 'approved', 'rejected'].map(status => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${
+                statusFilter === status
+                  ? 'bg-brand-navy text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >{status === 'all' ? 'All' : status}</button>
+          ))}
         </div>
       </div>
 
@@ -105,14 +141,14 @@ export function AdminApplications() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E7EB]">
-              {applications.length === 0 ? (
+              {filteredApplications.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                     No applications found
                   </td>
                 </tr>
               ) : (
-                applications.map(app => (
+                filteredApplications.map(app => (
                   <tr key={app.id} className="hover:bg-[#F9FAFB] transition-colors duration-100 text-[#111827] text-sm">
                     <td className="px-6 py-4">
                       <div className="font-medium text-gray-900">{app.full_name}</div>
@@ -184,9 +220,7 @@ export function AdminApplications() {
                         )}
 
                         <AdminButton 
-                          onClick={() => {
-                            alert(`Motivation:\n${app.motivation}\n\nCNIC: ${app.cnic || 'N/A'}\nOccupation: ${app.occupation || 'N/A'}\nAddress: ${app.address || 'N/A'}`);
-                          }}
+                          onClick={() => setViewingApplication(app)}
                           variant="ghost"
                           size="sm"
                           title="View Details"
@@ -306,6 +340,38 @@ export function AdminApplications() {
           </div>
         </div>
       </Modal>
+
+      {viewingApplication && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-brand-navy">Application Details</h2>
+              <button onClick={() => setViewingApplication(null)} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+            </div>
+            <div className="space-y-3 text-sm">
+              <div><span className="font-semibold text-gray-600">Full Name:</span> <span className="text-gray-900">{viewingApplication.full_name}</span></div>
+              <div><span className="font-semibold text-gray-600">Father's Name:</span> <span className="text-gray-900">{viewingApplication.father_name || '—'}</span></div>
+              <div><span className="font-semibold text-gray-600">Email:</span> <span className="text-gray-900">{viewingApplication.email}</span></div>
+              <div><span className="font-semibold text-gray-600">Phone:</span> <span className="text-gray-900">{viewingApplication.phone}</span></div>
+              <div><span className="font-semibold text-gray-600">CNIC:</span> <span className="text-gray-900">{viewingApplication.cnic}</span></div>
+              <div><span className="font-semibold text-gray-600">Address:</span> <span className="text-gray-900">{viewingApplication.address}</span></div>
+              <div><span className="font-semibold text-gray-600">Occupation:</span> <span className="text-gray-900">{viewingApplication.occupation}</span></div>
+              <div><span className="font-semibold text-gray-600">Zone:</span> <span className="text-gray-900">{viewingApplication.zones?.name || viewingApplication.zone_id}</span></div>
+              <div><span className="font-semibold text-gray-600">Tier:</span> <span className="text-gray-900">{viewingApplication.tiers?.name || viewingApplication.tier_id}</span></div>
+              <div><span className="font-semibold text-gray-600">Status:</span> <span className="text-gray-900 capitalize">{viewingApplication.status}</span></div>
+              {viewingApplication.motivation && (
+                <div><span className="font-semibold text-gray-600">Motivation:</span> <p className="text-gray-900 mt-1 text-sm">{viewingApplication.motivation}</p></div>
+              )}
+              {viewingApplication.profile_image_url && (
+                <div><span className="font-semibold text-gray-600">Profile Photo:</span>
+                  <img src={viewingApplication.profile_image_url} alt="Applicant" className="mt-2 w-20 h-20 rounded-full object-cover border" />
+                </div>
+              )}
+            </div>
+            <button onClick={() => setViewingApplication(null)} className="mt-6 w-full bg-brand-navy text-white py-2 rounded-xl font-semibold hover:bg-brand-navy/90 transition-colors">Close</button>
+          </div>
+        </div>
+      )}
 
     </div>
   );

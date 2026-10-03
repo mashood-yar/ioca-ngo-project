@@ -274,6 +274,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const imageUrl = req.query.url as string;
         if (!imageUrl) return err(res, 'Missing url parameter', 400);
         
+        // Allowed image domains whitelist
+        const ALLOWED_IMAGE_DOMAINS = [
+          'res.cloudinary.com',
+          'cloudinary.com', 
+          'r2.cloudflarestorage.com',
+          'pub-',  // Cloudflare R2 public buckets
+          'images.unsplash.com',
+          'lh3.googleusercontent.com', // Google OAuth profile pics
+          'avatars.githubusercontent.com',
+        ];
+
+        let parsedUrl: URL;
+        try {
+          parsedUrl = new URL(imageUrl);
+        } catch {
+          return err(res, 'Invalid image URL', 400);
+        }
+
+        // Block private IP ranges and metadata endpoints
+        const hostname = parsedUrl.hostname;
+        if (
+          hostname === 'localhost' ||
+          hostname === '127.0.0.1' ||
+          hostname.startsWith('192.168.') ||
+          hostname.startsWith('10.') ||
+          hostname.startsWith('172.16.') ||
+          hostname === '169.254.169.254' || // AWS/GCP metadata
+          hostname === '::1'
+        ) {
+          return err(res, 'Invalid image URL', 400);
+        }
+
+        const isAllowedDomain = ALLOWED_IMAGE_DOMAINS.some(d => hostname.includes(d));
+        if (!isAllowedDomain) {
+          return err(res, 'Image domain not allowed', 403);
+        }
+
         try {
           const fetchRes = await fetch(imageUrl);
           if (!fetchRes.ok) throw new Error('Failed to fetch image');
@@ -515,6 +552,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
 
+    // === Personnel Me (for volunteers to get their own personnel record) ===
+    if (resource === 'personnel') {
+      if (subPath === 'me' && req.method === 'GET') {
+        const user = await requireAuth(req, res);
+        if (!user) return;
+        
+        // Find personnel record linked to this user's email
+        const { data: userRecord } = await supabase.auth.admin.getUserById(user.id);
+        const email = userRecord?.user?.email;
+        
+        if (!email) return ok(res, null);
+        
+        const { data: personnelRecord } = await supabase
+          .from('personnel')
+          .select('*')
+          .eq('email', email)
+          .eq('status', 'active')
+          .maybeSingle();
+        
+        return ok(res, personnelRecord);
+      }
+    }
+
     // === Memberships Resource ===
     if (resource === 'memberships') {
       if (req.method === 'GET' && subPath === 'me') {
@@ -616,7 +676,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             // Handle Guest Applications
             if (!finalUserId && application.email) {
-              const tempPassword = Math.random().toString(36).slice(-8) + 'A1!'; // e.g. "x9k2m4pzA1!"
+              const tempPassword = require('crypto').randomBytes(12).toString('base64url').slice(0, 12) + 'A1!';
               const { data: authData, error: authError } = await supabase.auth.admin.createUser({
                 email: application.email,
                 password: tempPassword,
@@ -709,6 +769,60 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           }
 
           return ok(res, { ...application, ...updatePayload })
+        }
+      }
+
+      if (adminSub === 'users') {
+        if (req.method === 'GET') {
+          const user = await requireAdmin(req, res);
+          if (!user) return;
+          // Fetch profiles
+          const { data: profiles, error } = await supabase
+            .from('profiles')
+            .select('id, full_name, phone, role, avatar_url, is_volunteer, onboarding_completed, created_at')
+            .order('created_at', { ascending: false });
+          if (error) throw error;
+          
+          // Enrich with emails from auth.users
+          const { data: { users: authUsers } } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+          const emailMap = Object.fromEntries((authUsers || []).map(u => [u.id, u.email]));
+          
+          const enriched = (profiles || []).map(p => ({ ...p, email: emailMap[p.id] || null }));
+          return ok(res, enriched);
+        }
+        
+        if (req.method === 'PATCH') {
+          const user = await requireAdmin(req, res);
+          if (!user) return;
+          const userId = adminId;
+          if (!userId) return err(res, 'User ID required', 400);
+          const { role } = req.body as { role: string };
+          if (!['member', 'volunteer', 'admin'].includes(role)) return err(res, 'Invalid role', 400);
+          const { error } = await supabase.from('profiles').update({ role }).eq('id', userId);
+          if (error) throw error;
+          return ok(res, { message: 'Role updated' });
+        }
+      }
+
+      // GET /admin/memberships — list all memberships
+      if (adminSub === 'memberships') {
+        if (req.method === 'GET') {
+          const user = await requireAdmin(req, res);
+          if (!user) return;
+          const { data, error } = await supabase
+            .from('memberships')
+            .select('*, profiles(full_name, phone, avatar_url), tiers(name, price)')
+            .order('created_at', { ascending: false });
+          if (error) throw error;
+          
+          // Enrich with email
+          const { data: { users: authUsers } } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+          const emailMap = Object.fromEntries((authUsers || []).map(u => [u.id, u.email]));
+          const enriched = (data || []).map(m => ({
+            ...m,
+            profiles: m.profiles ? { ...m.profiles, email: emailMap[m.user_id] } : null
+          }));
+          return ok(res, enriched);
         }
       }
 
@@ -880,6 +994,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           </div>
         `,
       })
+
+      // Save subscriber to database
+      try {
+        await supabase.from('audience_contacts').upsert({
+          email: email.trim().toLowerCase(),
+          name: name || null,
+          is_subscribed: true,
+          source: 'newsletter',
+          subscribed_at: new Date().toISOString()
+        }, { onConflict: 'email', ignoreDuplicates: false });
+      } catch (dbErr) {
+        // Non-fatal: log but don't fail the response
+        console.error('Failed to save newsletter subscriber:', dbErr);
+      }
 
       // Also notify admin
       try {
