@@ -597,6 +597,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // === Event Registrations Resource ===
     if (resource === 'event-registrations') {
+      // User: get my own registrations
       if (req.method === 'GET' && subPath === 'me') {
         const user = await requireAuth(req, res)
         if (!user) return
@@ -607,6 +608,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           .order('registered_at', { ascending: false })
         if (error) throw error
         return ok(res, data || [])
+      }
+
+      // Admin: get registrations for a specific event by event_id query param
+      if (req.method === 'GET' && !subPath) {
+        const admin = await requireAdmin(req, res)
+        if (!admin) return
+        const { event_id } = req.query
+        let query = supabase
+          .from('event_registrations')
+          .select('*, profiles(full_name, phone, avatar_url)')
+          .order('registered_at', { ascending: false })
+        if (event_id && typeof event_id === 'string') {
+          query = query.eq('event_id', event_id)
+        }
+        const { data, error } = await query
+        if (error) throw error
+        return ok(res, data || [])
+      }
+
+      // User: register for an event
+      if (req.method === 'POST') {
+        const user = await requireAuth(req, res)
+        if (!user) return
+        const { eventId } = req.body as { eventId: string }
+        if (!eventId) return err(res, 'Event ID is required', 400)
+        const { data, error } = await supabase
+          .from('event_registrations')
+          .insert({ user_id: user.id, event_id: eventId })
+          .select()
+          .single()
+        if (error) {
+          if (error.code === '23505') return err(res, 'Already registered for this event', 409)
+          throw error
+        }
+        return ok(res, data, 201)
       }
     }
 
@@ -997,9 +1033,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Save subscriber to database
       try {
+        const subscriberName = (req.body as any)?.name || null;
         await supabase.from('audience_contacts').upsert({
           email: email.trim().toLowerCase(),
-          name: name || null,
+          name: subscriberName,
           is_subscribed: true,
           source: 'newsletter',
           subscribed_at: new Date().toISOString()
