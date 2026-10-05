@@ -95,6 +95,8 @@ CREATE TABLE IF NOT EXISTS public.programs (
   desc_ur TEXT,
   content_en TEXT,
   content_ur TEXT,
+  image_url TEXT,
+  image_public_id TEXT,
   icon_url TEXT,
   hero_image_url TEXT,
   category_id UUID,
@@ -102,6 +104,10 @@ CREATE TABLE IF NOT EXISTS public.programs (
   is_featured BOOLEAN DEFAULT false,
   sort_order INTEGER DEFAULT 0,
   key_impact JSONB DEFAULT '[]',
+  stats_beneficiaries INTEGER DEFAULT 0,
+  stats_projects INTEGER DEFAULT 0,
+  stats_volunteers INTEGER DEFAULT 0,
+  author_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

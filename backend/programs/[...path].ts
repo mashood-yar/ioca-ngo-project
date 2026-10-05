@@ -66,16 +66,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET' && !id) {
       const { data: programs, error } = await supabase
         .from('programs')
-        .select('*, category:program_categories(*)')
+        .select('*')
         .order('created_at', { ascending: false })
 
       if (error) throw new Error(error.message)
-      return ok(res, programs)
+
+      // Fetch categories separately to avoid PostgREST duplicate foreign key errors
+      const { data: categories } = await supabase.from('program_categories').select('*')
+      
+      const enrichedPrograms = (programs || []).map(p => ({
+        ...p,
+        category: (categories || []).find(c => c.id === p.category_id) || null
+      }))
+
+      return ok(res, enrichedPrograms)
     }
 
     // 2. GET /api/programs/:id — Public: get single program
     if (req.method === 'GET' && id) {
-      let query = supabase.from('programs').select('*, category:program_categories(*)');
+      let query = supabase.from('programs').select('*');
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       
       if (uuidRegex.test(id)) {
@@ -91,6 +100,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return err(res, 'Program not found', 404)
         }
         throw new Error(error.message)
+      }
+
+      // Fetch category separately
+      if (program && program.category_id) {
+        const { data: category } = await supabase
+          .from('program_categories')
+          .select('*')
+          .eq('id', program.category_id)
+          .single();
+        program.category = category || null;
+      } else if (program) {
+        program.category = null;
       }
 
       return ok(res, program)
