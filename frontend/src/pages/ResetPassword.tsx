@@ -65,7 +65,7 @@ export function ResetPassword() {
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center border border-white/10 my-auto">
           <div className="flex justify-center mb-6">
             <img
-              src="/assets/logos/logo-icon-teal.webp"
+              src="/assets/logos/logo-icon-teal.svg"
               alt="IOCA Icon"
               className="w-16 h-16 object-contain"
             />
@@ -94,7 +94,7 @@ export function ResetPassword() {
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
             <img
-              src="/assets/logos/logo-icon-teal.webp"
+              src="/assets/logos/logo-icon-teal.svg"
               alt="IOCA Icon"
               className="w-16 h-16 object-contain drop-shadow-sm"
             />

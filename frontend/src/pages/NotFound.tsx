@@ -13,7 +13,7 @@ const NotFound: React.FC<NotFoundProps> = ({ isUrdu }) => (
     </Helmet>
     <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-24">
       <img
-        src="/assets/logos/logo-icon-teal.webp"
+        src="/assets/logos/logo-icon-teal.svg"
         alt="IOCA"
         className="h-20 mb-8 opacity-30"
       />

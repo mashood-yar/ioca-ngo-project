@@ -54,7 +54,7 @@ export function LoginPage() {
             <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
               <div className="flex justify-center mb-6">
                 <img
-                  src="/assets/logos/logo-icon-teal.webp"
+                  src="/assets/logos/logo-icon-teal.svg"
                   alt="IOCA Icon"
                   className="w-20 h-20 object-contain drop-shadow-sm hover:scale-105 transition-transform duration-300"
                 />
@@ -212,7 +212,7 @@ export function LoginPage() {
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
             <img
-              src="/assets/logos/logo-icon-teal.webp"
+              src="/assets/logos/logo-icon-teal.svg"
               alt="IOCA Icon"
               className="w-16 h-16 object-contain drop-shadow-sm hover:scale-110 transition-transform duration-300"
             />
