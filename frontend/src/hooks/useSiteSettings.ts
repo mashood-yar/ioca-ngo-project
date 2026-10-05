@@ -15,8 +15,8 @@ interface SiteSettings {
 
 // Default fallbacks so the UI never breaks even before the API responds
 const DEFAULTS: SiteSettings = {
-  logo_url: '/assets/logos/horizontal-main-logo-teal.webp',
-  logo_url_white: '/assets/logos/horizontal-main-logo-white.webp',
+  logo_url: '/assets/logos/horizontal-main-logo-teal.svg',
+  logo_url_white: '/assets/logos/horizontal-main-logo-white.svg',
   contact_email: 'info@iocaworld.org',
   contact_phone: '+92 42 3576 1234',
   contact_address: 'IOCA Head Office, Lahore, Pakistan',
