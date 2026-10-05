@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Clock, CheckCircle2, FileText, Trash2, HeartHandshake, UserPlus, CreditCard, GraduationCap, Shield, RefreshCw } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { AdminButton } from './AdminButton';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 
 interface Volunteer {
   id: string;
@@ -459,11 +460,11 @@ export function AdminVolunteers() {
         </div>
       </div>
       <ConfirmDialog
-        open={confirmDialog.open}
+        isOpen={confirmDialog.open}
         title="Confirm Action"
         message={confirmDialog.message}
-        onConfirm={confirmDialog.onConfirm}
-        onCancel={() => setConfirmDialog(prev => ({ ...prev, open: false }))}
+        onConfirm={() => { confirmDialog.onConfirm(); setConfirmDialog(prev => ({ ...prev, open: false })); }}
+        onClose={() => setConfirmDialog(prev => ({ ...prev, open: false }))}
       />
     </div>
   );

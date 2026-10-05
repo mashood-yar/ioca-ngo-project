@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Search, Shield, Eye, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, Search, Eye, RefreshCw } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 
 interface UserProfile {

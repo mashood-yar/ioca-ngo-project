@@ -10,7 +10,7 @@ interface DonatePageProps {
   onDonateClick?: (campaignName: string | null, amount: number | null, isMonthly: boolean) => void;
 }
 
-const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick }) => {
+const DonatePage: React.FC<DonatePageProps> = ({ isUrdu, onDonateClick: _onDonateClick }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
