@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Inbox, Eye, CheckCircle, XCircle, Trash2, Search, Filter, ChevronDown, ChevronUp, Loader2, ExternalLink } from 'lucide-react';
+import { Inbox, Eye, CheckCircle, XCircle, Trash2, Search, Loader2 } from 'lucide-react';
 import { fetchApi } from '../../lib/apiClient';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';

@@ -9,11 +9,11 @@ import { useAuth } from '../hooks/useAuth';
 interface Props { isUrdu: boolean; }
 
 const SubmitTestimonial: React.FC<Props> = ({ isUrdu }) => {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const { upload, uploading } = useCloudinaryUpload();
 
   const [form, setForm] = useState({
-    submitter_name:       profile?.full_name || '',
+    submitter_name:       user?.user_metadata?.full_name || '',
     submitter_email:      '',
     submitter_phone:      '',
     submitter_location:   '',

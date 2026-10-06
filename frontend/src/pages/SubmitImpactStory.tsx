@@ -5,7 +5,6 @@ import { Upload, CheckCircle, AlertCircle, Loader2, X } from 'lucide-react';
 import { fetchApi } from '../lib/apiClient';
 import { useCloudinaryUpload } from '../hooks/useCloudinaryUpload';
 import { useAuth } from '../hooks/useAuth';
-import { optimizeImage } from '../lib/optimizeImage';
 
 interface Props { isUrdu: boolean; }
 
@@ -14,11 +13,11 @@ const CURRENT_YEAR = new Date().getFullYear();
 const YEARS = Array.from({ length: CURRENT_YEAR - 2014 }, (_, i) => CURRENT_YEAR - i);
 
 const SubmitImpactStory: React.FC<Props> = ({ isUrdu }) => {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const { upload, uploading } = useCloudinaryUpload();
 
   const [form, setForm] = useState({
-    submitter_name:     profile?.full_name || '',
+    submitter_name:     user?.user_metadata?.full_name || '',
     submitter_email:    '',
     submitter_phone:    '',
     submitter_location: '',
@@ -36,7 +35,6 @@ const SubmitImpactStory: React.FC<Props> = ({ isUrdu }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [imageUrl, setImageUrl] = useState<string>('');
-  const [imagePublicId, setImagePublicId] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -79,7 +77,7 @@ const SubmitImpactStory: React.FC<Props> = ({ isUrdu }) => {
 
     try {
       let finalImageUrl = imageUrl;
-      let finalPublicId = imagePublicId;
+      let finalPublicId = '';
 
       if (imageFile) {
         const result = await upload(imageFile, 'community');
