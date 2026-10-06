@@ -58,11 +58,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         honeypot:             z.string().optional(),
       })
 
-      if (req.body?.honeypot) {
+      const reqBody = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+      if (reqBody.honeypot) {
         return ok(res, { submitted: true })
       }
 
-      const emailCheck = req.body?.submitter_email?.replace(/[^a-zA-Z0-9@._+-]/g, '') || ''
+      const emailCheck = reqBody.submitter_email?.replace(/[^a-zA-Z0-9@._+-]/g, '') || ''
       if (emailCheck) {
         const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
         const { count } = await supabase
@@ -75,7 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
-      const body = submitSchema.parse(req.body)
+      const body = submitSchema.parse(reqBody)
 
       const { data: submission, error: insertError } = await supabase
         .from('testimonial_submissions')
@@ -316,3 +317,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return err(res, message)
   }
 }
+
