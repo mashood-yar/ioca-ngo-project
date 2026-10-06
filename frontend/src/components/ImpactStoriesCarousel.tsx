@@ -174,13 +174,30 @@ const ImpactStoriesCarousel: React.FC<ImpactStoriesCarouselProps> = ({ isUrdu })
             to="/impact-stories"
             className="inline-flex items-center justify-center gap-2 border-2 border-brand-teal text-brand-teal font-bold py-2.5 px-6 rounded-lg hover:bg-brand-teal hover:text-white transition-colors"
           >
-            {isUrdu ? 'تمام کہانیاں دیکھیں' : 'View All Stories'}
+                        {isUrdu ? '???? ??????? ??????' : 'View All Stories'}
             <ArrowIcon className="w-4 h-4" />
           </Link>
         </div>
+
+        {/* Share Your Story CTA */}
+        <motion.div
+          className="text-center mt-10 md:mt-12"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <Link
+            to="/share-your-story"
+            className={`inline-flex items-center gap-2 border-2 border-brand-navy text-brand-navy font-bold px-8 py-3 rounded-full hover:bg-brand-navy hover:text-white transition-all ${isUrdu ? 'font-urduBody' : ''}`}
+          >
+            {isUrdu ? 'اپنی کہانی شیئر کریں' : 'Share Your Story'}
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
 };
 
 export default ImpactStoriesCarousel;
+
+
