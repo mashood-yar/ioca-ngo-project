@@ -19,6 +19,8 @@ const ProgramDetails = lazy(() => import('./pages/ProgramDetails'));
 const Projects = lazy(() => import('./pages/Projects'));
 const ProjectDetails = lazy(() => import('./pages/ProjectDetails'));
 const ImpactStories = lazy(() => import('./pages/ImpactStories'));
+const SubmitImpactStory = lazy(() => import('./pages/SubmitImpactStory'));
+const SubmitTestimonial = lazy(() => import('./pages/SubmitTestimonial'));
 const DonatePage = lazy(() => import('./pages/DonatePage'));
 const Volunteer = lazy(() => import('./pages/Volunteer'));
 const MembershipApplication = lazy(() => import('./pages/MembershipApplication'));
@@ -59,6 +61,7 @@ const AdminPrograms = lazy(() => import('./pages/admin/AdminPrograms').then(m =>
 const AdminVolunteers = lazy(() => import('./pages/admin/AdminVolunteers').then(m => ({ default: m.AdminVolunteers })));
 const AdminTiers = lazy(() => import('./pages/admin/AdminTiers').then(m => ({ default: m.AdminTiers })));
 const AdminCampaigns = lazy(() => import('./pages/admin/AdminCampaigns').then(m => ({ default: m.AdminCampaigns })));
+import { AdminSubmissions } from './pages/admin/AdminSubmissions';
 
 /** Scrolls to top on route change */
 function ScrollToTop() {
@@ -163,6 +166,7 @@ function App() {
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="memberships" element={<AdminMemberships />} />
                 <Route path="campaigns" element={<AdminCampaigns />} />
+                <Route path="submissions" element={<AdminSubmissions />} />
               </Route>
             </Routes>
           </Suspense>
@@ -205,6 +209,8 @@ function App() {
               <Route path="/projects" element={<Projects isUrdu={isUrdu} />} />
               <Route path="/projects/:id" element={<ProjectDetails isUrdu={isUrdu} />} />
               <Route path="/impact-stories" element={<ImpactStories isUrdu={isUrdu} />} />
+              <Route path="/share-your-story" element={<SubmitImpactStory isUrdu={isUrdu} />} />
+              <Route path="/share-your-voice" element={<SubmitTestimonial isUrdu={isUrdu} />} />
               {/* H1-08: pass handleDonateClick with amount so DonatePage can pre-fill the modal */}
               <Route path="/donate" element={<DonatePage isUrdu={isUrdu} onDonateClick={handleDonateClick} />} />
               <Route path="/volunteer" element={<Volunteer isUrdu={isUrdu} />} />

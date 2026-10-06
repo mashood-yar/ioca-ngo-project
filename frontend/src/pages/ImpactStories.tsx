@@ -194,6 +194,32 @@ const ImpactStories: React.FC<ImpactStoriesProps> = ({ isUrdu }) => {
             })
             )}
           </div>
+
+          {/* CTA Banner */}
+          <motion.div
+            className={`mt-16 bg-gradient-to-r from-brand-teal/10 to-brand-navy/10 rounded-2xl p-8 text-center border border-brand-teal/20 ${isUrdu ? 'text-right' : 'text-left'}`}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="max-w-xl mx-auto text-center">
+              <h3 className={`text-2xl font-bold text-brand-navy mb-3 ${isUrdu ? 'font-urduHeading' : ''}`}>
+                {isUrdu ? 'کیا آپ کے پاس کوئی کہانی ہے؟' : 'Have a Story to Share?'}
+              </h3>
+              <p className={`text-brand-navy/60 mb-6 ${isUrdu ? 'font-urduBody' : ''}`}>
+                {isUrdu
+                  ? 'آپ کی تبدیلی ہزاروں کو متاثر کر سکتی ہے۔ IOCA کے ساتھ اپنا تجربہ شیئر کریں۔'
+                  : 'Your transformation could inspire thousands. Share your experience with IOCA and let your story make a difference.'}
+              </p>
+              <a
+                href="/share-your-story"
+                className="inline-flex items-center gap-2 bg-brand-navy text-white font-bold px-8 py-3 rounded-full hover:bg-brand-teal transition-colors"
+              >
+                {isUrdu ? 'اپنی کہانی شیئر کریں' : 'Share Your Story →'}
+              </a>
+            </div>
+          </motion.div>
         </div>
       </div>
     </>

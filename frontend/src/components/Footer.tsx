@@ -89,6 +89,8 @@ const Footer: React.FC<FooterProps> = ({ isUrdu }) => {
               <li><Link to="/programs" className="hover:text-brand-gold transition-colors">{isUrdu ? 'پروگرامز' : 'Programs'}</Link></li>
               <li><Link to="/projects" className="hover:text-brand-gold transition-colors">{isUrdu ? 'پروجیکٹس' : 'Projects'}</Link></li>
               <li><Link to="/impact-stories" className="hover:text-brand-gold transition-colors">{isUrdu ? 'کہانیاں' : 'Impact Stories'}</Link></li>
+              <li><Link to="/share-your-story" className="hover:text-brand-gold transition-colors">{isUrdu ? 'اپنی کہانی شیئر کریں' : 'Share Your Story'}</Link></li>
+              <li><Link to="/share-your-voice" className="hover:text-brand-gold transition-colors">{isUrdu ? 'اپنی آواز شیئر کریں' : 'Share Your Voice'}</Link></li>
               <li><Link to="/volunteer" className="hover:text-brand-gold transition-colors">{isUrdu ? 'رضاکار' : 'Volunteer'}</Link></li>
               <li><Link to="/donate" className="hover:text-brand-gold transition-colors font-bold text-brand-gold">{isUrdu ? 'عطیہ کریں' : 'Donate'}</Link></li>
             </ul>

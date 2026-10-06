@@ -21,6 +21,7 @@ import {
   HeartHandshake,
   Shield,
   CreditCard,
+  Inbox,
 } from 'lucide-react';
 
 const navItems = [
@@ -43,6 +44,7 @@ const navItems = [
   { to: '/admin/zones', label: 'Zones & Members', icon: MapPin },
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/memberships', label: 'Memberships', icon: CreditCard },
+  { to: '/admin/submissions', label: 'Submissions', icon: Inbox },
 ];
 
 const SidebarContent = ({ user, setIsMobileMenuOpen, handleSignOut, initials }: any) => (

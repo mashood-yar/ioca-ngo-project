@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { z } from 'zod'
 import { supabase } from '../_lib/supabase'
 import { ok, err } from '../_lib/response'
 import { requireAdmin } from '../_lib/auth'
@@ -38,6 +39,200 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (error) throw new Error(error.message)
       return ok(res, data)
+    }
+
+    // ── PUBLIC: POST /api/testimonials/submit ──────────────────────────────
+    if (req.method === 'POST' && segments[0] === 'submit') {
+      const submitSchema = z.object({
+        submitter_name:       z.string().min(2).max(100),
+        submitter_email:      z.string().email(),
+        submitter_phone:      z.string().optional().nullable(),
+        submitter_location:   z.string().min(2, 'Location is required').max(200),
+        quote_en:             z.string().min(30, 'Testimonial must be at least 30 characters').max(1000),
+        quote_ur:             z.string().optional().nullable(),
+        photo_url:            z.string().optional().nullable(),
+        photo_public_id:      z.string().optional().nullable(),
+        consent_to_publish:   z.literal(true, { errorMap: () => ({ message: 'Consent required' }) }),
+        consent_to_use_photo: z.boolean().default(false),
+        user_id:              z.string().uuid().optional().nullable(),
+        honeypot:             z.string().optional(),
+      })
+
+      if (req.body?.honeypot) {
+        return ok(res, { submitted: true })
+      }
+
+      const emailCheck = req.body?.submitter_email?.replace(/[^a-zA-Z0-9@._+-]/g, '') || ''
+      if (emailCheck) {
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+        const { count } = await supabase
+          .from('testimonial_submissions')
+          .select('id', { count: 'exact', head: true })
+          .eq('submitter_email', emailCheck)
+          .gte('submitted_at', oneHourAgo)
+        if ((count ?? 0) >= 3) {
+          return err(res, 'Too many submissions. Please try again later.', 429)
+        }
+      }
+
+      const body = submitSchema.parse(req.body)
+
+      const { data: submission, error: insertError } = await supabase
+        .from('testimonial_submissions')
+        .insert({
+          submitter_name:       body.submitter_name,
+          submitter_email:      body.submitter_email,
+          submitter_phone:      body.submitter_phone ?? null,
+          submitter_location:   body.submitter_location,
+          user_id:              body.user_id ?? null,
+          quote_en:             body.quote_en,
+          quote_ur:             body.quote_ur ?? null,
+          photo_url:            body.photo_url ?? null,
+          photo_public_id:      body.photo_public_id ?? null,
+          consent_to_publish:   true,
+          consent_to_use_photo: body.consent_to_use_photo ?? false,
+          status:               'pending',
+        })
+        .select()
+        .single()
+
+      if (insertError) throw new Error(insertError.message)
+      return ok(res, { submitted: true, id: submission.id }, 201)
+    }
+
+    // ── ADMIN: GET /api/testimonials/submissions ────────────────────────────
+    if (req.method === 'GET' && segments[0] === 'submissions' && !segments[1]) {
+      if (!(await requireAdmin(req, res))) return
+
+      const { status: statusFilter, search } = req.query
+      let query = supabase
+        .from('testimonial_submissions')
+        .select('*')
+        .order('submitted_at', { ascending: false })
+
+      if (statusFilter && statusFilter !== 'all') {
+        query = query.eq('status', statusFilter as string)
+      }
+      if (search) {
+        query = query.or(`submitter_name.ilike.%${search}%,submitter_email.ilike.%${search}%,quote_en.ilike.%${search}%`)
+      }
+
+      const { data, error: fetchError } = await query
+      if (fetchError) throw new Error(fetchError.message)
+      return ok(res, data)
+    }
+
+    // ── ADMIN: GET /api/testimonials/submissions/:id ────────────────────────
+    if (req.method === 'GET' && segments[0] === 'submissions' && segments[1]) {
+      if (!(await requireAdmin(req, res))) return
+
+      const { data, error: fetchError } = await supabase
+        .from('testimonial_submissions')
+        .select('*')
+        .eq('id', segments[1])
+        .single()
+
+      if (fetchError) {
+        if (fetchError.code === 'PGRST116') return err(res, 'Submission not found', 404)
+        throw new Error(fetchError.message)
+      }
+      return ok(res, data)
+    }
+
+    // ── ADMIN: PATCH /api/testimonials/submissions/:id ──────────────────────
+    if (req.method === 'PATCH' && segments[0] === 'submissions' && segments[1]) {
+      if (!(await requireAdmin(req, res))) return
+
+      const submissionId = segments[1]
+      const { action, rejection_reason, admin_notes, quote_en, quote_ur, display_name, display_initial, bg_color, sort_order, photo_url } = req.body
+
+      let reviewerId: string | null = null
+      try {
+        const token = (req.headers.authorization || '').replace('Bearer ', '')
+        const { data: { user } } = await supabase.auth.getUser(token)
+        reviewerId = user?.id ?? null
+      } catch {}
+
+      const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
+
+      if (quote_en !== undefined)       updates.quote_en        = quote_en
+      if (quote_ur !== undefined)       updates.quote_ur        = quote_ur
+      if (display_name !== undefined)   updates.display_name    = display_name
+      if (display_initial !== undefined) updates.display_initial = display_initial
+      if (bg_color !== undefined)       updates.bg_color        = bg_color
+      if (sort_order !== undefined)     updates.sort_order      = sort_order
+      if (admin_notes !== undefined)    updates.admin_notes     = admin_notes
+      if (photo_url !== undefined)      updates.photo_url       = photo_url
+
+      if (action === 'approve') {
+        const { data: sub, error: subErr } = await supabase
+          .from('testimonial_submissions')
+          .select('*')
+          .eq('id', submissionId)
+          .single()
+        if (subErr) throw new Error(subErr.message)
+
+        const finalName     = (display_name    ?? sub.submitter_name)   as string
+        const finalInitial  = ((display_initial ?? sub.display_initial ?? finalName[0]) as string).toUpperCase()
+        const finalQuoteEn  = (quote_en        ?? sub.quote_en)         as string
+        const finalQuoteUr  = (quote_ur        ?? sub.quote_ur)         as string | null
+        const finalLocation = sub.submitter_location                     as string
+        const finalBgColor  = (bg_color        ?? sub.bg_color ?? 'white') as string
+        const finalSortOrder = (sort_order     ?? sub.sort_order ?? 0)  as number
+
+        const { data: liveTestimonial, error: liveErr } = await supabase
+          .from('testimonials')
+          .insert({
+            quote_en:    finalQuoteEn,
+            quote_ur:    finalQuoteUr,
+            name_en:     finalName,
+            name_ur:     null,
+            location_en: finalLocation,
+            location_ur: null,
+            initial:     finalInitial,
+            bg_color:    finalBgColor,
+            sort_order:  finalSortOrder,
+            is_active:   true,
+          })
+          .select()
+          .single()
+
+        if (liveErr) throw new Error(liveErr.message)
+
+        updates.status                    = 'approved'
+        updates.published_testimonial_id  = liveTestimonial.id
+        updates.reviewed_by               = reviewerId
+        updates.reviewed_at               = new Date().toISOString()
+
+      } else if (action === 'reject') {
+        updates.status           = 'rejected'
+        updates.rejection_reason = rejection_reason ?? null
+        updates.reviewed_by      = reviewerId
+        updates.reviewed_at      = new Date().toISOString()
+      }
+
+      const { data: updated, error: updateErr } = await supabase
+        .from('testimonial_submissions')
+        .update(updates)
+        .eq('id', submissionId)
+        .select()
+        .single()
+
+      if (updateErr) throw new Error(updateErr.message)
+      return ok(res, updated)
+    }
+
+    // ── ADMIN: DELETE /api/testimonials/submissions/:id ─────────────────────
+    if (req.method === 'DELETE' && segments[0] === 'submissions' && segments[1]) {
+      if (!(await requireAdmin(req, res))) return
+
+      const { error: delErr } = await supabase
+        .from('testimonial_submissions')
+        .delete()
+        .eq('id', segments[1])
+
+      if (delErr) throw new Error(delErr.message)
+      return ok(res, { deleted: true })
     }
 
     // ── POST /api/testimonials ──────────────────────────────────────────────

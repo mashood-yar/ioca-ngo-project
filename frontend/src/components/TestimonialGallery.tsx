@@ -115,6 +115,22 @@ const TestimonialGallery: React.FC<TestimonialGalleryProps> = ({ isUrdu }) => {
             })}
           </div>
         )}
+
+        {/* Share Your Voice CTA */}
+        <motion.div
+          className="text-center mt-10"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <a
+            href="/share-your-voice"
+            className={`inline-flex items-center gap-2 border-2 border-brand-navy text-brand-navy font-bold px-8 py-3 rounded-full hover:bg-brand-navy hover:text-white transition-all ${isUrdu ? 'font-urduBody' : ''}`}
+          >
+            {isUrdu ? 'اپنی آواز شیئر کریں' : 'Share Your Voice'}
+          </a>
+        </motion.div>
       </div>
     </section>
   );
