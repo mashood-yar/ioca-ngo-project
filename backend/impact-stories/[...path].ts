@@ -101,12 +101,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const emailCheck = reqBody.submitter_email?.replace(/[^a-zA-Z0-9@._+-]/g, '') || ''
       if (emailCheck) {
         const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-        const { count } = await supabase
+          const { count, error: countErr } = await supabase
           .from('impact_story_submissions')
           .select('id', { count: 'exact', head: true })
           .eq('submitter_email', emailCheck)
           .gte('submitted_at', oneHourAgo)
-        if ((count ?? 0) >= 3) {
+          if (!countErr && (count ?? 0) >= 3) {
           return err(res, 'Too many submissions. Please try again later.', 429)
         }
       }
@@ -134,11 +134,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           consent_to_edit:    body.consent_to_edit ?? false,
           status:             'pending',
         })
-        .select()
-        .single()
 
       if (insertError) throw new Error(insertError.message)
-      return ok(res, { submitted: true, id: submission.id }, 201)
+      return ok(res, { submitted: true }, 201)
     }
 
     // ── ADMIN: GET /api/impact-stories/submissions ───────────────────────────
@@ -242,8 +240,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             image_url:   finalImageUrl,
             published_at: new Date().toISOString(),
           })
-          .select()
-          .single()
 
         if (liveErr) throw new Error(liveErr.message)
 
@@ -263,8 +259,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('impact_story_submissions')
         .update(updates)
         .eq('id', submissionId)
-        .select()
-        .single()
 
       if (updateErr) throw new Error(updateErr.message)
       return ok(res, updated)
@@ -302,9 +296,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           category: body.category || 'General',
           image_url: imageUrl && imageUrl !== '' ? await processImageField(imageUrl) : null,
         })
+
         .select()
         .single()
-
       if (error) throw new Error(error.message)
       return ok(res, story, 201)
     }
@@ -333,8 +327,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('impact_stories')
         .update(updates)
         .eq('id', id)
-        .select()
-        .single()
 
       if (error) throw new Error(error.message)
       return ok(res, story)
@@ -362,5 +354,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return err(res, e.message || 'Internal server error', 500)
   }
 }
+
+
+
+
+
 
 

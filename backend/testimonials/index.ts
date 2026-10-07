@@ -66,12 +66,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const emailCheck = reqBody.submitter_email?.replace(/[^a-zA-Z0-9@._+-]/g, '') || ''
       if (emailCheck) {
         const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-        const { count } = await supabase
-          .from('testimonial_submissions')
-          .select('id', { count: 'exact', head: true })
-          .eq('submitter_email', emailCheck)
-          .gte('submitted_at', oneHourAgo)
-        if ((count ?? 0) >= 3) {
+        const { count, error: countErr } = await supabase
+            .from('testimonial_submissions')
+            .select('id', { count: 'exact', head: true })
+            .eq('submitter_email', emailCheck)
+            .gte('submitted_at', oneHourAgo)
+          if (!countErr && (count ?? 0) >= 3) {
           return err(res, 'Too many submissions. Please try again later.', 429)
         }
       }
@@ -94,11 +94,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           consent_to_use_photo: body.consent_to_use_photo ?? false,
           status:               'pending',
         })
-        .select()
-        .single()
 
-      if (insertError) throw new Error(insertError.message)
-      return ok(res, { submitted: true, id: submission.id }, 201)
+        if (insertError) throw new Error(insertError.message)
+        return ok(res, { submitted: true }, 201)
     }
 
     // ── ADMIN: GET /api/testimonials/submissions ────────────────────────────
@@ -317,4 +315,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return err(res, message)
   }
 }
+
+
 
